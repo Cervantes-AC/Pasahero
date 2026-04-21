@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
+import '../../widgets/ph_widgets.dart';
 
 class DriverHistoryScreen extends StatelessWidget {
   const DriverHistoryScreen({super.key});
@@ -60,161 +61,144 @@ class DriverHistoryScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(gradient: AppColors.driverGradient),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.go('/driver-home'),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
+      backgroundColor: AppColors.driverBg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              child: Row(
+                children: [
+                  PhIconButton(
+                    icon: Icons.arrow_back,
+                    onTap: () => context.go('/driver-home'),
+                    color: Colors.white.withValues(alpha: 0.1),
+                    iconColor: Colors.white,
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Trip History',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
                     ),
-                    const SizedBox(width: 16),
-                    const Text(
-                      'Trip History',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ).animate().fadeIn(duration: 400.ms),
+                  ),
+                ],
+              ),
+            ).animate().fadeIn(duration: 350.ms),
 
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(24),
-                  itemCount: trips.length,
-                  itemBuilder: (context, index) {
-                    final trip = trips[index];
-                    final showDateHeader =
-                        index == 0 || trips[index - 1].date != trip.date;
-
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (showDateHeader) ...[
-                          if (index > 0) const SizedBox(height: 8),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              trip.date,
-                              style: TextStyle(
-                                color: AppColors.driverAccent,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.5,
-                              ),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(20),
+                itemCount: trips.length,
+                itemBuilder: (context, i) {
+                  final t = trips[i];
+                  final showHeader = i == 0 || trips[i - 1].date != t.date;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (showHeader) ...[
+                        if (i > 0) const SizedBox(height: 8),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text(
+                            t.date,
+                            style: TextStyle(
+                              color: AppColors.driverAccent,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5,
                             ),
                           ),
-                        ],
-                        Container(
-                              margin: const EdgeInsets.only(bottom: 10),
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.06),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.08),
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 44,
-                                    height: 44,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.green.withValues(
-                                        alpha: 0.15,
-                                      ),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.check,
-                                      color: AppColors.green,
-                                      size: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '${trip.pickup} → ${trip.dropoff}',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              trip.time,
-                                              style: const TextStyle(
-                                                color: Colors.white54,
-                                                fontSize: 11,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Row(
-                                              children: List.generate(
-                                                trip.rating,
-                                                (_) => const Icon(
-                                                  Icons.star,
-                                                  size: 10,
-                                                  color: AppColors.yellow,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Text(
-                                    '₱${trip.fare}',
-                                    style: TextStyle(
-                                      color: AppColors.driverAccent,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                            .animate()
-                            .fadeIn(delay: (index * 60).ms, duration: 400.ms)
-                            .slideX(begin: -0.1, end: 0),
+                        ),
                       ],
-                    );
-                  },
-                ),
+                      Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: AppColors.driverSurface,
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(color: AppColors.driverBorder),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.success.withValues(
+                                      alpha: 0.12,
+                                    ),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.check_rounded,
+                                    color: AppColors.success,
+                                    size: 18,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${t.pickup} → ${t.dropoff}',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 3),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            t.time,
+                                            style: const TextStyle(
+                                              color: AppColors.driverTextMuted,
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Row(
+                                            children: List.generate(
+                                              t.rating,
+                                              (_) => const Icon(
+                                                Icons.star_rounded,
+                                                size: 10,
+                                                color: AppColors.amber,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Text(
+                                  '₱${t.fare}',
+                                  style: TextStyle(
+                                    color: AppColors.driverAccent,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                          .animate()
+                          .fadeIn(delay: (i * 50).ms, duration: 350.ms)
+                          .slideX(begin: -0.05, end: 0),
+                    ],
+                  );
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

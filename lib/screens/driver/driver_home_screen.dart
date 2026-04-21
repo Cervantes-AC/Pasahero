@@ -3,24 +3,24 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../data/app_state.dart';
+import '../../widgets/ph_widgets.dart';
 import '../../widgets/toast.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key});
-
   @override
   State<DriverHomeScreen> createState() => _DriverHomeScreenState();
 }
 
 class _DriverHomeScreenState extends State<DriverHomeScreen>
     with SingleTickerProviderStateMixin {
-  bool _isOnline = false;
-  late AnimationController _pulseController;
+  bool _online = false;
+  late AnimationController _pulse;
 
   @override
   void initState() {
     super.initState();
-    _pulseController = AnimationController(
+    _pulse = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat();
@@ -28,25 +28,22 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
   @override
   void dispose() {
-    _pulseController.dispose();
+    _pulse.dispose();
     super.dispose();
   }
 
-  void _toggleOnline() {
-    setState(() => _isOnline = !_isOnline);
-    AppState.instance.driverStatus = _isOnline
+  void _toggle() {
+    setState(() => _online = !_online);
+    AppState.instance.driverStatus = _online
         ? DriverStatus.online
         : DriverStatus.offline;
     showToast(
       context,
-      _isOnline
-          ? 'You are now online! Ready for rides.'
-          : 'You are now offline.',
+      _online ? 'You are now online!' : 'You are now offline.',
     );
-    if (_isOnline) {
-      // Simulate incoming request after 3 seconds
+    if (_online) {
       Future.delayed(const Duration(seconds: 3), () {
-        if (mounted && _isOnline) {
+        if (mounted && _online) {
           AppState.instance.pendingRequest = mockRideRequest;
           context.go('/driver-request');
         }
@@ -61,479 +58,369 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
     final rating = AppState.instance.driverRating;
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(gradient: AppColors.driverGradient),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                child: Row(
-                  children: [
-                    // Avatar
-                    Container(
-                      width: 46,
-                      height: 46,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [AppColors.primary, AppColors.primaryLight],
-                        ),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.driverAccent.withValues(alpha: 0.5),
-                          width: 2,
-                        ),
+      backgroundColor: AppColors.driverBg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.driverAccent.withValues(alpha: 0.4),
+                        width: 1.5,
                       ),
-                      child: const Center(
-                        child: Text(
-                          'PS',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'PS',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Pedro Santos',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Pedro Santos',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
                           ),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.star,
-                                size: 12,
-                                color: AppColors.yellow,
+                        ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star_rounded,
+                              size: 12,
+                              color: AppColors.amber,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              '$rating · Habal-habal',
+                              style: const TextStyle(
+                                color: AppColors.driverTextMuted,
+                                fontSize: 12,
                               ),
-                              const SizedBox(width: 3),
-                              Text(
-                                '$rating • Habal-habal',
-                                style: const TextStyle(
-                                  color: Colors.white60,
-                                  fontSize: 12,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  PhIconButton(
+                    icon: Icons.settings_outlined,
+                    onTap: () => context.go('/driver-profile'),
+                    color: Colors.white.withValues(alpha: 0.08),
+                    iconColor: Colors.white,
+                  ),
+                ],
+              ),
+            ).animate().fadeIn(duration: 350.ms),
+
+            const SizedBox(height: 20),
+
+            // Online toggle
+            Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: GestureDetector(
+                    onTap: _toggle,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 350),
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        color: _online
+                            ? AppColors.success.withValues(alpha: 0.12)
+                            : AppColors.driverSurface,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(
+                          color: _online
+                              ? AppColors.success.withValues(alpha: 0.4)
+                              : AppColors.driverBorder,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              if (_online)
+                                AnimatedBuilder(
+                                  animation: _pulse,
+                                  builder: (_, __) => Container(
+                                    width: 52 + 18 * _pulse.value,
+                                    height: 52 + 18 * _pulse.value,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColors.success.withValues(
+                                        alpha: 0.12 * (1 - _pulse.value),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              Container(
+                                width: 52,
+                                height: 52,
+                                decoration: BoxDecoration(
+                                  color: _online
+                                      ? AppColors.success
+                                      : AppColors.driverBorder,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  _online
+                                      ? Icons.wifi_rounded
+                                      : Icons.wifi_off_rounded,
+                                  color: Colors.white,
+                                  size: 24,
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => context.go('/driver-profile'),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.settings_outlined,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ).animate().fadeIn(duration: 400.ms),
-
-              const SizedBox(height: 24),
-
-              // Online toggle card
-              Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: GestureDetector(
-                      onTap: _toggleOnline,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 400),
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: _isOnline
-                              ? AppColors.green.withValues(alpha: 0.15)
-                              : Colors.white.withValues(alpha: 0.06),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: _isOnline
-                                ? AppColors.green.withValues(alpha: 0.5)
-                                : Colors.white.withValues(alpha: 0.1),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            // Pulse indicator
-                            Stack(
-                              alignment: Alignment.center,
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (_isOnline)
-                                  AnimatedBuilder(
-                                    animation: _pulseController,
-                                    builder: (_, __) => Container(
-                                      width: 56 + 20 * _pulseController.value,
-                                      height: 56 + 20 * _pulseController.value,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: AppColors.green.withValues(
-                                          alpha:
-                                              0.15 *
-                                              (1 - _pulseController.value),
-                                        ),
-                                      ),
-                                    ),
+                                Text(
+                                  _online ? "You're Online" : "You're Offline",
+                                  style: TextStyle(
+                                    color: _online
+                                        ? AppColors.success
+                                        : Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 17,
                                   ),
-                                Container(
-                                  width: 56,
-                                  height: 56,
-                                  decoration: BoxDecoration(
-                                    color: _isOnline
-                                        ? AppColors.green
-                                        : Colors.white.withValues(alpha: 0.1),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    _isOnline ? Icons.wifi : Icons.wifi_off,
-                                    color: Colors.white,
-                                    size: 26,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  _online
+                                      ? 'Waiting for ride requests...'
+                                      : 'Tap to start accepting rides',
+                                  style: const TextStyle(
+                                    color: AppColors.driverTextMuted,
+                                    fontSize: 12,
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
+                          ),
+                          Switch(
+                            value: _online,
+                            onChanged: (_) => _toggle(),
+                            activeColor: AppColors.success,
+                            activeTrackColor: AppColors.success.withValues(
+                              alpha: 0.25,
+                            ),
+                            inactiveThumbColor: AppColors.driverTextMuted,
+                            inactiveTrackColor: AppColors.driverBorder,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+                .animate()
+                .fadeIn(delay: 80.ms, duration: 350.ms)
+                .slideY(begin: 0.1, end: 0),
+
+            const SizedBox(height: 20),
+
+            // Stats
+            Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "TODAY'S SUMMARY",
+                        style: TextStyle(
+                          color: AppColors.driverTextMuted,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    AppColors.driverAccent.withValues(
+                                      alpha: 0.2,
+                                    ),
+                                    AppColors.driverAccent.withValues(
+                                      alpha: 0.06,
+                                    ),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: AppColors.driverAccent.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                ),
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.monetization_on_outlined,
+                                        color: AppColors.driverAccent,
+                                        size: 14,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      const Text(
+                                        'Earnings',
+                                        style: TextStyle(
+                                          color: AppColors.driverTextMuted,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
                                   Text(
-                                    _isOnline
-                                        ? 'You\'re Online'
-                                        : 'You\'re Offline',
+                                    '₱${earnings.toStringAsFixed(2)}',
                                     style: TextStyle(
-                                      color: _isOnline
-                                          ? AppColors.green
-                                          : Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 18,
+                                      color: AppColors.driverAccent,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.w800,
                                     ),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    _isOnline
-                                        ? 'Waiting for ride requests...'
-                                        : 'Tap to start accepting rides',
+                                    '$trips trips completed',
                                     style: const TextStyle(
-                                      color: Colors.white54,
-                                      fontSize: 13,
+                                      color: AppColors.driverTextMuted,
+                                      fontSize: 11,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            Switch(
-                              value: _isOnline,
-                              onChanged: (_) => _toggleOnline(),
-                              activeColor: AppColors.green,
-                              activeTrackColor: AppColors.green.withValues(
-                                alpha: 0.3,
-                              ),
-                              inactiveThumbColor: Colors.white38,
-                              inactiveTrackColor: Colors.white.withValues(
-                                alpha: 0.1,
-                              ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                PhStatBox(
+                                  value: '$rating',
+                                  label: 'Rating',
+                                  valueColor: AppColors.amber,
+                                  dark: true,
+                                ),
+                                const SizedBox(height: 10),
+                                PhStatBox(
+                                  value: '6.5h',
+                                  label: 'Hours',
+                                  dark: true,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ),
-                  )
-                  .animate()
-                  .fadeIn(delay: 100.ms, duration: 400.ms)
-                  .slideY(begin: 0.2, end: 0),
+                    ],
+                  ),
+                )
+                .animate()
+                .fadeIn(delay: 160.ms, duration: 350.ms)
+                .slideY(begin: 0.1, end: 0),
 
-              const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-              // Today's stats
-              Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Today's Summary",
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: _EarningsCard(
-                                earnings: earnings,
-                                trips: trips,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  _MiniStatCard(
-                                    icon: Icons.star,
-                                    iconColor: AppColors.yellow,
-                                    label: 'Rating',
-                                    value: '$rating',
-                                  ),
-                                  const SizedBox(height: 10),
-                                  _MiniStatCard(
-                                    icon: Icons.access_time,
-                                    iconColor: AppColors.primary,
-                                    label: 'Hours',
-                                    value: '6.5h',
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                  .animate()
-                  .fadeIn(delay: 200.ms, duration: 400.ms)
-                  .slideY(begin: 0.2, end: 0),
+            // Quick actions
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: [
+                  _QuickBtn(
+                    icon: Icons.history_rounded,
+                    label: 'History',
+                    onTap: () => context.go('/driver-history'),
+                  ),
+                  const SizedBox(width: 10),
+                  _QuickBtn(
+                    icon: Icons.bar_chart_rounded,
+                    label: 'Earnings',
+                    onTap: () => context.go('/driver-earnings'),
+                  ),
+                  const SizedBox(width: 10),
+                  _QuickBtn(
+                    icon: Icons.person_outline,
+                    label: 'Profile',
+                    onTap: () => context.go('/driver-profile'),
+                  ),
+                ],
+              ),
+            ).animate().fadeIn(delay: 240.ms, duration: 350.ms),
 
-              const SizedBox(height: 20),
+            const Spacer(),
 
-              // Quick actions
-              Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Quick Actions',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _QuickAction(
-                                icon: Icons.history,
-                                label: 'Trip History',
-                                onTap: () => context.go('/driver-history'),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: _QuickAction(
-                                icon: Icons.bar_chart,
-                                label: 'Earnings',
-                                onTap: () => context.go('/driver-earnings'),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: _QuickAction(
-                                icon: Icons.person_outline,
-                                label: 'Profile',
-                                onTap: () => context.go('/driver-profile'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                  .animate()
-                  .fadeIn(delay: 300.ms, duration: 400.ms)
-                  .slideY(begin: 0.2, end: 0),
-
-              const Spacer(),
-
-              // Recent trips preview
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Recent Trips',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => context.go('/driver-history'),
-                          child: Text(
-                            'See all',
-                            style: TextStyle(
-                              color: AppColors.driverAccent,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    _RecentTripTile(
-                      pickup: 'SM City Cebu',
-                      dropoff: 'Ayala Center',
-                      fare: 65,
-                      time: '2:30 PM',
-                    ),
-                    const SizedBox(height: 8),
-                    _RecentTripTile(
-                      pickup: 'IT Park',
-                      dropoff: 'Guadalupe',
-                      fare: 48,
-                      time: '11:15 AM',
-                    ),
-                  ],
-                ),
-              ).animate().fadeIn(delay: 400.ms, duration: 400.ms),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _EarningsCard extends StatelessWidget {
-  final double earnings;
-  final int trips;
-  const _EarningsCard({required this.earnings, required this.trips});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.driverAccent.withValues(alpha: 0.2),
-            AppColors.driverAccent.withValues(alpha: 0.08),
+            // Recent trips
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+              child: Column(
+                children: [
+                  PhSectionHeader(
+                    title: 'Recent Trips',
+                    action: 'See all',
+                    onAction: () => context.go('/driver-history'),
+                    dark: true,
+                  ),
+                  const SizedBox(height: 10),
+                  _TripRow(
+                    pickup: 'SM City Cebu',
+                    dropoff: 'Ayala Center',
+                    fare: 65,
+                    time: '2:30 PM',
+                  ),
+                  const SizedBox(height: 8),
+                  _TripRow(
+                    pickup: 'IT Park',
+                    dropoff: 'Guadalupe',
+                    fare: 48,
+                    time: '11:15 AM',
+                  ),
+                ],
+              ),
+            ).animate().fadeIn(delay: 300.ms, duration: 350.ms),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.driverAccent.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.monetization_on,
-                color: AppColors.driverAccent,
-                size: 16,
-              ),
-              const SizedBox(width: 6),
-              const Text(
-                'Earnings',
-                style: TextStyle(color: Colors.white60, fontSize: 12),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '₱${earnings.toStringAsFixed(2)}',
-            style: TextStyle(
-              color: AppColors.driverAccent,
-              fontSize: 26,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '$trips trips completed',
-            style: const TextStyle(color: Colors.white54, fontSize: 12),
-          ),
-        ],
       ),
     );
   }
 }
 
-class _MiniStatCard extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String label;
-  final String value;
-  const _MiniStatCard({
-    required this.icon,
-    required this.iconColor,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: iconColor, size: 20),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
-              fontSize: 16,
-            ),
-          ),
-          Text(
-            label,
-            style: const TextStyle(color: Colors.white54, fontSize: 10),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _QuickAction extends StatelessWidget {
+class _QuickBtn extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  const _QuickAction({
+  const _QuickBtn({
     required this.icon,
     required this.label,
     required this.onTap,
@@ -541,37 +428,39 @@ class _QuickAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.07),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: Colors.white70, size: 22),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              style: const TextStyle(color: Colors.white60, fontSize: 11),
-              textAlign: TextAlign.center,
-            ),
-          ],
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            color: AppColors.driverSurface,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: AppColors.driverBorder),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: Colors.white70, size: 20),
+              const SizedBox(height: 5),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: AppColors.driverTextMuted,
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _RecentTripTile extends StatelessWidget {
-  final String pickup;
-  final String dropoff;
+class _TripRow extends StatelessWidget {
+  final String pickup, dropoff, time;
   final int fare;
-  final String time;
-  const _RecentTripTile({
+  const _TripRow({
     required this.pickup,
     required this.dropoff,
     required this.fare,
@@ -583,22 +472,26 @@ class _RecentTripTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
+        color: AppColors.driverSurface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: AppColors.driverBorder),
       ),
       child: Row(
         children: [
           Container(
-            width: 36,
-            height: 36,
+            width: 34,
+            height: 34,
             decoration: BoxDecoration(
-              color: AppColors.green.withValues(alpha: 0.15),
+              color: AppColors.success.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.check, color: AppColors.green, size: 18),
+            child: const Icon(
+              Icons.check_rounded,
+              color: AppColors.success,
+              size: 16,
+            ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -614,7 +507,10 @@ class _RecentTripTile extends StatelessWidget {
                 ),
                 Text(
                   time,
-                  style: const TextStyle(color: Colors.white54, fontSize: 11),
+                  style: const TextStyle(
+                    color: AppColors.driverTextMuted,
+                    fontSize: 11,
+                  ),
                 ),
               ],
             ),

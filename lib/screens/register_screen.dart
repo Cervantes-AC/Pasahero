@@ -2,220 +2,220 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
+import '../widgets/ph_widgets.dart';
 import '../widgets/toast.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
-
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _showPassword = false;
-
-  void _handleRegister() {
-    if (_nameController.text.isNotEmpty &&
-        _emailController.text.isNotEmpty &&
-        _phoneController.text.isNotEmpty &&
-        _passwordController.text.isNotEmpty) {
-      showToast(context, 'Account created successfully!');
-      context.go('/home');
-    }
-  }
+  final _nameCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
+  final _phoneCtrl = TextEditingController();
+  final _passCtrl = TextEditingController();
+  bool _showPass = false;
+  bool _agreed = false;
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _passwordController.dispose();
+    _nameCtrl.dispose();
+    _emailCtrl.dispose();
+    _phoneCtrl.dispose();
+    _passCtrl.dispose();
     super.dispose();
+  }
+
+  void _handleRegister() {
+    if (_nameCtrl.text.isNotEmpty &&
+        _emailCtrl.text.isNotEmpty &&
+        _phoneCtrl.text.isNotEmpty &&
+        _passCtrl.text.isNotEmpty) {
+      if (!_agreed) {
+        showToast(
+          context,
+          'Please accept the terms to continue',
+          isError: true,
+        );
+        return;
+      }
+      showToast(context, 'Account created successfully!');
+      context.go('/home');
+    } else {
+      showToast(context, 'Please fill in all fields', isError: true);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [AppColors.primary, AppColors.primaryDark],
-          ),
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 24),
-                GestureDetector(
-                  onTap: () => context.go('/'),
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 32),
-                const Text(
-                  'Create Account',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Sign up to get started',
-                  style: TextStyle(fontSize: 15, color: Colors.blue[100]),
-                ),
-                const SizedBox(height: 40),
-                _buildLabel('Full Name'),
-                const SizedBox(height: 8),
-                _buildTextField(
-                  controller: _nameController,
-                  hint: 'Enter your full name',
-                ),
-                const SizedBox(height: 20),
-                _buildLabel('Email'),
-                const SizedBox(height: 8),
-                _buildTextField(
-                  controller: _emailController,
-                  hint: 'Enter your email',
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 20),
-                _buildLabel('Phone Number'),
-                const SizedBox(height: 8),
-                _buildTextField(
-                  controller: _phoneController,
-                  hint: '09XX XXX XXXX',
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 20),
-                _buildLabel('Password'),
-                const SizedBox(height: 8),
-                _buildTextField(
-                  controller: _passwordController,
-                  hint: 'Create a password',
-                  obscure: !_showPassword,
-                  suffix: IconButton(
-                    icon: Icon(
-                      _showPassword ? Icons.visibility_off : Icons.visibility,
-                      color: Colors.white70,
-                    ),
-                    onPressed: () =>
-                        setState(() => _showPassword = !_showPassword),
-                  ),
-                ),
-                const SizedBox(height: 32),
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _handleRegister,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.red,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      elevation: 4,
-                    ),
-                    child: const Text(
-                      'Create Account',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      backgroundColor: AppColors.surface,
+      body: Column(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppColors.primary, AppColors.primaryDark],
+              ),
+            ),
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Already have an account? ',
-                      style: TextStyle(color: Colors.blue[100], fontSize: 14),
+                    PhIconButton(
+                      icon: Icons.arrow_back,
+                      onTap: () => context.go('/'),
+                      color: Colors.white.withValues(alpha: 0.15),
+                      iconColor: Colors.white,
                     ),
-                    GestureDetector(
-                      onTap: () => context.go('/login'),
-                      child: const Text(
-                        'Sign in',
-                        style: TextStyle(
-                          color: AppColors.yellow,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Create account',
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Join thousands of riders in Cebu',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 32),
-              ],
-            ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.2, end: 0),
+              ),
+            ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLabel(String text) => Text(
-    text,
-    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
-  );
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hint,
-    TextInputType? keyboardType,
-    bool obscure = false,
-    Widget? suffix,
-  }) {
-    return TextField(
-      controller: controller,
-      keyboardType: keyboardType,
-      obscureText: obscure,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.2)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.2)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.white),
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
-        suffixIcon: suffix,
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                children: [
+                  PhTextField(
+                    label: 'Full Name',
+                    hint: 'Juan Dela Cruz',
+                    controller: _nameCtrl,
+                    prefixIcon: Icons.person_outline,
+                  ),
+                  const SizedBox(height: 14),
+                  PhTextField(
+                    label: 'Email address',
+                    hint: 'you@example.com',
+                    controller: _emailCtrl,
+                    keyboardType: TextInputType.emailAddress,
+                    prefixIcon: Icons.mail_outline,
+                  ),
+                  const SizedBox(height: 14),
+                  PhTextField(
+                    label: 'Phone Number',
+                    hint: '09XX XXX XXXX',
+                    controller: _phoneCtrl,
+                    keyboardType: TextInputType.phone,
+                    prefixIcon: Icons.phone_outlined,
+                  ),
+                  const SizedBox(height: 14),
+                  PhTextField(
+                    label: 'Password',
+                    hint: 'Create a strong password',
+                    controller: _passCtrl,
+                    obscure: !_showPass,
+                    prefixIcon: Icons.lock_outline,
+                    suffix: IconButton(
+                      icon: Icon(
+                        _showPass
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: AppColors.textTertiary,
+                        size: 20,
+                      ),
+                      onPressed: () => setState(() => _showPass = !_showPass),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  GestureDetector(
+                    onTap: () => setState(() => _agreed = !_agreed),
+                    child: Row(
+                      children: [
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          width: 20,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            color: _agreed
+                                ? AppColors.primary
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                              color: _agreed
+                                  ? AppColors.primary
+                                  : AppColors.borderStrong,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: _agreed
+                              ? const Icon(
+                                  Icons.check,
+                                  color: Colors.white,
+                                  size: 13,
+                                )
+                              : null,
+                        ),
+                        const SizedBox(width: 10),
+                        const Expanded(
+                          child: Text(
+                            'I agree to the Terms of Service and Privacy Policy',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  PhButton(label: 'Create Account', onTap: _handleRegister),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Already have an account? ',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 14,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => context.go('/login'),
+                        child: const Text(
+                          'Sign in',
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
+            ),
+          ),
+        ],
       ),
     );
   }

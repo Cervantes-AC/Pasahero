@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
+import '../widgets/ph_widgets.dart';
 import '../widgets/toast.dart';
 
 class RideCompleteScreen extends StatefulWidget {
   const RideCompleteScreen({super.key});
-
   @override
   State<RideCompleteScreen> createState() => _RideCompleteScreenState();
 }
@@ -14,23 +14,22 @@ class RideCompleteScreen extends StatefulWidget {
 class _RideCompleteScreenState extends State<RideCompleteScreen> {
   int _rating = 0;
   int _tip = 0;
-  final _customTipController = TextEditingController();
-  final _tipOptions = [0, 10, 20, 50];
+  final _tipCtrl = TextEditingController();
+  final _tips = [0, 10, 20, 50];
 
   @override
   void dispose() {
-    _customTipController.dispose();
+    _tipCtrl.dispose();
     super.dispose();
   }
 
-  void _handleSubmit() {
+  void _submit() {
     if (_rating == 0) {
       showToast(context, 'Please rate your driver', isError: true);
       return;
     }
-    final total = 45 + _tip;
-    showToast(context, 'Payment of ₱$total completed!');
-    Future.delayed(const Duration(milliseconds: 1500), () {
+    showToast(context, 'Payment of ₱${45 + _tip} completed!');
+    Future.delayed(const Duration(milliseconds: 1200), () {
       if (mounted) context.go('/home');
     });
   }
@@ -38,6 +37,7 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.surface,
       body: Column(
         children: [
           // Success header
@@ -46,53 +46,58 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [AppColors.green, AppColors.greenDark],
+                colors: [AppColors.success, Color(0xFF15803D)],
               ),
             ),
             child: SafeArea(
+              bottom: false,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 32, 24, 48),
+                padding: const EdgeInsets.fromLTRB(24, 28, 24, 40),
                 child: Column(
                   children: [
                     Container(
-                          width: 96,
-                          height: 96,
+                          width: 80,
+                          height: 80,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.15),
+                                color: Colors.black.withValues(alpha: 0.12),
                                 blurRadius: 20,
                               ),
                             ],
                           ),
                           child: const Icon(
-                            Icons.check_circle,
-                            size: 48,
-                            color: AppColors.green,
+                            Icons.check_circle_outline_rounded,
+                            size: 44,
+                            color: AppColors.success,
                           ),
                         )
                         .animate()
                         .scale(
-                          begin: const Offset(0.8, 0.8),
+                          begin: const Offset(0.7, 0.7),
                           end: const Offset(1, 1),
                           duration: 400.ms,
+                          curve: Curves.easeOutBack,
                         )
-                        .fadeIn(duration: 400.ms),
-                    const SizedBox(height: 20),
+                        .fadeIn(duration: 300.ms),
+                    const SizedBox(height: 14),
                     const Text(
                       'Trip Complete!',
                       style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
+                    const SizedBox(height: 4),
+                    Text(
                       'Thank you for riding with us',
-                      style: TextStyle(fontSize: 15, color: Colors.white70),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
                     ),
                   ],
                 ),
@@ -100,333 +105,303 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
             ),
           ),
 
-          // Content card
           Expanded(
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                ),
-              ),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Trip summary
-                    const Text(
-                      'Trip Summary',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.muted,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        children: [
-                          _RouteRow(
-                            dotColor: AppColors.primary,
-                            label: 'From',
-                            address: 'Cebu City, Philippines',
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 11),
-                            child: Container(
-                              height: 20,
-                              width: 2,
-                              decoration: const BoxDecoration(
-                                color: AppColors.border,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Trip summary
+                  PhCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Trip Summary',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
                               ),
                             ),
-                          ),
-                          _RouteRow(
-                            dotColor: AppColors.red,
-                            label: 'To',
-                            address: 'SM City Cebu',
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _InfoTile(
-                            icon: Icons.access_time,
-                            label: 'Duration',
-                            value: '8 mins',
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _InfoTile(
-                            icon: Icons.calendar_today,
-                            label: 'Distance',
-                            value: '3.2 km',
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Driver info
-                    const Text(
-                      'Your Driver',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.muted,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 64,
-                            height: 64,
-                            decoration: const BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppColors.primary,
-                                  AppColors.primaryDark,
-                                ],
-                              ),
-                              shape: BoxShape.circle,
+                            const SizedBox(height: 12),
+                            PhRouteDisplay(
+                              pickup: 'Cebu City, Philippines',
+                              dropoff: 'SM City Cebu',
                             ),
-                            child: const Center(
-                              child: Text(
-                                'PS',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          const Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            const SizedBox(height: 12),
+                            Row(
                               children: [
-                                Text(
-                                  'Pedro Santos',
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
+                                Expanded(
+                                  child: _InfoTile(
+                                    icon: Icons.access_time_outlined,
+                                    label: 'Duration',
+                                    value: '8 mins',
                                   ),
                                 ),
-                                Text(
-                                  'Habal-habal • ABC 1234',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: AppColors.mutedForeground,
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: _InfoTile(
+                                    icon: Icons.straighten,
+                                    label: 'Distance',
+                                    value: '3.2 km',
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Rating
-                    const Text(
-                      'Rate Your Driver',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(5, (i) {
-                        final star = i + 1;
-                        return GestureDetector(
-                          onTap: () => setState(() => _rating = star),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 6),
-                            child: Icon(
-                              Icons.star,
-                              size: 44,
-                              color: star <= _rating
-                                  ? AppColors.yellow
-                                  : AppColors.border,
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Payment
-                    const Text(
-                      'Payment',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.muted,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        children: [
-                          _PayRow(label: 'Fare', value: '₱45.00'),
-                          if (_tip > 0) ...[
-                            const SizedBox(height: 8),
-                            _PayRow(label: 'Tip', value: '₱$_tip.00'),
                           ],
-                          const Divider(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        ),
+                      )
+                      .animate()
+                      .fadeIn(duration: 350.ms)
+                      .slideY(begin: 0.1, end: 0),
+
+                  const SizedBox(height: 12),
+
+                  // Driver
+                  PhCard(
+                    child: Row(
+                      children: [
+                        PhAvatar(initials: 'PS', size: 52),
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Total',
-                                style: TextStyle(fontWeight: FontWeight.w600),
+                              Text(
+                                'Pedro Santos',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: AppColors.textPrimary,
+                                ),
                               ),
                               Text(
-                                '₱${45 + _tip}.00',
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
+                                'Habal-habal · ABC 1234',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.textTertiary,
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                        Row(
+                          children: List.generate(
+                            5,
+                            (i) => const Icon(
+                              Icons.star_rounded,
+                              size: 14,
+                              color: AppColors.amber,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
+                  ).animate().fadeIn(delay: 60.ms, duration: 350.ms),
 
-                    // Tip options
-                    const Text(
-                      'Add Tip (Optional)',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: _tipOptions.map((amount) {
-                        final isSelected =
-                            _tip == amount && _customTipController.text.isEmpty;
-                        return Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _tip = amount;
-                                _customTipController.clear();
-                              });
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.only(right: 8),
-                              height: 48,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: isSelected
-                                      ? AppColors.primary
-                                      : AppColors.border,
-                                  width: 2,
+                  const SizedBox(height: 12),
+
+                  // Rating
+                  PhCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Rate Your Driver',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(5, (i) {
+                            final star = i + 1;
+                            return GestureDetector(
+                              onTap: () => setState(() => _rating = star),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
                                 ),
-                                color: isSelected
-                                    ? AppColors.primary.withValues(alpha: 0.1)
-                                    : Colors.white,
-                                borderRadius: BorderRadius.circular(12),
+                                child: Icon(
+                                  star <= _rating
+                                      ? Icons.star_rounded
+                                      : Icons.star_outline_rounded,
+                                  size: 40,
+                                  color: star <= _rating
+                                      ? AppColors.amber
+                                      : AppColors.border,
+                                ),
                               ),
-                              child: Center(
-                                child: Text(
-                                  amount == 0 ? 'No tip' : '₱$amount',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: isSelected
-                                        ? FontWeight.w600
-                                        : FontWeight.normal,
+                            );
+                          }),
+                        ),
+                      ],
+                    ),
+                  ).animate().fadeIn(delay: 120.ms, duration: 350.ms),
+
+                  const SizedBox(height: 12),
+
+                  // Payment
+                  PhCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Payment',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        _PayRow(label: 'Fare', value: '₱45.00'),
+                        if (_tip > 0) ...[
+                          const SizedBox(height: 6),
+                          _PayRow(label: 'Tip', value: '₱$_tip.00'),
+                        ],
+                        const SizedBox(height: 10),
+                        const PhDivider(),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Total',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            Text(
+                              '₱${45 + _tip}.00',
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Add Tip (Optional)',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: _tips.map((amt) {
+                            final sel = _tip == amt && _tipCtrl.text.isEmpty;
+                            return Expanded(
+                              child: GestureDetector(
+                                onTap: () => setState(() {
+                                  _tip = amt;
+                                  _tipCtrl.clear();
+                                }),
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 6),
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: sel
+                                        ? AppColors.primarySurface
+                                        : AppColors.surfaceVariant,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: sel
+                                          ? AppColors.primary
+                                          : AppColors.border,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      amt == 0 ? 'None' : '₱$amt',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: sel
+                                            ? AppColors.primary
+                                            : AppColors.textSecondary,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(height: 8),
+                        TextField(
+                          controller: _tipCtrl,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: 'Custom tip amount',
+                            hintStyle: const TextStyle(
+                              color: AppColors.textTertiary,
+                              fontSize: 13,
+                            ),
+                            filled: true,
+                            fillColor: AppColors.surfaceVariant,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: AppColors.border,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: AppColors.border,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(
+                                color: AppColors.primary,
+                                width: 1.5,
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 12,
                             ),
                           ),
-                        );
-                      }).toList(),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: _customTipController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        hintText: 'Custom amount',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          onChanged: (v) =>
+                              setState(() => _tip = int.tryParse(v) ?? 0),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                      ),
-                      onChanged: (v) {
-                        setState(() => _tip = int.tryParse(v) ?? 0);
-                      },
+                      ],
                     ),
-                    const SizedBox(height: 24),
+                  ).animate().fadeIn(delay: 180.ms, duration: 350.ms),
 
-                    // Submit
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        onPressed: _handleSubmit,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        child: Text(
-                          'Pay ₱${45 + _tip}',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  const SizedBox(height: 16),
+                  PhButton(
+                    label: 'Pay ₱${45 + _tip}',
+                    onTap: _submit,
+                  ).animate().fadeIn(delay: 240.ms, duration: 350.ms),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton(
+                      onPressed: () => context.go('/home'),
+                      child: const Text(
+                        'Skip for now',
+                        style: TextStyle(
+                          color: AppColors.textTertiary,
+                          fontSize: 13,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: TextButton(
-                        onPressed: () => context.go('/home'),
-                        child: const Text(
-                          'Skip for now',
-                          style: TextStyle(color: AppColors.mutedForeground),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
           ),
@@ -436,61 +411,9 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
   }
 }
 
-class _RouteRow extends StatelessWidget {
-  final Color dotColor;
-  final String label;
-  final String address;
-
-  const _RouteRow({
-    required this.dotColor,
-    required this.label,
-    required this.address,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          width: 24,
-          height: 24,
-          decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
-          child: const Center(
-            child: CircleAvatar(radius: 4, backgroundColor: Colors.white),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: AppColors.mutedForeground,
-                ),
-              ),
-              Text(
-                address,
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _InfoTile extends StatelessWidget {
   final IconData icon;
-  final String label;
-  final String value;
-
+  final String label, value;
   const _InfoTile({
     required this.icon,
     required this.label,
@@ -502,12 +425,13 @@ class _InfoTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.muted,
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.surfaceVariant,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: AppColors.mutedForeground),
+          Icon(icon, size: 16, color: AppColors.textTertiary),
           const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -515,8 +439,8 @@ class _InfoTile extends StatelessWidget {
               Text(
                 label,
                 style: const TextStyle(
-                  fontSize: 11,
-                  color: AppColors.mutedForeground,
+                  fontSize: 10,
+                  color: AppColors.textTertiary,
                 ),
               ),
               Text(
@@ -524,6 +448,7 @@ class _InfoTile extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ],
@@ -535,8 +460,7 @@ class _InfoTile extends StatelessWidget {
 }
 
 class _PayRow extends StatelessWidget {
-  final String label;
-  final String value;
+  final String label, value;
   const _PayRow({required this.label, required this.value});
 
   @override
@@ -546,14 +470,15 @@ class _PayRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 13,
-            color: AppColors.mutedForeground,
-          ),
+          style: const TextStyle(fontSize: 13, color: AppColors.textTertiary),
         ),
         Text(
           value,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textPrimary,
+          ),
         ),
       ],
     );

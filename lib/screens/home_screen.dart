@@ -10,103 +10,97 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Header with wave
-            _HomeHeader(),
-            // Content
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Search card (overlapping header)
-                  Transform.translate(
-                    offset: const Offset(0, -56),
-                    child: _SearchCard()
-                        .animate()
-                        .fadeIn(duration: 400.ms)
-                        .slideY(begin: 0.3, end: 0),
+      backgroundColor: AppColors.surface,
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(child: _HomeHeader()),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                Transform.translate(
+                  offset: const Offset(0, -28),
+                  child: _SearchBar()
+                      .animate()
+                      .fadeIn(duration: 350.ms)
+                      .slideY(begin: 0.2, end: 0),
+                ),
+                Transform.translate(
+                  offset: const Offset(0, -12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _PaymentRow().animate().fadeIn(
+                        delay: 80.ms,
+                        duration: 350.ms,
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Choose your ride',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                          letterSpacing: -0.3,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _RideCard(
+                            icon: Icons.two_wheeler,
+                            iconColor: AppColors.primary,
+                            iconBg: AppColors.primarySurface,
+                            title: 'Habal-habal',
+                            subtitle: 'Single motorcycle ride',
+                            price: 'From ₱25',
+                            badge: 'Fastest',
+                            badgeColor: AppColors.success,
+                            onTap: () => context.go('/search?type=habal-habal'),
+                          )
+                          .animate()
+                          .fadeIn(delay: 120.ms, duration: 350.ms)
+                          .slideY(begin: 0.15, end: 0),
+                      const SizedBox(height: 10),
+                      _RideCard(
+                            icon: Icons.two_wheeler,
+                            iconColor: AppColors.error,
+                            iconBg: AppColors.errorSurface,
+                            title: 'Motorela',
+                            subtitle: 'Motorcycle with sidecar',
+                            price: 'From ₱35',
+                            badge: 'Shared',
+                            badgeColor: AppColors.warning,
+                            onTap: () => context.go('/search?type=motorela'),
+                          )
+                          .animate()
+                          .fadeIn(delay: 160.ms, duration: 350.ms)
+                          .slideY(begin: 0.15, end: 0),
+                      const SizedBox(height: 10),
+                      _RideCard(
+                            icon: Icons.directions_car_outlined,
+                            iconColor: AppColors.amber,
+                            iconBg: AppColors.warningSurface,
+                            title: 'Bao-bao',
+                            subtitle: 'Tricycle for groups',
+                            price: 'From ₱50',
+                            badge: 'Groups',
+                            badgeColor: AppColors.primary,
+                            onTap: () => context.go('/search?type=bao-bao'),
+                          )
+                          .animate()
+                          .fadeIn(delay: 200.ms, duration: 350.ms)
+                          .slideY(begin: 0.15, end: 0),
+                      const SizedBox(height: 24),
+                      _PromoBanner().animate().fadeIn(
+                        delay: 240.ms,
+                        duration: 350.ms,
+                      ),
+                    ],
                   ),
-                  Transform.translate(
-                    offset: const Offset(0, -40),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Payment method selector
-                        _PaymentSelector().animate().fadeIn(
-                          delay: 100.ms,
-                          duration: 400.ms,
-                        ),
-                        const SizedBox(height: 24),
-                        // Ride types
-                        const Text(
-                          'Choose Your Ride',
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                        _RideTypeCard(
-                              icon: Icons.two_wheeler,
-                              iconBg: AppColors.primary,
-                              title: 'Habal-habal',
-                              subtitle: 'Single motorcycle ride',
-                              price: 'From ₱25',
-                              tag: 'Fastest',
-                              tagColor: AppColors.green,
-                              onTap: () =>
-                                  context.go('/search?type=habal-habal'),
-                            )
-                            .animate()
-                            .fadeIn(delay: 150.ms, duration: 400.ms)
-                            .slideY(begin: 0.2, end: 0),
-                        const SizedBox(height: 10),
-                        _RideTypeCard(
-                              icon: Icons.two_wheeler,
-                              iconBg: AppColors.red,
-                              title: 'Motorela',
-                              subtitle: 'Motorcycle with sidecar',
-                              price: 'From ₱35',
-                              tag: 'Shared',
-                              tagColor: AppColors.orange,
-                              onTap: () => context.go('/search?type=motorela'),
-                            )
-                            .animate()
-                            .fadeIn(delay: 200.ms, duration: 400.ms)
-                            .slideY(begin: 0.2, end: 0),
-                        const SizedBox(height: 10),
-                        _RideTypeCard(
-                              icon: Icons.directions_car,
-                              iconBg: AppColors.yellow,
-                              iconColor: AppColors.primary,
-                              title: 'Bao-bao',
-                              subtitle: 'Tricycle for groups',
-                              price: 'From ₱50',
-                              tag: 'Groups',
-                              tagColor: AppColors.primary,
-                              onTap: () => context.go('/search?type=bao-bao'),
-                            )
-                            .animate()
-                            .fadeIn(delay: 250.ms, duration: 400.ms)
-                            .slideY(begin: 0.2, end: 0),
-                        const SizedBox(height: 24),
-                        // Promo banner
-                        _PromoBanner().animate().fadeIn(
-                          delay: 300.ms,
-                          duration: 400.ms,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ]),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -123,40 +117,37 @@ class _HomeHeader extends StatelessWidget {
           colors: [AppColors.primary, AppColors.primaryDark],
         ),
         borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(36),
-          bottomRight: Radius.circular(36),
+          bottomLeft: Radius.circular(28),
+          bottomRight: Radius.circular(28),
         ),
       ),
       child: SafeArea(
+        bottom: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 72),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 52),
           child: Column(
             children: [
               Row(
                 children: [
-                  // Avatar
                   Container(
-                    width: 44,
-                    height: 44,
+                    width: 40,
+                    height: 40,
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.3),
-                      ),
                     ),
                     child: const Center(
                       child: Text(
                         'JD',
                         style: TextStyle(
                           color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,13 +156,13 @@ class _HomeHeader extends StatelessWidget {
                           'Good morning,',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.blue[100],
+                            color: Colors.white.withValues(alpha: 0.7),
                           ),
                         ),
                         const Text(
                           'Juan Dela Cruz',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 15,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
                           ),
@@ -179,12 +170,11 @@ class _HomeHeader extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // Notification bell
                   Stack(
                     children: [
                       Container(
-                        width: 42,
-                        height: 42,
+                        width: 40,
+                        height: 40,
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.12),
                           shape: BoxShape.circle,
@@ -192,17 +182,17 @@ class _HomeHeader extends StatelessWidget {
                         child: const Icon(
                           Icons.notifications_outlined,
                           color: Colors.white,
-                          size: 22,
+                          size: 20,
                         ),
                       ),
                       Positioned(
-                        top: 8,
-                        right: 8,
+                        top: 9,
+                        right: 9,
                         child: Container(
-                          width: 8,
-                          height: 8,
+                          width: 7,
+                          height: 7,
                           decoration: const BoxDecoration(
-                            color: AppColors.red,
+                            color: AppColors.amber,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -212,7 +202,6 @@ class _HomeHeader extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-              // Location row
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,
@@ -220,7 +209,7 @@ class _HomeHeader extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.2),
                   ),
@@ -231,7 +220,7 @@ class _HomeHeader extends StatelessWidget {
                       width: 8,
                       height: 8,
                       decoration: const BoxDecoration(
-                        color: AppColors.green,
+                        color: AppColors.success,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -246,9 +235,9 @@ class _HomeHeader extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Icon(
-                      Icons.my_location,
-                      color: Colors.white54,
+                    Icon(
+                      Icons.my_location_rounded,
+                      color: Colors.white.withValues(alpha: 0.6),
                       size: 16,
                     ),
                   ],
@@ -262,54 +251,52 @@ class _HomeHeader extends StatelessWidget {
   }
 }
 
-class _SearchCard extends StatelessWidget {
+class _SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.12),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16),
-      child: GestureDetector(
-        onTap: () => context.go('/search'),
+    return GestureDetector(
+      onTap: () => context.go('/search'),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.border),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.08),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: Row(
           children: [
             Container(
-              width: 42,
-              height: 42,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
+                color: AppColors.primarySurface,
+                borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(
                 Icons.search,
                 color: AppColors.primary,
-                size: 20,
+                size: 18,
               ),
             ),
             const SizedBox(width: 12),
             const Expanded(
               child: Text(
                 'Where do you want to go?',
-                style: TextStyle(
-                  color: AppColors.mutedForeground,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: AppColors.textTertiary, fontSize: 14),
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: AppColors.primary,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: const Text(
                 'Go',
@@ -327,23 +314,27 @@ class _SearchCard extends StatelessWidget {
   }
 }
 
-class _PaymentSelector extends StatefulWidget {
+class _PaymentRow extends StatefulWidget {
   @override
-  State<_PaymentSelector> createState() => _PaymentSelectorState();
+  State<_PaymentRow> createState() => _PaymentRowState();
 }
 
-class _PaymentSelectorState extends State<_PaymentSelector> {
+class _PaymentRowState extends State<_PaymentRow> {
   final _methods = ['GCash', 'Maya', 'Cash'];
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Icon(Icons.payment, color: AppColors.mutedForeground, size: 16),
+        const Icon(
+          Icons.payment_outlined,
+          color: AppColors.textTertiary,
+          size: 16,
+        ),
         const SizedBox(width: 8),
         const Text(
-          'Pay with:',
-          style: TextStyle(fontSize: 13, color: AppColors.mutedForeground),
+          'Pay with',
+          style: TextStyle(fontSize: 13, color: AppColors.textTertiary),
         ),
         const SizedBox(width: 8),
         Expanded(
@@ -356,14 +347,14 @@ class _PaymentSelectorState extends State<_PaymentSelector> {
                   onTap: () =>
                       setState(() => AppState.instance.selectedPayment = m),
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    margin: const EdgeInsets.only(right: 8),
+                    duration: const Duration(milliseconds: 180),
+                    margin: const EdgeInsets.only(right: 6),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
-                      vertical: 6,
+                      vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: selected ? AppColors.primary : AppColors.muted,
+                      color: selected ? AppColors.primary : Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: selected ? AppColors.primary : AppColors.border,
@@ -376,7 +367,7 @@ class _PaymentSelectorState extends State<_PaymentSelector> {
                         fontWeight: FontWeight.w600,
                         color: selected
                             ? Colors.white
-                            : AppColors.mutedForeground,
+                            : AppColors.textSecondary,
                       ),
                     ),
                   ),
@@ -390,26 +381,26 @@ class _PaymentSelectorState extends State<_PaymentSelector> {
   }
 }
 
-class _RideTypeCard extends StatelessWidget {
+class _RideCard extends StatelessWidget {
   final IconData icon;
-  final Color iconBg;
   final Color iconColor;
+  final Color iconBg;
   final String title;
   final String subtitle;
   final String price;
-  final String tag;
-  final Color tagColor;
+  final String badge;
+  final Color badgeColor;
   final VoidCallback onTap;
 
-  const _RideTypeCard({
+  const _RideCard({
     required this.icon,
+    required this.iconColor,
     required this.iconBg,
-    this.iconColor = Colors.white,
     required this.title,
     required this.subtitle,
     required this.price,
-    required this.tag,
-    required this.tagColor,
+    required this.badge,
+    required this.badgeColor,
     required this.onTap,
   });
 
@@ -418,29 +409,29 @@ class _RideTypeCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(color: AppColors.border),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Row(
           children: [
             Container(
-              width: 60,
-              height: 60,
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
                 color: iconBg,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(13),
               ),
-              child: Icon(icon, size: 30, color: iconColor),
+              child: Icon(icon, color: iconColor, size: 26),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -454,24 +445,25 @@ class _RideTypeCard extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                          horizontal: 7,
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: tagColor.withValues(alpha: 0.12),
+                          color: badgeColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          tag,
+                          badge,
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: tagColor,
+                            color: badgeColor,
                           ),
                         ),
                       ),
@@ -482,33 +474,25 @@ class _RideTypeCard extends StatelessWidget {
                     subtitle,
                     style: const TextStyle(
                       fontSize: 12,
-                      color: AppColors.mutedForeground,
+                      color: AppColors.textTertiary,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 3),
                   Text(
                     price,
                     style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.green,
+                      fontSize: 12,
+                      color: AppColors.success,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
               ),
             ),
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: AppColors.muted,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.arrow_forward_ios,
-                size: 14,
-                color: AppColors.mutedForeground,
-              ),
+            const Icon(
+              Icons.chevron_right,
+              color: AppColors.textTertiary,
+              size: 20,
             ),
           ],
         ),
@@ -526,16 +510,9 @@ class _PromoBanner extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF1A5BB5), Color(0xFF00409A)],
+          colors: [AppColors.primary, Color(0xFF1347C0)],
         ),
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.3),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [
@@ -549,20 +526,20 @@ class _PromoBanner extends StatelessWidget {
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.yellow.withValues(alpha: 0.2),
+                    color: AppColors.amber.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Text(
                     'LIMITED OFFER',
                     style: TextStyle(
-                      color: AppColors.yellow,
+                      color: AppColors.amber,
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 0.5,
                     ),
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 const Text(
                   '₱10 off your\nnext 3 rides!',
                   style: TextStyle(
@@ -572,20 +549,20 @@ class _PromoBanner extends StatelessWidget {
                     height: 1.3,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.yellow,
+                    color: AppColors.amber,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Text(
                     'Claim Now',
                     style: TextStyle(
-                      color: AppColors.primary,
+                      color: AppColors.driverBg,
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                     ),
@@ -594,7 +571,11 @@ class _PromoBanner extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.local_offer, color: Colors.white24, size: 72),
+          const Icon(
+            Icons.local_offer_outlined,
+            color: Colors.white24,
+            size: 64,
+          ),
         ],
       ),
     );

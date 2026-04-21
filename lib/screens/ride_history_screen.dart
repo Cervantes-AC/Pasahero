@@ -2,24 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
+import '../widgets/ph_widgets.dart';
 import '../widgets/toast.dart';
 
 class _Ride {
-  final String id;
-  final String date;
-  final String time;
-  final String pickup;
-  final String dropoff;
-  final String driverName;
+  final String id,
+      date,
+      time,
+      pickup,
+      dropoff,
+      driverName,
+      vehicleType,
+      distance,
+      duration,
+      plateNumber,
+      status;
   final double driverRating;
-  final String vehicleType;
   final int fare;
   final int? rating;
-  final String distance;
-  final String duration;
-  final String plateNumber;
-  final String status; // 'completed' | 'cancelled'
-
   const _Ride({
     required this.id,
     required this.date,
@@ -38,7 +38,7 @@ class _Ride {
   });
 }
 
-const _mockRides = [
+const _rides = [
   _Ride(
     id: '1',
     date: 'Today',
@@ -79,7 +79,7 @@ const _mockRides = [
     dropoff: 'Mabolo',
     driverName: 'Juan Reyes',
     driverRating: 4.7,
-    vehicleType: 'rela',
+    vehicleType: 'motorela',
     fare: 48,
     rating: 4,
     distance: '4.1 km',
@@ -122,51 +122,45 @@ const _mockRides = [
 
 class RideHistoryScreen extends StatefulWidget {
   const RideHistoryScreen({super.key});
-
   @override
   State<RideHistoryScreen> createState() => _RideHistoryScreenState();
 }
 
 class _RideHistoryScreenState extends State<RideHistoryScreen> {
-  _Ride? _selectedRide;
+  _Ride? _selected;
 
-  String _vehicleLabel(String type) {
-    if (type == 'habal-habal') return 'Habal-habal';
-    if (type == 'rela') return 'Rela';
-    if (type == 'bao-bao') return 'Bao-bao';
-    return type;
-  }
-
-  void _handleRebook(_Ride ride) {
-    showToast(context, 'Rebooking ride...');
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      if (mounted) context.go('/drivers');
-    });
-  }
+  String _label(String t) => t == 'habal-habal'
+      ? 'Habal-habal'
+      : t == 'motorela'
+      ? 'Motorela'
+      : 'Bao-bao';
 
   @override
   Widget build(BuildContext context) {
-    if (_selectedRide != null) {
+    if (_selected != null)
       return _ReceiptView(
-        ride: _selectedRide!,
-        vehicleLabel: _vehicleLabel(_selectedRide!.vehicleType),
-        onBack: () => setState(() => _selectedRide = null),
-        onRebook: () => _handleRebook(_selectedRide!),
+        ride: _selected!,
+        label: _label(_selected!.vehicleType),
+        onBack: () => setState(() => _selected = null),
+        onRebook: () {
+          showToast(context, 'Rebooking...');
+          Future.delayed(const Duration(milliseconds: 800), () {
+            if (mounted) context.go('/drivers');
+          });
+        },
       );
-    }
 
-    final completed = _mockRides.where((r) => r.status == 'completed').toList();
-    final totalSpent = completed.fold<int>(0, (sum, r) => sum + r.fare);
-    final rated = _mockRides.where((r) => r.rating != null).toList();
-    final avgRating = rated.isEmpty
+    final completed = _rides.where((r) => r.status == 'completed').toList();
+    final totalSpent = completed.fold<int>(0, (s, r) => s + r.fare);
+    final rated = _rides.where((r) => r.rating != null).toList();
+    final avg = rated.isEmpty
         ? 0.0
-        : rated.fold<int>(0, (sum, r) => sum + r.rating!) / rated.length;
+        : rated.fold<int>(0, (s, r) => s + r.rating!) / rated.length;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.surface,
       body: Column(
         children: [
-          // Header
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -176,92 +170,114 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
               ),
             ),
             child: SafeArea(
+              bottom: false,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
-                child: const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Ride History',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                child: const Text(
+                  'Ride History',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
                   ),
                 ),
               ),
             ),
           ),
-
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Stats
                   Row(
                         children: [
                           Expanded(
-                            child: _StatCard(
+                            child: PhStatBox(
                               value: '${completed.length}',
                               label: 'Completed',
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 10),
                           Expanded(
-                            child: _StatCard(
+                            child: PhStatBox(
                               value: '₱$totalSpent',
                               label: 'Total Spent',
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 10),
                           Expanded(
-                            child: _StatCard(
-                              value: avgRating.toStringAsFixed(1),
+                            child: PhStatBox(
+                              value: avg.toStringAsFixed(1),
                               label: 'Avg Rating',
                             ),
                           ),
                         ],
                       )
                       .animate()
-                      .fadeIn(duration: 400.ms)
-                      .slideY(begin: 0.2, end: 0),
-                  const SizedBox(height: 24),
-
+                      .fadeIn(duration: 350.ms)
+                      .slideY(begin: 0.1, end: 0),
+                  const SizedBox(height: 20),
                   const Text(
                     'Recent Rides',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
-                  const SizedBox(height: 12),
-
-                  ...List.generate(_mockRides.length, (index) {
-                    final ride = _mockRides[index];
+                  const SizedBox(height: 10),
+                  ..._rides.asMap().entries.map((e) {
+                    final ride = e.value;
+                    final done = ride.status == 'completed';
                     return GestureDetector(
-                      onTap: () => setState(() => _selectedRide = ride),
+                      onTap: () => setState(() => _selected = ride),
                       child:
                           Container(
-                                margin: const EdgeInsets.only(bottom: 12),
+                                margin: const EdgeInsets.only(bottom: 10),
+                                padding: const EdgeInsets.all(14),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(color: AppColors.border),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withValues(
-                                        alpha: 0.06,
+                                        alpha: 0.03,
                                       ),
-                                      blurRadius: 8,
+                                      blurRadius: 6,
                                       offset: const Offset(0, 2),
                                     ),
                                   ],
                                 ),
-                                padding: const EdgeInsets.all(16),
                                 child: Column(
                                   children: [
                                     Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
+                                        Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: done
+                                                ? AppColors.successLight
+                                                : AppColors.errorLight,
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                          ),
+                                          child: Icon(
+                                            done
+                                                ? Icons.check_circle_outline
+                                                : Icons.cancel_outlined,
+                                            color: done
+                                                ? AppColors.success
+                                                : AppColors.error,
+                                            size: 20,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment:
@@ -274,70 +290,44 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
                                                     style: const TextStyle(
                                                       fontWeight:
                                                           FontWeight.w600,
+                                                      fontSize: 13,
+                                                      color:
+                                                          AppColors.textPrimary,
                                                     ),
                                                   ),
                                                   const Text(
-                                                    ' • ',
+                                                    ' · ',
                                                     style: TextStyle(
                                                       color: AppColors
-                                                          .mutedForeground,
+                                                          .textTertiary,
                                                     ),
                                                   ),
                                                   Text(
                                                     ride.time,
                                                     style: const TextStyle(
-                                                      fontSize: 13,
+                                                      fontSize: 12,
                                                       color: AppColors
-                                                          .mutedForeground,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 6),
-                                              Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  const Icon(
-                                                    Icons.place,
-                                                    size: 14,
-                                                    color: AppColors.green,
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          ride.pickup,
-                                                          style: const TextStyle(
-                                                            fontSize: 13,
-                                                            color: AppColors
-                                                                .mutedForeground,
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          'to ${ride.dropoff}',
-                                                          style: const TextStyle(
-                                                            fontSize: 13,
-                                                            color: AppColors
-                                                                .mutedForeground,
-                                                          ),
-                                                        ),
-                                                      ],
+                                                          .textTertiary,
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                               const SizedBox(height: 4),
                                               Text(
-                                                '${_vehicleLabel(ride.vehicleType)} • ${ride.driverName}',
+                                                '${ride.pickup} → ${ride.dropoff}',
                                                 style: const TextStyle(
-                                                  fontSize: 12,
+                                                  fontSize: 13,
                                                   color:
-                                                      AppColors.mutedForeground,
+                                                      AppColors.textSecondary,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                '${_label(ride.vehicleType)} · ${ride.driverName}',
+                                                style: const TextStyle(
+                                                  fontSize: 11,
+                                                  color: AppColors.textTertiary,
                                                 ),
                                               ),
                                             ],
@@ -350,21 +340,27 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
                                             Text(
                                               '₱${ride.fare}',
                                               style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.primary,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.textPrimary,
                                               ),
                                             ),
                                             const SizedBox(height: 4),
-                                            _StatusBadge(
-                                              completed:
-                                                  ride.status == 'completed',
+                                            PhBadge(
+                                              label: done
+                                                  ? 'Completed'
+                                                  : 'Cancelled',
+                                              color: done
+                                                  ? AppColors.success
+                                                  : AppColors.error,
                                             ),
                                           ],
                                         ),
                                       ],
                                     ),
-                                    const Divider(height: 20),
+                                    const SizedBox(height: 10),
+                                    const PhDivider(),
+                                    const SizedBox(height: 10),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -372,24 +368,24 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
                                         Row(
                                           children: [
                                             const Icon(
-                                              Icons.access_time,
-                                              size: 14,
-                                              color: AppColors.mutedForeground,
+                                              Icons.access_time_outlined,
+                                              size: 13,
+                                              color: AppColors.textTertiary,
                                             ),
                                             const SizedBox(width: 4),
                                             Text(
-                                              '${ride.distance} • ${ride.duration}',
+                                              '${ride.distance} · ${ride.duration}',
                                               style: const TextStyle(
-                                                fontSize: 13,
-                                                color:
-                                                    AppColors.mutedForeground,
+                                                fontSize: 12,
+                                                color: AppColors.textTertiary,
                                               ),
                                             ),
                                           ],
                                         ),
                                         const Icon(
                                           Icons.chevron_right,
-                                          color: AppColors.primary,
+                                          color: AppColors.textTertiary,
+                                          size: 18,
                                         ),
                                       ],
                                     ),
@@ -397,8 +393,8 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
                                 ),
                               )
                               .animate()
-                              .fadeIn(delay: (index * 100).ms, duration: 400.ms)
-                              .slideX(begin: -0.2, end: 0),
+                              .fadeIn(delay: (e.key * 60).ms, duration: 350.ms)
+                              .slideX(begin: -0.05, end: 0),
                     );
                   }),
                 ],
@@ -411,28 +407,25 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
   }
 }
 
-// ── Receipt View ──────────────────────────────────────────────────────────────
-
 class _ReceiptView extends StatelessWidget {
   final _Ride ride;
-  final String vehicleLabel;
+  final String label;
   final VoidCallback onBack;
   final VoidCallback onRebook;
-
   const _ReceiptView({
     required this.ride,
-    required this.vehicleLabel,
+    required this.label,
     required this.onBack,
     required this.onRebook,
   });
 
   @override
   Widget build(BuildContext context) {
+    final done = ride.status == 'completed';
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.surface,
       body: Column(
         children: [
-          // Header
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -442,32 +435,23 @@ class _ReceiptView extends StatelessWidget {
               ),
             ),
             child: SafeArea(
+              bottom: false,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                 child: Row(
                   children: [
-                    GestureDetector(
+                    PhIconButton(
+                      icon: Icons.arrow_back,
                       onTap: onBack,
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
+                      color: Colors.white.withValues(alpha: 0.15),
+                      iconColor: Colors.white,
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 12),
                     const Text(
-                      'Ride Receipt',
+                      'Receipt',
                       style: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
                         color: Colors.white,
                       ),
                     ),
@@ -476,171 +460,48 @@ class _ReceiptView extends StatelessWidget {
               ),
             ),
           ),
-
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.06),
-                      blurRadius: 12,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(16),
+              child: PhCard(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Status
-                    Center(
-                      child: _StatusBadge(
-                        completed: ride.status == 'completed',
-                        large: true,
+                    PhBadge(
+                      label: done ? '✓ Completed' : '✕ Cancelled',
+                      color: done ? AppColors.success : AppColors.error,
+                      filled: true,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      '₱${ride.fare}',
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      '${ride.date} · ${ride.time}',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppColors.textTertiary,
                       ),
                     ),
                     const SizedBox(height: 20),
-
-                    // Fare & date
-                    Center(
-                      child: Column(
-                        children: [
-                          Text(
-                            '₱${ride.fare}',
-                            style: const TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            '${ride.date} • ${ride.time}',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: AppColors.mutedForeground,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(height: 32),
-
-                    // Route
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Column(
-                          children: [
-                            Container(
-                              width: 12,
-                              height: 12,
-                              decoration: const BoxDecoration(
-                                color: AppColors.green,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            Container(
-                              width: 2,
-                              height: 40,
-                              color: AppColors.border,
-                            ),
-                            Container(
-                              width: 12,
-                              height: 12,
-                              decoration: const BoxDecoration(
-                                color: AppColors.red,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Pickup',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.mutedForeground,
-                                    ),
-                                  ),
-                                  Text(
-                                    ride.pickup,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Drop-off',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: AppColors.mutedForeground,
-                                    ),
-                                  ),
-                                  Text(
-                                    ride.dropoff,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Divider(height: 32),
-
-                    // Driver info
-                    const Text(
-                      'Driver Information',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: AppColors.mutedForeground,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
+                    const PhDivider(),
+                    const SizedBox(height: 16),
+                    PhRouteDisplay(pickup: ride.pickup, dropoff: ride.dropoff),
+                    const SizedBox(height: 16),
+                    const PhDivider(),
+                    const SizedBox(height: 16),
                     Row(
                       children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                AppColors.primary,
-                                AppColors.primaryDark,
-                              ],
-                            ),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: Text(
-                              ride.driverName
-                                  .split(' ')
-                                  .map((n) => n[0])
-                                  .join(),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+                        PhAvatar(
+                          initials: ride.driverName
+                              .split(' ')
+                              .map((n) => n[0])
+                              .join(),
+                          size: 44,
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -651,19 +512,24 @@ class _ReceiptView extends StatelessWidget {
                                 ride.driverName,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
                               Row(
                                 children: [
                                   const Icon(
-                                    Icons.star,
-                                    size: 14,
-                                    color: AppColors.yellow,
+                                    Icons.star_rounded,
+                                    size: 13,
+                                    color: AppColors.amber,
                                   ),
-                                  const SizedBox(width: 4),
+                                  const SizedBox(width: 3),
                                   Text(
                                     '${ride.driverRating}',
-                                    style: const TextStyle(fontSize: 13),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.textSecondary,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -676,84 +542,60 @@ class _ReceiptView extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: _LabelValue(
-                            label: 'Vehicle Type',
-                            value: vehicleLabel,
-                          ),
+                          child: _InfoPair(label: 'Vehicle', value: label),
                         ),
                         Expanded(
-                          child: _LabelValue(
-                            label: 'Plate Number',
+                          child: _InfoPair(
+                            label: 'Plate',
                             value: ride.plateNumber,
                           ),
                         ),
                       ],
                     ),
-                    const Divider(height: 32),
-
-                    // Trip details
-                    const Text(
-                      'Trip Details',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: AppColors.mutedForeground,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    _LabelValue(label: 'Distance', value: ride.distance),
-                    const SizedBox(height: 8),
-                    _LabelValue(label: 'Duration', value: ride.duration),
-                    const SizedBox(height: 8),
-                    _LabelValue(label: 'Base Fare', value: '₱${ride.fare}'),
-
-                    // Rating
+                    const SizedBox(height: 16),
+                    const PhDivider(),
+                    const SizedBox(height: 16),
+                    _InfoPair(label: 'Distance', value: ride.distance),
+                    const SizedBox(height: 6),
+                    _InfoPair(label: 'Duration', value: ride.duration),
+                    const SizedBox(height: 6),
+                    _InfoPair(label: 'Base Fare', value: '₱${ride.fare}'),
                     if (ride.rating != null) ...[
-                      const Divider(height: 32),
-                      const Text(
-                        'Your Rating',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: AppColors.mutedForeground,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 16),
+                      const PhDivider(),
+                      const SizedBox(height: 16),
                       Row(
-                        children: List.generate(5, (i) {
-                          return Icon(
-                            Icons.star,
-                            size: 24,
-                            color: i < ride.rating!
-                                ? AppColors.yellow
-                                : AppColors.border,
-                          );
-                        }),
-                      ),
-                    ],
-
-                    if (ride.status == 'completed') ...[
-                      const SizedBox(height: 24),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed: onRebook,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                        children: [
+                          const Text(
+                            'Your Rating',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: AppColors.textTertiary,
                             ),
                           ),
-                          child: const Text(
-                            'Book Same Route Again',
-                            style: TextStyle(fontWeight: FontWeight.w600),
+                          const Spacer(),
+                          Row(
+                            children: List.generate(
+                              5,
+                              (i) => Icon(
+                                Icons.star_rounded,
+                                size: 18,
+                                color: i < ride.rating!
+                                    ? AppColors.amber
+                                    : AppColors.border,
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
+                    ],
+                    if (done) ...[
+                      const SizedBox(height: 20),
+                      PhButton(label: 'Book Same Route Again', onTap: onRebook),
                     ],
                   ],
                 ),
-              ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.2, end: 0),
+              ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.1, end: 0),
             ),
           ),
         ],
@@ -762,88 +604,10 @@ class _ReceiptView extends StatelessWidget {
   }
 }
 
-// ── Shared widgets ────────────────────────────────────────────────────────────
-
-class _StatCard extends StatelessWidget {
-  final String value;
-  final String label;
-  const _StatCard({required this.value, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: AppColors.primary,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 11,
-              color: AppColors.mutedForeground,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusBadge extends StatelessWidget {
-  final bool completed;
-  final bool large;
-  const _StatusBadge({required this.completed, this.large = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: large ? 16 : 8,
-        vertical: large ? 8 : 4,
-      ),
-      decoration: BoxDecoration(
-        color: completed
-            ? AppColors.green.withValues(alpha: 0.1)
-            : AppColors.red.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        completed
-            ? (large ? '✓ Completed' : 'Completed')
-            : (large ? '✕ Cancelled' : 'Cancelled'),
-        style: TextStyle(
-          fontSize: large ? 14 : 11,
-          fontWeight: FontWeight.w600,
-          color: completed ? AppColors.green : AppColors.red,
-        ),
-      ),
-    );
-  }
-}
-
-class _LabelValue extends StatelessWidget {
+class _InfoPair extends StatelessWidget {
   final String label;
   final String value;
-  const _LabelValue({required this.label, required this.value});
+  const _InfoPair({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -852,14 +616,15 @@ class _LabelValue extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 13,
-            color: AppColors.mutedForeground,
-          ),
+          style: const TextStyle(fontSize: 13, color: AppColors.textTertiary),
         ),
         Text(
           value,
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
         ),
       ],
     );

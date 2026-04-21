@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../data/app_state.dart';
+import '../../widgets/ph_widgets.dart';
 import '../../widgets/toast.dart';
 
 class DriverProfileScreen extends StatelessWidget {
@@ -11,385 +12,324 @@ class DriverProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rating = AppState.instance.driverRating;
-    final trips = AppState.instance.dailyTrips;
 
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(gradient: AppColors.driverGradient),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.go('/driver-home'),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
+      backgroundColor: AppColors.driverBg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              child: Row(
+                children: [
+                  PhIconButton(
+                    icon: Icons.arrow_back,
+                    onTap: () => context.go('/driver-home'),
+                    color: Colors.white.withValues(alpha: 0.1),
+                    iconColor: Colors.white,
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Driver Profile',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
                     ),
-                    const SizedBox(width: 16),
-                    const Text(
-                      'Driver Profile',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ).animate().fadeIn(duration: 400.ms),
+                  ),
+                ],
+              ),
+            ).animate().fadeIn(duration: 350.ms),
 
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      // Profile card
-                      Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.06),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.1),
-                              ),
-                            ),
-                            child: Column(
-                              children: [
-                                // Avatar
-                                Stack(
-                                  children: [
-                                    Container(
-                                      width: 88,
-                                      height: 88,
-                                      decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            AppColors.primary,
-                                            AppColors.primaryLight,
-                                          ],
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    // Profile card
+                    PhDriverCard(
+                          child: Column(
+                            children: [
+                              Stack(
+                                children: [
+                                  Container(
+                                    width: 80,
+                                    height: 80,
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [
+                                          AppColors.primary,
+                                          AppColors.primaryDark,
+                                        ],
+                                      ),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: AppColors.driverAccent
+                                            .withValues(alpha: 0.5),
+                                        width: 2,
+                                      ),
+                                    ),
+                                    child: const Center(
+                                      child: Text(
+                                        'PS',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 26,
                                         ),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      width: 26,
+                                      height: 26,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.driverAccent,
                                         shape: BoxShape.circle,
                                         border: Border.all(
-                                          color: AppColors.driverAccent
-                                              .withValues(alpha: 0.6),
-                                          width: 2.5,
+                                          color: AppColors.driverBg,
+                                          width: 2,
                                         ),
                                       ),
-                                      child: const Center(
-                                        child: Text(
-                                          'PS',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 28,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      bottom: 0,
-                                      right: 0,
-                                      child: Container(
-                                        width: 28,
-                                        height: 28,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.driverAccent,
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: const Color(0xFF0F172A),
-                                            width: 2,
-                                          ),
-                                        ),
-                                        child: const Icon(
-                                          Icons.camera_alt,
-                                          size: 14,
-                                          color: AppColors.driverPrimary,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 14),
-                                const Text(
-                                  'Pedro Santos',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                const Text(
-                                  '+63 912 345 6789',
-                                  style: TextStyle(
-                                    color: Colors.white54,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                // Verified badge
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.green.withValues(
-                                      alpha: 0.15,
-                                    ),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: AppColors.green.withValues(
-                                        alpha: 0.4,
+                                      child: const Icon(
+                                        Icons.camera_alt,
+                                        size: 12,
+                                        color: AppColors.driverBg,
                                       ),
                                     ),
                                   ),
-                                  child: const Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.verified,
-                                        color: AppColors.green,
-                                        size: 14,
-                                      ),
-                                      SizedBox(width: 6),
-                                      Text(
-                                        'Verified Driver',
-                                        style: TextStyle(
-                                          color: AppColors.green,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              const Text(
+                                'Pedro Santos',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              const Text(
+                                '+63 912 345 6789',
+                                style: TextStyle(
+                                  color: AppColors.driverTextMuted,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.success.withValues(
+                                    alpha: 0.12,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: AppColors.success.withValues(
+                                      alpha: 0.3,
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(height: 16),
-                                // Stats row
-                                Row(
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Expanded(
-                                      child: _ProfileStat(
-                                        value: '$rating',
-                                        label: 'Rating',
-                                        icon: Icons.star,
-                                        iconColor: AppColors.yellow,
-                                      ),
+                                    Icon(
+                                      Icons.verified_rounded,
+                                      color: AppColors.success,
+                                      size: 13,
                                     ),
-                                    Container(
-                                      width: 1,
-                                      height: 40,
-                                      color: Colors.white12,
-                                    ),
-                                    Expanded(
-                                      child: _ProfileStat(
-                                        value: '1,250',
-                                        label: 'Total Trips',
-                                        icon: Icons.two_wheeler,
-                                        iconColor: AppColors.primary,
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 1,
-                                      height: 40,
-                                      color: Colors.white12,
-                                    ),
-                                    Expanded(
-                                      child: _ProfileStat(
-                                        value: 'Jan 2024',
-                                        label: 'Member Since',
-                                        icon: Icons.calendar_today,
-                                        iconColor: Colors.white54,
+                                    SizedBox(width: 5),
+                                    Text(
+                                      'Verified Driver',
+                                      style: TextStyle(
+                                        color: AppColors.success,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          )
-                          .animate()
-                          .fadeIn(delay: 100.ms, duration: 400.ms)
-                          .slideY(begin: 0.2, end: 0),
-
-                      const SizedBox(height: 20),
-
-                      // Vehicle info
-                      _SectionCard(
-                            title: 'Vehicle Information',
-                            child: Column(
-                              children: [
-                                _InfoRow(
-                                  icon: Icons.two_wheeler,
-                                  label: 'Vehicle',
-                                  value: 'Honda TMX 155',
-                                ),
-                                const Divider(
-                                  color: Colors.white12,
-                                  height: 20,
-                                ),
-                                _InfoRow(
-                                  icon: Icons.confirmation_number_outlined,
-                                  label: 'Plate No.',
-                                  value: 'ABC 1234',
-                                ),
-                                const Divider(
-                                  color: Colors.white12,
-                                  height: 20,
-                                ),
-                                _InfoRow(
-                                  icon: Icons.category_outlined,
-                                  label: 'Service Type',
-                                  value: 'Habal-habal',
-                                ),
-                              ],
-                            ),
-                          )
-                          .animate()
-                          .fadeIn(delay: 200.ms, duration: 400.ms)
-                          .slideY(begin: 0.2, end: 0),
-
-                      const SizedBox(height: 14),
-
-                      // Documents
-                      _SectionCard(
-                            title: 'Documents',
-                            child: Column(
-                              children: [
-                                _DocRow(
-                                  label: "Driver's License",
-                                  status: 'Verified',
-                                ),
-                                const Divider(
-                                  color: Colors.white12,
-                                  height: 20,
-                                ),
-                                _DocRow(
-                                  label: 'Vehicle Registration',
-                                  status: 'Verified',
-                                ),
-                                const Divider(
-                                  color: Colors.white12,
-                                  height: 20,
-                                ),
-                                _DocRow(
-                                  label: 'Insurance',
-                                  status: 'Expiring Soon',
-                                  isWarning: true,
-                                ),
-                              ],
-                            ),
-                          )
-                          .animate()
-                          .fadeIn(delay: 300.ms, duration: 400.ms)
-                          .slideY(begin: 0.2, end: 0),
-
-                      const SizedBox(height: 14),
-
-                      // Recent ratings
-                      _SectionCard(
-                            title: 'Recent Ratings',
-                            child: Column(
-                              children: [
-                                _RatingRow(
-                                  name: 'Ana Reyes',
-                                  rating: 5,
-                                  comment: 'Very safe driver!',
-                                  time: '2h ago',
-                                ),
-                                const Divider(
-                                  color: Colors.white12,
-                                  height: 20,
-                                ),
-                                _RatingRow(
-                                  name: 'Carlos Tan',
-                                  rating: 5,
-                                  comment: 'Fast and friendly.',
-                                  time: 'Yesterday',
-                                ),
-                                const Divider(
-                                  color: Colors.white12,
-                                  height: 20,
-                                ),
-                                _RatingRow(
-                                  name: 'Maria Cruz',
-                                  rating: 4,
-                                  comment: 'Good ride overall.',
-                                  time: '2 days ago',
-                                ),
-                              ],
-                            ),
-                          )
-                          .animate()
-                          .fadeIn(delay: 400.ms, duration: 400.ms)
-                          .slideY(begin: 0.2, end: 0),
-
-                      const SizedBox(height: 20),
-
-                      // Logout
-                      SizedBox(
-                        width: double.infinity,
-                        height: 52,
-                        child: OutlinedButton.icon(
-                          onPressed: () {
-                            showToast(context, 'Logged out');
-                            Future.delayed(
-                              const Duration(milliseconds: 800),
-                              () {
-                                if (context.mounted) context.go('/');
-                              },
-                            );
-                          },
-                          icon: const Icon(Icons.logout),
-                          label: const Text(
-                            'Logout',
-                            style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              const SizedBox(height: 16),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _PStat(
+                                      value: '$rating',
+                                      label: 'Rating',
+                                      icon: Icons.star_rounded,
+                                      iconColor: AppColors.amber,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 1,
+                                    height: 36,
+                                    color: AppColors.driverBorder,
+                                  ),
+                                  Expanded(
+                                    child: _PStat(
+                                      value: '1,250',
+                                      label: 'Total Trips',
+                                      icon: Icons.two_wheeler,
+                                      iconColor: AppColors.primary,
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 1,
+                                    height: 36,
+                                    color: AppColors.driverBorder,
+                                  ),
+                                  Expanded(
+                                    child: _PStat(
+                                      value: 'Jan 2024',
+                                      label: 'Since',
+                                      icon: Icons.calendar_today_outlined,
+                                      iconColor: AppColors.driverTextMuted,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.red,
-                            side: const BorderSide(
-                              color: AppColors.red,
-                              width: 1.5,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
+                        )
+                        .animate()
+                        .fadeIn(delay: 80.ms, duration: 350.ms)
+                        .slideY(begin: 0.1, end: 0),
+
+                    const SizedBox(height: 14),
+
+                    _Section(
+                      title: 'Vehicle Information',
+                      child: Column(
+                        children: [
+                          _InfoRow(
+                            icon: Icons.two_wheeler,
+                            label: 'Vehicle',
+                            value: 'Honda TMX 155',
+                          ),
+                          const SizedBox(height: 12),
+                          _InfoRow(
+                            icon: Icons.confirmation_number_outlined,
+                            label: 'Plate No.',
+                            value: 'ABC 1234',
+                          ),
+                          const SizedBox(height: 12),
+                          _InfoRow(
+                            icon: Icons.category_outlined,
+                            label: 'Service Type',
+                            value: 'Habal-habal',
+                          ),
+                        ],
+                      ),
+                    ).animate().fadeIn(delay: 160.ms, duration: 350.ms),
+
+                    const SizedBox(height: 14),
+
+                    _Section(
+                      title: 'Documents',
+                      child: Column(
+                        children: [
+                          _DocRow(
+                            label: "Driver's License",
+                            status: 'Verified',
+                            ok: true,
+                          ),
+                          const SizedBox(height: 12),
+                          _DocRow(
+                            label: 'Vehicle Registration',
+                            status: 'Verified',
+                            ok: true,
+                          ),
+                          const SizedBox(height: 12),
+                          _DocRow(
+                            label: 'Insurance',
+                            status: 'Expiring Soon',
+                            ok: false,
+                          ),
+                        ],
+                      ),
+                    ).animate().fadeIn(delay: 240.ms, duration: 350.ms),
+
+                    const SizedBox(height: 14),
+
+                    _Section(
+                      title: 'Recent Ratings',
+                      child: Column(
+                        children: [
+                          _RatingRow(
+                            name: 'Ana Reyes',
+                            rating: 5,
+                            comment: 'Very safe driver!',
+                            time: '2h ago',
+                          ),
+                          const SizedBox(height: 12),
+                          _RatingRow(
+                            name: 'Carlos Tan',
+                            rating: 5,
+                            comment: 'Fast and friendly.',
+                            time: 'Yesterday',
+                          ),
+                          const SizedBox(height: 12),
+                          _RatingRow(
+                            name: 'Maria Cruz',
+                            rating: 4,
+                            comment: 'Good ride overall.',
+                            time: '2 days ago',
+                          ),
+                        ],
+                      ),
+                    ).animate().fadeIn(delay: 320.ms, duration: 350.ms),
+
+                    const SizedBox(height: 20),
+
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          showToast(context, 'Logged out');
+                          Future.delayed(const Duration(milliseconds: 600), () {
+                            if (context.mounted) context.go('/');
+                          });
+                        },
+                        icon: const Icon(Icons.logout, size: 18),
+                        label: const Text(
+                          'Log Out',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.error,
+                          side: const BorderSide(color: AppColors.error),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
                           ),
                         ),
-                      ).animate().fadeIn(delay: 500.ms, duration: 400.ms),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
+                      ),
+                    ).animate().fadeIn(delay: 400.ms, duration: 350.ms),
+                    const SizedBox(height: 16),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class _ProfileStat extends StatelessWidget {
-  final String value;
-  final String label;
+class _PStat extends StatelessWidget {
+  final String value, label;
   final IconData icon;
   final Color iconColor;
-  const _ProfileStat({
+  const _PStat({
     required this.value,
     required this.label,
     required this.icon,
@@ -400,49 +340,46 @@ class _ProfileStat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(icon, color: iconColor, size: 18),
+        Icon(icon, color: iconColor, size: 16),
         const SizedBox(height: 4),
         Text(
           value,
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w700,
-            fontSize: 15,
+            fontSize: 14,
           ),
         ),
         Text(
           label,
-          style: const TextStyle(color: Colors.white54, fontSize: 11),
+          style: const TextStyle(
+            color: AppColors.driverTextMuted,
+            fontSize: 10,
+          ),
         ),
       ],
     );
   }
 }
 
-class _SectionCard extends StatelessWidget {
+class _Section extends StatelessWidget {
   final String title;
   final Widget child;
-  const _SectionCard({required this.title, required this.child});
+  const _Section({required this.title, required this.child});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-      ),
+    return PhDriverCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
+            title.toUpperCase(),
             style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
+              color: AppColors.driverTextMuted,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.6,
             ),
           ),
           const SizedBox(height: 14),
@@ -455,8 +392,7 @@ class _SectionCard extends StatelessWidget {
 
 class _InfoRow extends StatelessWidget {
   final IconData icon;
-  final String label;
-  final String value;
+  final String label, value;
   const _InfoRow({
     required this.icon,
     required this.label,
@@ -467,11 +403,14 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white38, size: 18),
+        Icon(icon, color: AppColors.driverTextMuted, size: 16),
         const SizedBox(width: 10),
         Text(
           label,
-          style: const TextStyle(color: Colors.white54, fontSize: 13),
+          style: const TextStyle(
+            color: AppColors.driverTextMuted,
+            fontSize: 13,
+          ),
         ),
         const Spacer(),
         Text(
@@ -488,21 +427,20 @@ class _InfoRow extends StatelessWidget {
 }
 
 class _DocRow extends StatelessWidget {
-  final String label;
-  final String status;
-  final bool isWarning;
-  const _DocRow({
-    required this.label,
-    required this.status,
-    this.isWarning = false,
-  });
+  final String label, status;
+  final bool ok;
+  const _DocRow({required this.label, required this.status, required this.ok});
 
   @override
   Widget build(BuildContext context) {
-    final color = isWarning ? AppColors.orange : AppColors.green;
+    final color = ok ? AppColors.success : AppColors.warning;
     return Row(
       children: [
-        Icon(Icons.description_outlined, color: Colors.white38, size: 18),
+        const Icon(
+          Icons.description_outlined,
+          color: AppColors.driverTextMuted,
+          size: 16,
+        ),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
@@ -511,9 +449,9 @@ class _DocRow extends StatelessWidget {
           ),
         ),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.15),
+            color: color.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
@@ -531,10 +469,8 @@ class _DocRow extends StatelessWidget {
 }
 
 class _RatingRow extends StatelessWidget {
-  final String name;
+  final String name, comment, time;
   final int rating;
-  final String comment;
-  final String time;
   const _RatingRow({
     required this.name,
     required this.rating,
@@ -548,10 +484,10 @@ class _RatingRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 36,
-          height: 36,
+          width: 34,
+          height: 34,
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.3),
+            color: AppColors.primary.withValues(alpha: 0.25),
             shape: BoxShape.circle,
           ),
           child: Center(
@@ -559,7 +495,8 @@ class _RatingRow extends StatelessWidget {
               name[0],
               style: const TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
               ),
             ),
           ),
@@ -582,7 +519,10 @@ class _RatingRow extends StatelessWidget {
                   const Spacer(),
                   Text(
                     time,
-                    style: const TextStyle(color: Colors.white38, fontSize: 11),
+                    style: const TextStyle(
+                      color: AppColors.driverTextMuted,
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ),
@@ -590,14 +530,20 @@ class _RatingRow extends StatelessWidget {
               Row(
                 children: List.generate(
                   rating,
-                  (_) =>
-                      const Icon(Icons.star, size: 12, color: AppColors.yellow),
+                  (_) => const Icon(
+                    Icons.star_rounded,
+                    size: 11,
+                    color: AppColors.amber,
+                  ),
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 comment,
-                style: const TextStyle(color: Colors.white54, fontSize: 12),
+                style: const TextStyle(
+                  color: AppColors.driverTextMuted,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
