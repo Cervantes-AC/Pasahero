@@ -11,28 +11,24 @@ class BottomNavBar extends StatelessWidget {
 
     final tabs = [
       _NavTab(
-        id: 'home',
         label: 'Home',
         icon: Icons.home_outlined,
-        activeIcon: Icons.home,
+        activeIcon: Icons.home_rounded,
         path: '/home',
       ),
       _NavTab(
-        id: 'rides',
         label: 'Rides',
-        icon: Icons.access_time_outlined,
-        activeIcon: Icons.access_time,
+        icon: Icons.receipt_long_outlined,
+        activeIcon: Icons.receipt_long,
         path: '/ride-history',
       ),
       _NavTab(
-        id: 'saved',
         label: 'Saved',
-        icon: Icons.place_outlined,
-        activeIcon: Icons.place,
+        icon: Icons.bookmark_outline,
+        activeIcon: Icons.bookmark,
         path: '/saved-locations',
       ),
       _NavTab(
-        id: 'profile',
         label: 'Profile',
         icon: Icons.person_outline,
         activeIcon: Icons.person,
@@ -41,68 +37,56 @@ class BottomNavBar extends StatelessWidget {
     ];
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.border, width: 1)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
+        border: Border(top: BorderSide(color: AppColors.border)),
       ),
       child: SafeArea(
+        top: false,
         child: SizedBox(
-          height: 64,
+          height: 60,
           child: Row(
             children: tabs.map((tab) {
               final active = location == tab.path;
               return Expanded(
                 child: InkWell(
                   onTap: () => context.go(tab.path),
+                  splashColor: AppColors.primarySurface,
+                  highlightColor: Colors.transparent,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Icon(
-                            active ? tab.activeIcon : tab.icon,
-                            size: 24,
-                            color: active
-                                ? AppColors.primary
-                                : AppColors.mutedForeground,
-                          ),
-                          if (active)
-                            Positioned(
-                              bottom: -6,
-                              left: 0,
-                              right: 0,
-                              child: Center(
-                                child: Container(
-                                  width: 4,
-                                  height: 4,
-                                  decoration: const BoxDecoration(
-                                    color: AppColors.primary,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: active
+                              ? AppColors.primarySurface
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Icon(
+                          active ? tab.activeIcon : tab.icon,
+                          size: 22,
+                          color: active
+                              ? AppColors.primary
+                              : AppColors.textTertiary,
+                        ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         tab.label,
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 10,
                           fontWeight: active
                               ? FontWeight.w600
-                              : FontWeight.normal,
+                              : FontWeight.w400,
                           color: active
                               ? AppColors.primary
-                              : AppColors.mutedForeground,
+                              : AppColors.textTertiary,
                         ),
                       ),
                     ],
@@ -118,13 +102,11 @@ class BottomNavBar extends StatelessWidget {
 }
 
 class _NavTab {
-  final String id;
   final String label;
   final IconData icon;
   final IconData activeIcon;
   final String path;
   const _NavTab({
-    required this.id,
     required this.label,
     required this.icon,
     required this.activeIcon,
