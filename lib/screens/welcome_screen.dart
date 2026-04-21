@@ -26,72 +26,33 @@ class WelcomeScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Logo
-                    Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Container(
-                          width: 128,
-                          height: 128,
-                          decoration: BoxDecoration(
-                            color: AppColors.yellow,
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                blurRadius: 20,
-                                offset: const Offset(0, 8),
-                              ),
-                            ],
+                    Container(
+                      width: 148,
+                      height: 148,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(28),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            blurRadius: 24,
+                            offset: const Offset(0, 8),
                           ),
-                          child: const Icon(
-                            Icons.two_wheeler,
-                            size: 64,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        Positioned(
-                          bottom: -8,
-                          right: -8,
-                          child: Container(
-                            width: 64,
-                            height: 64,
-                            decoration: BoxDecoration(
-                              color: AppColors.red,
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  blurRadius: 10,
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.directions_car,
-                              size: 32,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(28),
+                        child: Image.asset('logo.jpg', fit: BoxFit.cover),
+                      ),
                     ).animate().scale(duration: 500.ms, curve: Curves.easeOut),
                     const SizedBox(height: 40),
                     // Title
-                    RichText(
-                          text: const TextSpan(
-                            style: TextStyle(
-                              fontSize: 40,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: 'Sakay',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              TextSpan(
-                                text: 'PH',
-                                style: TextStyle(color: AppColors.yellow),
-                              ),
-                            ],
+                    const Text(
+                          'Pasahero',
+                          style: TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            letterSpacing: 1,
                           ),
                         )
                         .animate()

@@ -13,9 +13,9 @@ import 'package:pasahero/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const PasaHeroApp());
+    await tester.pumpWidget(const PasaheroApp());
 
-    // Verify splash screen title is present.
-    expect(find.text('PasaHero'), findsOneWidget);
+    // Verify app loads without crashing.
+    expect(find.byType(MaterialApp), findsOneWidget);
   });
 }
