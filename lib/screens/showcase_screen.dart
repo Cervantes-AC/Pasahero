@@ -1,164 +1,167 @@
 ﻿import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
 
-// ── Transaction step model ────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// DATA MODEL
+// ─────────────────────────────────────────────────────────────────────────────
 
-enum _StepId {
+enum _Phase {
   idle,
-  passengerSearching,
-  requestSent,
-  driverAccepted,
-  driverEnRoute,
-  driverArrived,
-  tripInProgress,
-  tripComplete,
+  searching,
+  requested,
+  accepted,
+  enRoute,
+  arrived,
+  inTrip,
+  complete,
 }
 
-class _Step {
-  final _StepId id;
+class _StepData {
+  final _Phase phase;
   final String label;
-  final String passengerTitle;
-  final String passengerBody;
-  final String driverTitle;
-  final String driverBody;
-  final IconData passengerIcon;
-  final IconData driverIcon;
-  final Color passengerAccent;
-  final Color driverAccent;
+  final String pTitle;
+  final String pDesc;
+  final String dTitle;
+  final String dDesc;
+  final IconData pIcon;
+  final IconData dIcon;
+  final Color pColor;
+  final Color dColor;
 
-  const _Step({
-    required this.id,
+  const _StepData({
+    required this.phase,
     required this.label,
-    required this.passengerTitle,
-    required this.passengerBody,
-    required this.driverTitle,
-    required this.driverBody,
-    required this.passengerIcon,
-    required this.driverIcon,
-    required this.passengerAccent,
-    required this.driverAccent,
+    required this.pTitle,
+    required this.pDesc,
+    required this.dTitle,
+    required this.dDesc,
+    required this.pIcon,
+    required this.dIcon,
+    required this.pColor,
+    required this.dColor,
   });
 }
 
-const _steps = [
-  _Step(
-    id: _StepId.idle,
+const List<_StepData> _kSteps = [
+  _StepData(
+    phase: _Phase.idle,
     label: 'Start',
-    passengerTitle: 'Passenger App',
-    passengerBody:
-        'Juan opens Pasahero and sees the home screen with available ride types.',
-    driverTitle: 'Driver App',
-    driverBody:
-        'Pedro is offline. He taps the toggle to go online and wait for requests.',
-    passengerIcon: Icons.home_rounded,
-    driverIcon: Icons.wifi_off_rounded,
-    passengerAccent: AppColors.primary,
-    driverAccent: AppColors.driverTextMuted,
+    pTitle: 'Home Screen',
+    pDesc:
+        'Juan opens Pasahero. He sees Habal-habal, Motorela, and Bao-bao options ready to book.',
+    dTitle: 'Driver Offline',
+    dDesc:
+        'Pedro is offline. His dashboard shows today\'s earnings. He taps the toggle to go online.',
+    pIcon: Icons.home_rounded,
+    dIcon: Icons.wifi_off_rounded,
+    pColor: AppColors.primary,
+    dColor: AppColors.driverTextMuted,
   ),
-  _Step(
-    id: _StepId.passengerSearching,
-    label: 'Booking',
-    passengerTitle: 'Requesting a Ride',
-    passengerBody:
-        'Juan selects Habal-habal, enters his destination "Ayala Center Cebu", and taps Search Drivers.',
-    driverTitle: 'Driver Online',
-    driverBody:
-        'Pedro switches to Online. The app shows a pulsing indicator — he\'s now visible to passengers.',
-    passengerIcon: Icons.search_rounded,
-    driverIcon: Icons.wifi_rounded,
-    passengerAccent: AppColors.primary,
-    driverAccent: AppColors.success,
+  _StepData(
+    phase: _Phase.searching,
+    label: 'Book',
+    pTitle: 'Searching Drivers',
+    pDesc:
+        'Juan picks Habal-habal, types "Ayala Center Cebu" as destination, and taps Search Drivers.',
+    dTitle: 'Driver Online',
+    dDesc:
+        'Pedro goes online. A green pulse shows he\'s now visible and accepting ride requests.',
+    pIcon: Icons.search_rounded,
+    dIcon: Icons.wifi_rounded,
+    pColor: AppColors.primary,
+    dColor: AppColors.success,
   ),
-  _Step(
-    id: _StepId.requestSent,
+  _StepData(
+    phase: _Phase.requested,
     label: 'Request',
-    passengerTitle: 'Ride Request Sent',
-    passengerBody:
-        'Juan sees Pedro\'s profile — ₱65 fare, 4.9 ★, 3 mins away. He taps "Order Ride".',
-    driverTitle: 'New Request!',
-    driverBody:
-        'Pedro gets an alert with a 30-second countdown. He sees the fare ₱65, pickup & drop-off.',
-    passengerIcon: Icons.send_rounded,
-    driverIcon: Icons.notifications_active_rounded,
-    passengerAccent: AppColors.amber,
-    driverAccent: AppColors.amber,
+    pTitle: 'Request Sent',
+    pDesc:
+        'Juan sees Pedro\'s card — ₱65 fare, ★4.9, 3 mins away. He taps "Order Ride".',
+    dTitle: 'Incoming Request!',
+    dDesc:
+        'Pedro gets a 30-second alert showing ₱65 fare, pickup at SM City, drop-off at Ayala.',
+    pIcon: Icons.send_rounded,
+    dIcon: Icons.notifications_active_rounded,
+    pColor: AppColors.amber,
+    dColor: AppColors.amber,
   ),
-  _Step(
-    id: _StepId.driverAccepted,
-    label: 'Accepted',
-    passengerTitle: 'Driver Accepted!',
-    passengerBody:
-        'Pedro accepted the ride. Juan sees a live map with Pedro\'s location moving toward him.',
-    driverTitle: 'Ride Accepted',
-    driverBody:
-        'Pedro taps Accept. The app shows navigation to Juan\'s pickup at SM City Cebu.',
-    passengerIcon: Icons.check_circle_rounded,
-    driverIcon: Icons.navigation_rounded,
-    passengerAccent: AppColors.success,
-    driverAccent: AppColors.primary,
+  _StepData(
+    phase: _Phase.accepted,
+    label: 'Accept',
+    pTitle: 'Driver Accepted!',
+    pDesc:
+        'Pedro accepted. Juan sees a live map with Pedro\'s bike moving toward his location.',
+    dTitle: 'Ride Accepted',
+    dDesc:
+        'Pedro taps Accept. Navigation starts — heading to SM City Cebu to pick up Juan.',
+    pIcon: Icons.check_circle_rounded,
+    dIcon: Icons.navigation_rounded,
+    pColor: AppColors.success,
+    dColor: AppColors.primary,
   ),
-  _Step(
-    id: _StepId.driverEnRoute,
+  _StepData(
+    phase: _Phase.enRoute,
     label: 'En Route',
-    passengerTitle: 'Driver On the Way',
-    passengerBody:
-        'Juan tracks Pedro in real-time. ETA: 3 mins. He can call, message, or share his location.',
-    driverTitle: 'Heading to Pickup',
-    driverBody:
-        'Pedro follows navigation. The app shows distance to pickup: 0.8 km remaining.',
-    passengerIcon: Icons.location_on_rounded,
-    driverIcon: Icons.two_wheeler,
-    passengerAccent: AppColors.primary,
-    driverAccent: AppColors.primary,
+    pTitle: 'Driver On the Way',
+    pDesc:
+        'ETA: 3 mins. Juan can call Pedro, send a message, or share his live location with family.',
+    dTitle: 'Heading to Pickup',
+    dDesc:
+        'Pedro follows the route. Distance to pickup: 0.8 km. Passenger details visible on screen.',
+    pIcon: Icons.location_on_rounded,
+    dIcon: Icons.two_wheeler,
+    pColor: AppColors.primary,
+    dColor: AppColors.primary,
   ),
-  _Step(
-    id: _StepId.driverArrived,
+  _StepData(
+    phase: _Phase.arrived,
     label: 'Arrived',
-    passengerTitle: 'Driver Arrived!',
-    passengerBody:
-        'Juan gets a notification — Pedro has arrived at SM City Cebu. Time to board!',
-    driverTitle: 'At Pickup Point',
-    driverBody:
-        'Pedro taps "Passenger Picked Up" to start the trip and begin navigation to Ayala Center.',
-    passengerIcon: Icons.person_pin_rounded,
-    driverIcon: Icons.flag_rounded,
-    passengerAccent: AppColors.success,
-    driverAccent: AppColors.success,
+    pTitle: 'Driver Arrived!',
+    pDesc:
+        'Pedro is at SM City Cebu. Juan gets a notification and heads to the pickup point.',
+    dTitle: 'At Pickup Point',
+    dDesc:
+        'Pedro taps "Passenger Picked Up" to confirm boarding and start navigation to Ayala.',
+    pIcon: Icons.person_pin_rounded,
+    dIcon: Icons.flag_rounded,
+    pColor: AppColors.success,
+    dColor: AppColors.success,
   ),
-  _Step(
-    id: _StepId.tripInProgress,
+  _StepData(
+    phase: _Phase.inTrip,
     label: 'Trip',
-    passengerTitle: 'Trip in Progress',
-    passengerBody:
-        'Juan is riding. He sees the route, ETA 8 mins, and can share his live location with family.',
-    driverTitle: 'Trip in Progress',
-    driverBody:
-        'Pedro follows navigation to Ayala Center Cebu. Fare meter is running — ₱65 confirmed.',
-    passengerIcon: Icons.directions_rounded,
-    driverIcon: Icons.route_rounded,
-    passengerAccent: AppColors.primary,
-    driverAccent: AppColors.driverAccent,
+    pTitle: 'Trip in Progress',
+    pDesc:
+        'Juan is riding. ETA 8 mins, 3.2 km. He shares his live location with his family.',
+    dTitle: 'Trip in Progress',
+    dDesc:
+        'Pedro navigates to Ayala Center. Fare ₱65 confirmed. Trip timer running.',
+    pIcon: Icons.directions_rounded,
+    dIcon: Icons.route_rounded,
+    pColor: AppColors.primary,
+    dColor: AppColors.driverAccent,
   ),
-  _Step(
-    id: _StepId.tripComplete,
+  _StepData(
+    phase: _Phase.complete,
     label: 'Done',
-    passengerTitle: 'Trip Complete!',
-    passengerBody:
-        'Juan rates Pedro 5 stars, adds a ₱10 tip, and pays ₱75 via GCash. Receipt saved.',
-    driverTitle: 'Earnings Updated',
-    driverBody:
-        'Pedro\'s dashboard shows +₱65. Daily total: ₱912.50. He\'s ready for the next ride.',
-    passengerIcon: Icons.star_rounded,
-    driverIcon: Icons.monetization_on_rounded,
-    passengerAccent: AppColors.amber,
-    driverAccent: AppColors.driverAccent,
+    pTitle: 'Trip Complete!',
+    pDesc:
+        'Juan rates Pedro ★5, adds ₱10 tip, pays ₱75 via GCash. Receipt saved automatically.',
+    dTitle: 'Earnings Updated',
+    dDesc:
+        'Pedro\'s dashboard: +₱65 added. Daily total ₱912.50. 13 trips. Ready for next ride.',
+    pIcon: Icons.star_rounded,
+    dIcon: Icons.monetization_on_rounded,
+    pColor: AppColors.amber,
+    dColor: AppColors.driverAccent,
   ),
 ];
 
-// ── Showcase Screen ───────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// SHOWCASE SCREEN
+// ─────────────────────────────────────────────────────────────────────────────
 
 class ShowcaseScreen extends StatefulWidget {
   const ShowcaseScreen({super.key});
@@ -168,141 +171,121 @@ class ShowcaseScreen extends StatefulWidget {
 }
 
 class _ShowcaseScreenState extends State<ShowcaseScreen>
-    with TickerProviderStateMixin {
-  int _currentStep = 0;
+    with SingleTickerProviderStateMixin {
+  int _step = 0;
   bool _autoPlay = false;
-  Timer? _autoTimer;
-  late AnimationController _progressCtrl;
-  late AnimationController _pulseCtrl;
+  Timer? _timer;
 
-  @override
-  void initState() {
-    super.initState();
-    _progressCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 4),
-    );
-    _pulseCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat(reverse: true);
-  }
+  // Pulse animation lives here — never recreated
+  late final AnimationController _pulse = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1000),
+  )..repeat(reverse: true);
 
   @override
   void dispose() {
-    _autoTimer?.cancel();
-    _progressCtrl.dispose();
-    _pulseCtrl.dispose();
+    _timer?.cancel();
+    _pulse.dispose();
     super.dispose();
   }
 
-  void _goTo(int index) {
-    if (index < 0 || index >= _steps.length) return;
-    setState(() => _currentStep = index);
-    _progressCtrl.forward(from: 0);
+  void _goTo(int i) {
+    if (i < 0 || i >= _kSteps.length) return;
+    setState(() => _step = i);
   }
 
-  void _next() => _goTo(_currentStep + 1);
-  void _prev() => _goTo(_currentStep - 1);
-
-  void _toggleAutoPlay() {
-    setState(() => _autoPlay = !_autoPlay);
+  void _toggleAuto() {
     if (_autoPlay) {
-      _progressCtrl.forward(from: 0);
-      _autoTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+      _timer?.cancel();
+      setState(() => _autoPlay = false);
+    } else {
+      setState(() => _autoPlay = true);
+      _timer = Timer.periodic(const Duration(seconds: 3), (_) {
         if (!mounted) return;
-        if (_currentStep < _steps.length - 1) {
-          _goTo(_currentStep + 1);
+        if (_step < _kSteps.length - 1) {
+          setState(() => _step++);
         } else {
-          _toggleAutoPlay(); // stop at end
+          _timer?.cancel();
+          setState(() => _autoPlay = false);
         }
       });
-    } else {
-      _autoTimer?.cancel();
-      _progressCtrl.stop();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final step = _steps[_currentStep];
-    final isLast = _currentStep == _steps.length - 1;
-    final isFirst = _currentStep == 0;
+    final s = _kSteps[_step];
+    final isLast = _step == _kSteps.length - 1;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0F1E),
+      backgroundColor: const Color(0xFF060B18),
       body: SafeArea(
         child: Column(
           children: [
-            // ── Top bar ──────────────────────────────────────────────────────
-            _TopBar(
+            // ── Header ───────────────────────────────────────────────────────
+            _Header(
               onClose: () => context.go('/'),
               autoPlay: _autoPlay,
-              onToggleAutoPlay: _toggleAutoPlay,
-              progressCtrl: _progressCtrl,
-              autoPlayActive: _autoPlay,
+              onToggleAuto: _toggleAuto,
             ),
 
-            // ── Step indicator ───────────────────────────────────────────────
-            _StepIndicator(steps: _steps, current: _currentStep, onTap: _goTo),
+            // ── Step pills ───────────────────────────────────────────────────
+            _StepPills(steps: _kSteps, current: _step, onTap: _goTo),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
 
-            // ── Step label ───────────────────────────────────────────────────
+            // ── Phase label ──────────────────────────────────────────────────
             AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 250),
               child: Text(
-                _stepPhrase(step.id),
-                key: ValueKey(_currentStep),
+                'STEP ${_step + 1} OF ${_kSteps.length}  ·  ${s.label.toUpperCase()}',
+                key: ValueKey(_step),
                 style: const TextStyle(
-                  color: Colors.white54,
-                  fontSize: 12,
-                  letterSpacing: 1.2,
+                  color: Colors.white38,
+                  fontSize: 10,
+                  letterSpacing: 1.4,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
 
-            // ── Split panels ─────────────────────────────────────────────────
+            // ── Split view ───────────────────────────────────────────────────
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Passenger panel
+                    // Passenger side
                     Expanded(
-                      child: _Panel(
-                        key: ValueKey('p_$_currentStep'),
-                        role: 'PASSENGER',
-                        name: 'Juan Dela Cruz',
-                        title: step.passengerTitle,
-                        body: step.passengerBody,
-                        icon: step.passengerIcon,
-                        accent: step.passengerAccent,
+                      child: _SidePanel(
                         isPassenger: true,
-                        stepId: step.id,
-                        pulseCtrl: _pulseCtrl,
+                        phase: s.phase,
+                        title: s.pTitle,
+                        desc: s.pDesc,
+                        icon: s.pIcon,
+                        accent: s.pColor,
+                        pulse: _pulse,
+                        stepIndex: _step,
                       ),
                     ),
 
-                    // Divider with lightning bolt
-                    _CenterDivider(stepId: step.id),
+                    // Center connector
+                    _Connector(phase: s.phase),
 
-                    // Driver panel
+                    // Driver side
                     Expanded(
-                      child: _Panel(
-                        key: ValueKey('d_$_currentStep'),
-                        role: 'DRIVER',
-                        name: 'Pedro Santos',
-                        title: step.driverTitle,
-                        body: step.driverBody,
-                        icon: step.driverIcon,
-                        accent: step.driverAccent,
+                      child: _SidePanel(
                         isPassenger: false,
-                        stepId: step.id,
-                        pulseCtrl: _pulseCtrl,
+                        phase: s.phase,
+                        title: s.dTitle,
+                        desc: s.dDesc,
+                        icon: s.dIcon,
+                        accent: s.dColor,
+                        pulse: _pulse,
+                        stepIndex: _step,
                       ),
                     ),
                   ],
@@ -310,130 +293,88 @@ class _ShowcaseScreenState extends State<ShowcaseScreen>
               ),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
-            // ── Navigation controls ──────────────────────────────────────────
-            _NavControls(
-              onPrev: isFirst ? null : _prev,
-              onNext: isLast ? null : _next,
-              onRestart: isLast ? () => _goTo(0) : null,
-              onLaunchPassenger: () {
-                context.go('/home');
-              },
-              onLaunchDriver: () {
-                context.go('/driver-home');
-              },
-              currentStep: _currentStep,
-              totalSteps: _steps.length,
-            ),
+            // ── Controls ─────────────────────────────────────────────────────
+            if (isLast)
+              _LaunchRow(
+                onPassenger: () => context.go('/home'),
+                onDriver: () => context.go('/driver-home'),
+                onRestart: () => _goTo(0),
+              )
+            else
+              _NavRow(
+                step: _step,
+                total: _kSteps.length,
+                onPrev: _step > 0 ? () => _goTo(_step - 1) : null,
+                onNext: () => _goTo(_step + 1),
+              ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
           ],
         ),
       ),
     );
   }
-
-  String _stepPhrase(_StepId id) {
-    switch (id) {
-      case _StepId.idle:
-        return 'STEP 1 OF 8  ·  INITIAL STATE';
-      case _StepId.passengerSearching:
-        return 'STEP 2 OF 8  ·  BOOKING FLOW';
-      case _StepId.requestSent:
-        return 'STEP 3 OF 8  ·  RIDE REQUEST';
-      case _StepId.driverAccepted:
-        return 'STEP 4 OF 8  ·  ACCEPTANCE';
-      case _StepId.driverEnRoute:
-        return 'STEP 5 OF 8  ·  EN ROUTE';
-      case _StepId.driverArrived:
-        return 'STEP 6 OF 8  ·  ARRIVAL';
-      case _StepId.tripInProgress:
-        return 'STEP 7 OF 8  ·  ACTIVE TRIP';
-      case _StepId.tripComplete:
-        return 'STEP 8 OF 8  ·  COMPLETION';
-    }
-  }
 }
 
-// ── Top Bar ───────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// HEADER
+// ─────────────────────────────────────────────────────────────────────────────
 
-class _TopBar extends StatelessWidget {
+class _Header extends StatelessWidget {
   final VoidCallback onClose;
   final bool autoPlay;
-  final VoidCallback onToggleAutoPlay;
-  final AnimationController progressCtrl;
-  final bool autoPlayActive;
+  final VoidCallback onToggleAuto;
 
-  const _TopBar({
+  const _Header({
     required this.onClose,
     required this.autoPlay,
-    required this.onToggleAutoPlay,
-    required this.progressCtrl,
-    required this.autoPlayActive,
+    required this.onToggleAuto,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
       child: Row(
         children: [
-          // Close
-          GestureDetector(
-            onTap: onClose,
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.close, color: Colors.white60, size: 18),
-            ),
-          ),
-          const SizedBox(width: 12),
-
-          // Title
-          Expanded(
+          _CircleBtn(icon: Icons.close, onTap: onClose),
+          const SizedBox(width: 10),
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Live Demo',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.3,
                   ),
                 ),
                 Text(
-                  'Passenger ↔ Driver transaction',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.45),
-                    fontSize: 11,
-                  ),
+                  'Passenger ↔ Driver transaction walkthrough',
+                  style: TextStyle(color: Colors.white38, fontSize: 10),
                 ),
               ],
             ),
           ),
-
-          // Auto-play toggle
           GestureDetector(
-            onTap: onToggleAutoPlay,
+            onTap: onToggleAuto,
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
+              duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
               decoration: BoxDecoration(
                 color: autoPlay
-                    ? AppColors.primary.withValues(alpha: 0.25)
-                    : Colors.white.withValues(alpha: 0.08),
+                    ? AppColors.primary.withValues(alpha: 0.22)
+                    : Colors.white.withValues(alpha: 0.07),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: autoPlay
-                      ? AppColors.primary.withValues(alpha: 0.6)
-                      : Colors.white.withValues(alpha: 0.12),
+                      ? AppColors.primary.withValues(alpha: 0.55)
+                      : Colors.white.withValues(alpha: 0.1),
                 ),
               ),
               child: Row(
@@ -441,15 +382,15 @@ class _TopBar extends StatelessWidget {
                 children: [
                   Icon(
                     autoPlay ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                    color: autoPlay ? AppColors.primaryLight : Colors.white60,
-                    size: 15,
+                    color: autoPlay ? AppColors.primaryLight : Colors.white54,
+                    size: 14,
                   ),
-                  const SizedBox(width: 5),
+                  const SizedBox(width: 4),
                   Text(
                     autoPlay ? 'Pause' : 'Auto',
                     style: TextStyle(
-                      color: autoPlay ? AppColors.primaryLight : Colors.white60,
-                      fontSize: 12,
+                      color: autoPlay ? AppColors.primaryLight : Colors.white54,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -463,14 +404,16 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-// ── Step Indicator ────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// STEP PILLS
+// ─────────────────────────────────────────────────────────────────────────────
 
-class _StepIndicator extends StatelessWidget {
-  final List<_Step> steps;
+class _StepPills extends StatelessWidget {
+  final List<_StepData> steps;
   final int current;
   final ValueChanged<int> onTap;
 
-  const _StepIndicator({
+  const _StepPills({
     required this.steps,
     required this.current,
     required this.onTap,
@@ -479,14 +422,12 @@ class _StepIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 14),
       child: Row(
         children: steps.asMap().entries.map((e) {
           final i = e.key;
-          final step = e.value;
           final done = i < current;
           final active = i == current;
-
           return Expanded(
             child: GestureDetector(
               onTap: () => onTap(i),
@@ -495,28 +436,28 @@ class _StepIndicator extends StatelessWidget {
                 child: Column(
                   children: [
                     AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 250),
                       height: 3,
                       decoration: BoxDecoration(
                         color: done
                             ? AppColors.primary
                             : active
                             ? AppColors.primaryLight
-                            : Colors.white.withValues(alpha: 0.12),
+                            : Colors.white.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                    const SizedBox(height: 5),
+                    const SizedBox(height: 4),
                     Text(
-                      step.label,
+                      e.value.label,
                       style: TextStyle(
-                        fontSize: 9,
+                        fontSize: 8,
                         fontWeight: active ? FontWeight.w700 : FontWeight.w400,
                         color: active
                             ? Colors.white
                             : done
-                            ? AppColors.primaryLight.withValues(alpha: 0.7)
-                            : Colors.white.withValues(alpha: 0.3),
+                            ? AppColors.primaryLight.withValues(alpha: 0.6)
+                            : Colors.white.withValues(alpha: 0.25),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -531,53 +472,54 @@ class _StepIndicator extends StatelessWidget {
   }
 }
 
-// ── Center Divider ────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// CENTER CONNECTOR
+// ─────────────────────────────────────────────────────────────────────────────
 
-class _CenterDivider extends StatelessWidget {
-  final _StepId stepId;
-
-  const _CenterDivider({required this.stepId});
+class _Connector extends StatelessWidget {
+  final _Phase phase;
+  const _Connector({required this.phase});
 
   @override
   Widget build(BuildContext context) {
-    final isActive = stepId != _StepId.idle;
+    final active = phase != _Phase.idle;
     return SizedBox(
-      width: 28,
+      width: 24,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 1,
-            height: 60,
-            color: Colors.white.withValues(alpha: 0.08),
+          Expanded(
+            child: Container(
+              width: 1,
+              color: Colors.white.withValues(alpha: 0.06),
+            ),
           ),
-          const SizedBox(height: 8),
           AnimatedContainer(
-            duration: const Duration(milliseconds: 400),
-            width: 28,
-            height: 28,
+            duration: const Duration(milliseconds: 300),
+            width: 24,
+            height: 24,
             decoration: BoxDecoration(
-              color: isActive
-                  ? AppColors.primary.withValues(alpha: 0.2)
-                  : Colors.white.withValues(alpha: 0.06),
+              color: active
+                  ? AppColors.primary.withValues(alpha: 0.18)
+                  : Colors.white.withValues(alpha: 0.04),
               shape: BoxShape.circle,
               border: Border.all(
-                color: isActive
-                    ? AppColors.primary.withValues(alpha: 0.5)
-                    : Colors.white.withValues(alpha: 0.1),
+                color: active
+                    ? AppColors.primary.withValues(alpha: 0.45)
+                    : Colors.white.withValues(alpha: 0.08),
               ),
             ),
             child: Icon(
-              isActive ? Icons.bolt_rounded : Icons.more_horiz,
-              color: isActive ? AppColors.primaryLight : Colors.white30,
-              size: 14,
+              active ? Icons.bolt_rounded : Icons.more_horiz,
+              color: active ? AppColors.primaryLight : Colors.white24,
+              size: 12,
             ),
           ),
-          const SizedBox(height: 8),
-          Container(
-            width: 1,
-            height: 60,
-            color: Colors.white.withValues(alpha: 0.08),
+          Expanded(
+            child: Container(
+              width: 1,
+              color: Colors.white.withValues(alpha: 0.06),
+            ),
           ),
         ],
       ),
@@ -585,83 +527,87 @@ class _CenterDivider extends StatelessWidget {
   }
 }
 
-// ── Panel ─────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// SIDE PANEL
+// ─────────────────────────────────────────────────────────────────────────────
 
-class _Panel extends StatelessWidget {
-  final String role;
-  final String name;
+class _SidePanel extends StatelessWidget {
+  final bool isPassenger;
+  final _Phase phase;
   final String title;
-  final String body;
+  final String desc;
   final IconData icon;
   final Color accent;
-  final bool isPassenger;
-  final _StepId stepId;
-  final AnimationController pulseCtrl;
+  final AnimationController pulse;
+  final int stepIndex;
 
-  const _Panel({
-    super.key,
-    required this.role,
-    required this.name,
+  const _SidePanel({
+    required this.isPassenger,
+    required this.phase,
     required this.title,
-    required this.body,
+    required this.desc,
     required this.icon,
     required this.accent,
-    required this.isPassenger,
-    required this.stepId,
-    required this.pulseCtrl,
+    required this.pulse,
+    required this.stepIndex,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bg = isPassenger ? const Color(0xFF0D1B3E) : const Color(0xFF0F172A);
-    final borderColor = isPassenger
-        ? AppColors.primary.withValues(alpha: 0.25)
+    final bg = isPassenger ? const Color(0xFF0C1A38) : const Color(0xFF0F172A);
+    final border = isPassenger
+        ? AppColors.primary.withValues(alpha: 0.2)
         : AppColors.driverBorder;
+    final initials = isPassenger ? 'JD' : 'PS';
+    final name = isPassenger ? 'Juan Dela Cruz' : 'Pedro Santos';
+    final role = isPassenger ? 'PASSENGER' : 'DRIVER';
+
+    // Online status
+    final isOnline = isPassenger ? phase != _Phase.idle : phase != _Phase.idle;
 
     return Container(
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: borderColor),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: border),
       ),
       child: Column(
         children: [
-          // Panel header
+          // ── Panel header ──────────────────────────────────────────────────
           Container(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
             decoration: BoxDecoration(
               color: isPassenger
-                  ? AppColors.primary.withValues(alpha: 0.12)
-                  : Colors.white.withValues(alpha: 0.04),
+                  ? AppColors.primary.withValues(alpha: 0.1)
+                  : Colors.white.withValues(alpha: 0.03),
               borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(17),
-                topRight: Radius.circular(17),
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
               ),
-              border: Border(bottom: BorderSide(color: borderColor)),
+              border: Border(bottom: BorderSide(color: border)),
             ),
             child: Row(
               children: [
-                // Avatar
                 Container(
-                  width: 32,
-                  height: 32,
+                  width: 28,
+                  height: 28,
                   decoration: BoxDecoration(
-                    color: accent.withValues(alpha: 0.18),
+                    color: accent.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
-                    border: Border.all(color: accent.withValues(alpha: 0.4)),
+                    border: Border.all(color: accent.withValues(alpha: 0.35)),
                   ),
                   child: Center(
                     child: Text(
-                      name.split(' ').map((n) => n[0]).join(),
+                      initials,
                       style: TextStyle(
                         color: accent,
                         fontWeight: FontWeight.w700,
-                        fontSize: 11,
+                        fontSize: 9,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 7),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -670,7 +616,7 @@ class _Panel extends StatelessWidget {
                         name,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 12,
+                          fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -679,92 +625,115 @@ class _Panel extends StatelessWidget {
                         role,
                         style: TextStyle(
                           color: accent,
-                          fontSize: 9,
+                          fontSize: 8,
                           fontWeight: FontWeight.w700,
-                          letterSpacing: 0.8,
+                          letterSpacing: 0.6,
                         ),
                       ),
                     ],
                   ),
                 ),
                 // Status dot
-                _StatusDot(
-                  stepId: stepId,
-                  isPassenger: isPassenger,
-                  pulseCtrl: pulseCtrl,
+                AnimatedBuilder(
+                  animation: pulse,
+                  builder: (_, __) => Container(
+                    width: 7,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      color: isOnline ? AppColors.success : Colors.white24,
+                      shape: BoxShape.circle,
+                      boxShadow: isOnline
+                          ? [
+                              BoxShadow(
+                                color: AppColors.success.withValues(
+                                  alpha: 0.5 * pulse.value,
+                                ),
+                                blurRadius: 5,
+                                spreadRadius: 1,
+                              ),
+                            ]
+                          : null,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
 
-          // Panel body
+          // ── Mock screen ───────────────────────────────────────────────────
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(15),
+                bottomRight: Radius.circular(15),
+              ),
+              child: Stack(
                 children: [
-                  // Mock screen visual
-                  Expanded(
-                    child:
-                        _MockScreen(
-                              stepId: stepId,
-                              isPassenger: isPassenger,
-                              accent: accent,
-                              pulseCtrl: pulseCtrl,
-                            )
-                            .animate()
-                            .fadeIn(duration: 350.ms)
-                            .scale(
-                              begin: const Offset(0.96, 0.96),
-                              end: const Offset(1, 1),
-                              duration: 350.ms,
-                              curve: Curves.easeOut,
-                            ),
+                  // The mock UI — keyed so it rebuilds on step change
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 300),
+                    switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeIn,
+                    transitionBuilder: (child, anim) =>
+                        FadeTransition(opacity: anim, child: child),
+                    child: KeyedSubtree(
+                      key: ValueKey('${isPassenger ? 'p' : 'd'}_$stepIndex'),
+                      child: _buildMock(phase, pulse),
+                    ),
                   ),
 
-                  const SizedBox(height: 10),
-
-                  // Text description
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.04),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.07),
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(icon, color: accent, size: 13),
-                            const SizedBox(width: 5),
-                            Expanded(
-                              child: Text(
-                                title,
-                                style: TextStyle(
-                                  color: accent,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
+                  // Description overlay at bottom
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            bg.withValues(alpha: 0),
+                            bg.withValues(alpha: 0.95),
+                            bg,
                           ],
+                          stops: const [0, 0.4, 1],
                         ),
-                        const SizedBox(height: 5),
-                        Text(
-                          body,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.6),
-                            fontSize: 10.5,
-                            height: 1.45,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(icon, color: accent, size: 11),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  title,
+                                  style: TextStyle(
+                                    color: accent,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 3),
+                          Text(
+                            desc,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.55),
+                              fontSize: 9,
+                              height: 1.4,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -775,256 +744,202 @@ class _Panel extends StatelessWidget {
       ),
     );
   }
-}
 
-// ── Status Dot ────────────────────────────────────────────────────────────────
-
-class _StatusDot extends StatelessWidget {
-  final _StepId stepId;
-  final bool isPassenger;
-  final AnimationController pulseCtrl;
-
-  const _StatusDot({
-    required this.stepId,
-    required this.isPassenger,
-    required this.pulseCtrl,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isActive = isPassenger
-        ? stepId != _StepId.idle
-        : stepId == _StepId.passengerSearching ||
-              stepId == _StepId.requestSent ||
-              stepId == _StepId.driverAccepted ||
-              stepId == _StepId.driverEnRoute ||
-              stepId == _StepId.driverArrived ||
-              stepId == _StepId.tripInProgress;
-
-    final color = isActive ? AppColors.success : Colors.white24;
-
-    return AnimatedBuilder(
-      animation: pulseCtrl,
-      builder: (_, __) => Container(
-        width: 8,
-        height: 8,
-        decoration: BoxDecoration(
-          color: isActive
-              ? Color.lerp(
-                  AppColors.success,
-                  AppColors.successLight,
-                  pulseCtrl.value * 0.4,
-                )
-              : Colors.white24,
-          shape: BoxShape.circle,
-          boxShadow: isActive
-              ? [
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.5 * pulseCtrl.value),
-                    blurRadius: 6,
-                    spreadRadius: 2,
-                  ),
-                ]
-              : null,
-        ),
-      ),
-    );
-  }
-}
-
-// ── Mock Screen ───────────────────────────────────────────────────────────────
-// Each step renders a simplified but recognizable UI mockup inside the panel.
-
-class _MockScreen extends StatelessWidget {
-  final _StepId stepId;
-  final bool isPassenger;
-  final Color accent;
-  final AnimationController pulseCtrl;
-
-  const _MockScreen({
-    required this.stepId,
-    required this.isPassenger,
-    required this.accent,
-    required this.pulseCtrl,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: isPassenger ? _buildPassengerMock() : _buildDriverMock(),
-    );
-  }
-
-  Widget _buildPassengerMock() {
-    switch (stepId) {
-      case _StepId.idle:
-      case _StepId.passengerSearching:
-        return _MockHomeScreen(accent: accent);
-      case _StepId.requestSent:
-        return _MockDriverCard(accent: accent);
-      case _StepId.driverAccepted:
-      case _StepId.driverEnRoute:
-      case _StepId.driverArrived:
-        return _MockTrackingScreen(
-          accent: accent,
-          pulseCtrl: pulseCtrl,
-          arrived: stepId == _StepId.driverArrived,
-        );
-      case _StepId.tripInProgress:
-        return _MockOngoingScreen(accent: accent, pulseCtrl: pulseCtrl);
-      case _StepId.tripComplete:
-        return _MockCompleteScreen(accent: accent);
-    }
-  }
-
-  Widget _buildDriverMock() {
-    switch (stepId) {
-      case _StepId.idle:
-        return _MockDriverOffline();
-      case _StepId.passengerSearching:
-        return _MockDriverOnline(pulseCtrl: pulseCtrl);
-      case _StepId.requestSent:
-        return _MockRideRequest(accent: accent, pulseCtrl: pulseCtrl);
-      case _StepId.driverAccepted:
-      case _StepId.driverEnRoute:
-      case _StepId.driverArrived:
-        return _MockDriverNavigation(
-          accent: accent,
-          pulseCtrl: pulseCtrl,
-          arrived: stepId == _StepId.driverArrived,
-        );
-      case _StepId.tripInProgress:
-        return _MockDriverTrip(accent: accent, pulseCtrl: pulseCtrl);
-      case _StepId.tripComplete:
-        return _MockDriverEarnings(accent: accent);
+  Widget _buildMock(_Phase p, AnimationController pulse) {
+    if (isPassenger) {
+      switch (p) {
+        case _Phase.idle:
+        case _Phase.searching:
+          return _PMockHome(pulse: pulse, searching: p == _Phase.searching);
+        case _Phase.requested:
+          return _PMockDriverCard();
+        case _Phase.accepted:
+        case _Phase.enRoute:
+        case _Phase.arrived:
+          return _PMockTracking(pulse: pulse, arrived: p == _Phase.arrived);
+        case _Phase.inTrip:
+          return _PMockOngoing(pulse: pulse);
+        case _Phase.complete:
+          return _PMockComplete();
+      }
+    } else {
+      switch (p) {
+        case _Phase.idle:
+          return _DMockOffline();
+        case _Phase.searching:
+          return _DMockOnline(pulse: pulse);
+        case _Phase.requested:
+          return _DMockRequest(pulse: pulse);
+        case _Phase.accepted:
+        case _Phase.enRoute:
+        case _Phase.arrived:
+          return _DMockNav(pulse: pulse, arrived: p == _Phase.arrived);
+        case _Phase.inTrip:
+          return _DMockTrip(pulse: pulse);
+        case _Phase.complete:
+          return _DMockEarnings();
+      }
     }
   }
 }
 
-// ── Passenger mock screens ────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// PASSENGER MOCK SCREENS
+// ─────────────────────────────────────────────────────────────────────────────
 
-class _MockHomeScreen extends StatelessWidget {
-  final Color accent;
-  const _MockHomeScreen({required this.accent});
+class _PMockHome extends StatelessWidget {
+  final AnimationController pulse;
+  final bool searching;
+  const _PMockHome({required this.pulse, required this.searching});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF0D1B3E),
+      color: AppColors.surface,
       child: Column(
         children: [
-          // Header
+          // Blue header
           Container(
-            height: 52,
             color: AppColors.primary,
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            child: Row(
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 20),
+            child: Column(
               children: [
-                const CircleAvatar(
-                  radius: 12,
-                  backgroundColor: Colors.white24,
-                  child: Text(
-                    'JD',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Good morning,',
-                        style: TextStyle(color: Colors.white60, fontSize: 7),
-                      ),
-                      const Text(
-                        'Juan Dela Cruz',
+                Row(
+                  children: [
+                    const CircleAvatar(
+                      radius: 10,
+                      backgroundColor: Colors.white24,
+                      child: Text(
+                        'JD',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 9,
+                          fontSize: 6,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                const Icon(
-                  Icons.notifications_outlined,
-                  color: Colors.white60,
-                  size: 14,
-                ),
-              ],
-            ),
-          ),
-          // Search bar
-          Container(
-            margin: const EdgeInsets.all(8),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.search, color: AppColors.primary, size: 12),
-                const SizedBox(width: 5),
-                const Expanded(
-                  child: Text(
-                    'Where do you want to go?',
-                    style: TextStyle(color: Colors.black38, fontSize: 8),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: const Text(
-                    'Go',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 7,
-                      fontWeight: FontWeight.w700,
                     ),
-                  ),
+                    const SizedBox(width: 5),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Good morning,',
+                            style: TextStyle(
+                              color: Colors.white60,
+                              fontSize: 6,
+                            ),
+                          ),
+                          Text(
+                            'Juan Dela Cruz',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.notifications_outlined,
+                      color: Colors.white60,
+                      size: 12,
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-          // Ride types
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Column(
-                children: [
-                  _MiniRideCard(
-                    label: 'Habal-habal',
-                    color: AppColors.primary,
-                    icon: Icons.two_wheeler,
-                  ),
-                  const SizedBox(height: 4),
-                  _MiniRideCard(
-                    label: 'Motorela',
-                    color: AppColors.error,
-                    icon: Icons.two_wheeler,
-                  ),
-                  const SizedBox(height: 4),
-                  _MiniRideCard(
-                    label: 'Bao-bao',
-                    color: AppColors.amber,
-                    icon: Icons.directions_car,
+          // Search bar overlapping
+          Transform.translate(
+            offset: const Offset(0, -10),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 8,
                   ),
                 ],
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.search, color: AppColors.primary, size: 11),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      searching
+                          ? 'Ayala Center Cebu'
+                          : 'Where do you want to go?',
+                      style: TextStyle(
+                        color: searching
+                            ? AppColors.textPrimary
+                            : AppColors.textTertiary,
+                        fontSize: 7,
+                        fontWeight: searching
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Text(
+                      'Go',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 6,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          // Ride type cards
+          Expanded(
+            child: Transform.translate(
+              offset: const Offset(0, -6),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  children: [
+                    _MiniRideRow(
+                      label: 'Habal-habal',
+                      color: AppColors.primary,
+                      icon: Icons.two_wheeler,
+                      price: '₱25',
+                      highlighted: searching,
+                    ),
+                    const SizedBox(height: 4),
+                    _MiniRideRow(
+                      label: 'Motorela',
+                      color: AppColors.error,
+                      icon: Icons.two_wheeler,
+                      price: '₱35',
+                    ),
+                    const SizedBox(height: 4),
+                    _MiniRideRow(
+                      label: 'Bao-bao',
+                      color: AppColors.amber,
+                      icon: Icons.directions_car,
+                      price: '₱50',
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1034,14 +949,17 @@ class _MockHomeScreen extends StatelessWidget {
   }
 }
 
-class _MiniRideCard extends StatelessWidget {
-  final String label;
+class _MiniRideRow extends StatelessWidget {
+  final String label, price;
   final Color color;
   final IconData icon;
-  const _MiniRideCard({
+  final bool highlighted;
+  const _MiniRideRow({
     required this.label,
     required this.color,
     required this.icon,
+    required this.price,
+    this.highlighted = false,
   });
 
   @override
@@ -1049,72 +967,97 @@ class _MiniRideCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        color: highlighted ? color.withValues(alpha: 0.06) : Colors.white,
+        borderRadius: BorderRadius.circular(7),
+        border: Border.all(
+          color: highlighted ? color.withValues(alpha: 0.4) : AppColors.border,
+        ),
       ),
       child: Row(
         children: [
           Container(
-            width: 20,
-            height: 20,
+            width: 18,
+            height: 18,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
+              color: color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(4),
             ),
-            child: Icon(icon, color: color, size: 11),
+            child: Icon(icon, color: color, size: 10),
           ),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 9,
-              fontWeight: FontWeight.w500,
+          const SizedBox(width: 5),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: 8,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-          const Spacer(),
-          const Icon(Icons.chevron_right, color: Colors.white30, size: 12),
+          Text(
+            price,
+            style: TextStyle(
+              color: color,
+              fontSize: 7,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(width: 3),
+          const Icon(
+            Icons.chevron_right,
+            color: AppColors.textTertiary,
+            size: 10,
+          ),
         ],
       ),
     );
   }
 }
 
-class _MockDriverCard extends StatelessWidget {
-  final Color accent;
-  const _MockDriverCard({required this.accent});
-
+class _PMockDriverCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF0D1B3E),
-      padding: const EdgeInsets.all(8),
+      color: AppColors.surface,
       child: Column(
         children: [
-          // Map area
+          // Mini map
           Expanded(
             child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFE8F0F8),
-                borderRadius: BorderRadius.circular(8),
-              ),
+              color: const Color(0xFFE8F0F8),
               child: Stack(
                 children: [
-                  CustomPaint(painter: _MiniMapPainter(), size: Size.infinite),
-                  Center(
+                  CustomPaint(painter: _MapPainter(), size: Size.infinite),
+                  CustomPaint(painter: _RoutePainter(), size: Size.infinite),
+                  Positioned(
+                    top: 20,
+                    left: 30,
                     child: Container(
-                      width: 20,
-                      height: 20,
+                      width: 16,
+                      height: 16,
                       decoration: BoxDecoration(
                         color: AppColors.amber,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+                        border: Border.all(color: Colors.white, width: 1.5),
                       ),
                       child: const Icon(
                         Icons.two_wheeler,
                         color: Colors.white,
-                        size: 10,
+                        size: 8,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 20,
+                    right: 25,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 1.5),
                       ),
                     ),
                   ),
@@ -1122,26 +1065,22 @@ class _MockDriverCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 6),
-          // Driver info card
+          // Driver card
           Container(
+            color: Colors.white,
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(8),
-            ),
             child: Column(
               children: [
                 Row(
                   children: [
                     const CircleAvatar(
-                      radius: 14,
+                      radius: 12,
                       backgroundColor: AppColors.primary,
                       child: Text(
                         'PS',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 8,
+                          fontSize: 7,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -1163,13 +1102,13 @@ class _MockDriverCard extends StatelessWidget {
                             children: [
                               const Icon(
                                 Icons.star_rounded,
-                                size: 9,
+                                size: 8,
                                 color: AppColors.amber,
                               ),
                               const Text(
                                 ' 4.9 · ABC 1234',
                                 style: TextStyle(
-                                  fontSize: 8,
+                                  fontSize: 7,
                                   color: AppColors.textTertiary,
                                 ),
                               ),
@@ -1178,13 +1117,25 @@ class _MockDriverCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const Text(
-                      '₱65',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.primary,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const Text(
+                          '₱65',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const Text(
+                          'est. fare',
+                          style: TextStyle(
+                            fontSize: 6,
+                            color: AppColors.textTertiary,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -1216,20 +1167,15 @@ class _MockDriverCard extends StatelessWidget {
   }
 }
 
-class _MockTrackingScreen extends StatelessWidget {
-  final Color accent;
-  final AnimationController pulseCtrl;
+class _PMockTracking extends StatelessWidget {
+  final AnimationController pulse;
   final bool arrived;
-  const _MockTrackingScreen({
-    required this.accent,
-    required this.pulseCtrl,
-    required this.arrived,
-  });
+  const _PMockTracking({required this.pulse, required this.arrived});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF0D1B3E),
+      color: AppColors.surface,
       child: Column(
         children: [
           Expanded(
@@ -1237,18 +1183,14 @@ class _MockTrackingScreen extends StatelessWidget {
               color: const Color(0xFFE8F0F8),
               child: Stack(
                 children: [
-                  CustomPaint(painter: _MiniMapPainter(), size: Size.infinite),
-                  // Route line
-                  CustomPaint(
-                    painter: _MiniRoutePainter(),
-                    size: Size.infinite,
-                  ),
-                  // Driver marker
+                  CustomPaint(painter: _MapPainter(), size: Size.infinite),
+                  CustomPaint(painter: _RoutePainter(), size: Size.infinite),
+                  // Animated driver marker
                   AnimatedBuilder(
-                    animation: pulseCtrl,
+                    animation: pulse,
                     builder: (_, __) => Positioned(
-                      top: arrived ? 30 : 30 + 20 * (1 - pulseCtrl.value),
-                      left: arrived ? 40 : 40 + 10 * (1 - pulseCtrl.value),
+                      top: arrived ? 18 : 18 + 22 * (1 - pulse.value),
+                      left: arrived ? 28 : 28 + 12 * (1 - pulse.value),
                       child: Container(
                         width: 18,
                         height: 18,
@@ -1256,6 +1198,12 @@ class _MockTrackingScreen extends StatelessWidget {
                           color: AppColors.amber,
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.white, width: 1.5),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.amber.withValues(alpha: 0.4),
+                              blurRadius: 6,
+                            ),
+                          ],
                         ),
                         child: const Icon(
                           Icons.two_wheeler,
@@ -1266,22 +1214,22 @@ class _MockTrackingScreen extends StatelessWidget {
                     ),
                   ),
                   // Your location
-                  Positioned(
-                    bottom: 30,
-                    right: 30,
-                    child: AnimatedBuilder(
-                      animation: pulseCtrl,
-                      builder: (_, __) => Container(
-                        width: 14,
-                        height: 14,
+                  AnimatedBuilder(
+                    animation: pulse,
+                    builder: (_, __) => Positioned(
+                      bottom: 22,
+                      right: 22,
+                      child: Container(
+                        width: 12,
+                        height: 12,
                         decoration: BoxDecoration(
                           color: AppColors.primary,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
+                          border: Border.all(color: Colors.white, width: 1.5),
                           boxShadow: [
                             BoxShadow(
                               color: AppColors.primary.withValues(
-                                alpha: 0.4 * pulseCtrl.value,
+                                alpha: 0.4 * pulse.value,
                               ),
                               blurRadius: 8,
                               spreadRadius: 2,
@@ -1291,124 +1239,7 @@ class _MockTrackingScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(8),
-            color: Colors.white,
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 12,
-                  backgroundColor: AppColors.primary,
-                  child: Text(
-                    'PS',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 7,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Pedro Santos',
-                        style: TextStyle(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      Text(
-                        arrived ? 'Driver arrived!' : '3 mins away',
-                        style: TextStyle(
-                          fontSize: 8,
-                          color: arrived
-                              ? AppColors.success
-                              : AppColors.textTertiary,
-                          fontWeight: arrived
-                              ? FontWeight.w600
-                              : FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: arrived ? AppColors.success : AppColors.primary,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    arrived ? 'Arrived!' : '₱65',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MockOngoingScreen extends StatelessWidget {
-  final Color accent;
-  final AnimationController pulseCtrl;
-  const _MockOngoingScreen({required this.accent, required this.pulseCtrl});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF0D1B3E),
-      child: Column(
-        children: [
-          Expanded(
-            child: Container(
-              color: const Color(0xFFE8F0F8),
-              child: Stack(
-                children: [
-                  CustomPaint(painter: _MiniMapPainter(), size: Size.infinite),
-                  CustomPaint(
-                    painter: _MiniRoutePainter(),
-                    size: Size.infinite,
-                  ),
-                  AnimatedBuilder(
-                    animation: pulseCtrl,
-                    builder: (_, __) => Positioned(
-                      top: 20 + 30 * pulseCtrl.value,
-                      left: 20 + 20 * pulseCtrl.value,
-                      child: Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          color: AppColors.amber,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: const Icon(
-                          Icons.navigation,
-                          color: Colors.white,
-                          size: 10,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Status pill
                   Positioned(
                     top: 6,
                     left: 0,
@@ -1416,16 +1247,24 @@ class _MockOngoingScreen extends StatelessWidget {
                     child: Center(
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                          horizontal: 7,
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.success,
+                          color: arrived
+                              ? AppColors.success
+                              : AppColors.primary,
                           borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              blurRadius: 4,
+                            ),
+                          ],
                         ),
-                        child: const Text(
-                          'Ride Ongoing',
-                          style: TextStyle(
+                        child: Text(
+                          arrived ? '🎉 Driver Arrived!' : 'Driver On the Way',
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 7,
                             fontWeight: FontWeight.w700,
@@ -1439,8 +1278,155 @@ class _MockOngoingScreen extends StatelessWidget {
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(8),
             color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 10,
+                  backgroundColor: AppColors.primary,
+                  child: Text(
+                    'PS',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 6,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Pedro Santos',
+                        style: TextStyle(
+                          fontSize: 8,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      Text(
+                        arrived ? 'At your location' : '3 mins away · ABC 1234',
+                        style: TextStyle(
+                          fontSize: 7,
+                          color: arrived
+                              ? AppColors.success
+                              : AppColors.textTertiary,
+                          fontWeight: arrived
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  children: [
+                    _TinyBtn(icon: Icons.phone, color: AppColors.primary),
+                    const SizedBox(width: 4),
+                    _TinyBtn(icon: Icons.message, color: AppColors.primary),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PMockOngoing extends StatelessWidget {
+  final AnimationController pulse;
+  const _PMockOngoing({required this.pulse});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppColors.surface,
+      child: Column(
+        children: [
+          Expanded(
+            child: Container(
+              color: const Color(0xFFE8F0F8),
+              child: Stack(
+                children: [
+                  CustomPaint(painter: _MapPainter(), size: Size.infinite),
+                  CustomPaint(painter: _RoutePainter(), size: Size.infinite),
+                  AnimatedBuilder(
+                    animation: pulse,
+                    builder: (_, __) => Positioned(
+                      top: 15 + 30 * pulse.value,
+                      left: 15 + 20 * pulse.value,
+                      child: Container(
+                        width: 18,
+                        height: 18,
+                        decoration: BoxDecoration(
+                          color: AppColors.amber,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 1.5),
+                        ),
+                        child: const Icon(
+                          Icons.navigation,
+                          color: Colors.white,
+                          size: 9,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 6,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.success,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AnimatedBuilder(
+                              animation: pulse,
+                              builder: (_, __) => Container(
+                                width: 5,
+                                height: 5,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(
+                                    alpha: 0.5 + 0.5 * pulse.value,
+                                  ),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            const Text(
+                              'Ride Ongoing',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 7,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(7),
             child: Column(
               children: [
                 Row(
@@ -1454,16 +1440,9 @@ class _MockOngoingScreen extends StatelessWidget {
                       ),
                     ),
                     const Text(
-                      ' · ',
+                      ' · 3.2 km',
                       style: TextStyle(
-                        color: AppColors.textTertiary,
-                        fontSize: 9,
-                      ),
-                    ),
-                    const Text(
-                      '3.2 km',
-                      style: TextStyle(
-                        fontSize: 9,
+                        fontSize: 7,
                         color: AppColors.textTertiary,
                       ),
                     ),
@@ -1471,27 +1450,27 @@ class _MockOngoingScreen extends StatelessWidget {
                     const Icon(
                       Icons.share_outlined,
                       color: AppColors.primary,
-                      size: 12,
+                      size: 11,
                     ),
                   ],
                 ),
                 const SizedBox(height: 4),
                 Container(
                   width: double.infinity,
-                  height: 18,
+                  height: 16,
                   decoration: BoxDecoration(
-                    color: AppColors.amber.withValues(alpha: 0.15),
+                    color: AppColors.amber.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
-                      color: AppColors.amber.withValues(alpha: 0.4),
+                      color: AppColors.amber.withValues(alpha: 0.35),
                     ),
                   ),
                   child: const Center(
                     child: Text(
-                      'Share Location',
+                      'Share Live Location',
                       style: TextStyle(
                         color: AppColors.amber,
-                        fontSize: 7,
+                        fontSize: 6.5,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -1506,18 +1485,15 @@ class _MockOngoingScreen extends StatelessWidget {
   }
 }
 
-class _MockCompleteScreen extends StatelessWidget {
-  final Color accent;
-  const _MockCompleteScreen({required this.accent});
-
+class _PMockComplete extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF0D1B3E),
+      color: AppColors.surface,
       child: Column(
         children: [
           Container(
-            height: 60,
+            height: 55,
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -1525,15 +1501,16 @@ class _MockCompleteScreen extends StatelessWidget {
                 colors: [AppColors.success, Color(0xFF15803D)],
               ),
             ),
-            child: Column(
+            child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.check_circle_outline_rounded,
                   color: Colors.white,
-                  size: 22,
+                  size: 20,
                 ),
-                const Text(
+                SizedBox(height: 2),
+                Text(
                   'Trip Complete!',
                   style: TextStyle(
                     color: Colors.white,
@@ -1556,16 +1533,16 @@ class _MockCompleteScreen extends StatelessWidget {
                       5,
                       (i) => Icon(
                         Icons.star_rounded,
-                        color: i < 5 ? AppColors.amber : AppColors.border,
-                        size: 14,
+                        color: AppColors.amber,
+                        size: 16,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 5),
                   const Text(
                     '₱75.00',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: AppColors.textPrimary,
                     ),
@@ -1587,13 +1564,21 @@ class _MockCompleteScreen extends StatelessWidget {
                     ),
                     child: const Center(
                       child: Text(
-                        'Pay via GCash',
+                        'Pay via GCash  ✓',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 8,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Receipt saved',
+                    style: TextStyle(
+                      fontSize: 7,
+                      color: AppColors.textTertiary,
                     ),
                   ),
                 ],
@@ -1606,9 +1591,11 @@ class _MockCompleteScreen extends StatelessWidget {
   }
 }
 
-// ── Driver mock screens ───────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// DRIVER MOCK SCREENS
+// ─────────────────────────────────────────────────────────────────────────────
 
-class _MockDriverOffline extends StatelessWidget {
+class _DMockOffline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1616,22 +1603,21 @@ class _MockDriverOffline extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: Column(
         children: [
-          // Header
           Row(
             children: [
               const CircleAvatar(
-                radius: 12,
+                radius: 10,
                 backgroundColor: Color(0xFF1E3A5F),
                 child: Text(
                   'PS',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 7,
+                    fontSize: 6,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 5),
               const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1640,49 +1626,48 @@ class _MockDriverOffline extends StatelessWidget {
                       'Pedro Santos',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 9,
+                        fontSize: 8,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
                       '4.9 · Habal-habal',
-                      style: TextStyle(color: Colors.white38, fontSize: 7),
+                      style: TextStyle(color: Colors.white38, fontSize: 6),
                     ),
                   ],
                 ),
               ),
               const Icon(
                 Icons.settings_outlined,
-                color: Colors.white30,
-                size: 12,
+                color: Colors.white24,
+                size: 11,
               ),
             ],
           ),
           const SizedBox(height: 8),
-          // Offline toggle
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(9),
             decoration: BoxDecoration(
               color: AppColors.driverSurface,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(9),
               border: Border.all(color: AppColors.driverBorder),
             ),
             child: Row(
               children: [
                 Container(
-                  width: 28,
-                  height: 28,
+                  width: 26,
+                  height: 26,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.08),
+                    color: Colors.white.withValues(alpha: 0.07),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.wifi_off_rounded,
                     color: Colors.white38,
-                    size: 14,
+                    size: 13,
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 7),
                 const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1691,22 +1676,39 @@ class _MockDriverOffline extends StatelessWidget {
                         "You're Offline",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 9,
+                          fontSize: 8,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       Text(
                         'Tap to go online',
-                        style: TextStyle(color: Colors.white38, fontSize: 7),
+                        style: TextStyle(color: Colors.white38, fontSize: 6),
                       ),
                     ],
+                  ),
+                ),
+                Container(
+                  width: 28,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'OFF',
+                      style: TextStyle(
+                        color: Colors.white38,
+                        fontSize: 6,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 8),
-          // Earnings preview
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -1714,29 +1716,30 @@ class _MockDriverOffline extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: AppColors.driverBorder),
             ),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(
-                  Icons.monetization_on_outlined,
-                  color: AppColors.driverTextMuted,
-                  size: 12,
-                ),
-                const SizedBox(width: 5),
                 const Text(
-                  'Today',
+                  "TODAY'S EARNINGS",
                   style: TextStyle(
                     color: AppColors.driverTextMuted,
-                    fontSize: 8,
+                    fontSize: 6,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.5,
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(height: 4),
                 Text(
                   '₱847.50',
                   style: TextStyle(
                     color: AppColors.driverAccent,
-                    fontSize: 11,
+                    fontSize: 16,
                     fontWeight: FontWeight.w800,
                   ),
+                ),
+                const Text(
+                  '12 trips completed',
+                  style: TextStyle(color: Colors.white38, fontSize: 6),
                 ),
               ],
             ),
@@ -1747,9 +1750,9 @@ class _MockDriverOffline extends StatelessWidget {
   }
 }
 
-class _MockDriverOnline extends StatelessWidget {
-  final AnimationController pulseCtrl;
-  const _MockDriverOnline({required this.pulseCtrl});
+class _DMockOnline extends StatelessWidget {
+  final AnimationController pulse;
+  const _DMockOnline({required this.pulse});
 
   @override
   Widget build(BuildContext context) {
@@ -1761,31 +1764,31 @@ class _MockDriverOnline extends StatelessWidget {
           Row(
             children: [
               const CircleAvatar(
-                radius: 12,
+                radius: 10,
                 backgroundColor: Color(0xFF1E3A5F),
                 child: Text(
                   'PS',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 7,
+                    fontSize: 6,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 5),
               const Expanded(
                 child: Text(
                   'Pedro Santos',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 9,
+                    fontSize: 8,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
               Container(
-                width: 8,
-                height: 8,
+                width: 7,
+                height: 7,
                 decoration: const BoxDecoration(
                   color: AppColors.success,
                   shape: BoxShape.circle,
@@ -1794,47 +1797,52 @@ class _MockDriverOnline extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          // Online toggle with pulse
           AnimatedBuilder(
-            animation: pulseCtrl,
+            animation: pulse,
             builder: (_, __) => Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(9),
               decoration: BoxDecoration(
                 color: AppColors.success.withValues(
-                  alpha: 0.1 + 0.05 * pulseCtrl.value,
+                  alpha: 0.08 + 0.05 * pulse.value,
                 ),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(9),
                 border: Border.all(
                   color: AppColors.success.withValues(
-                    alpha: 0.3 + 0.2 * pulseCtrl.value,
+                    alpha: 0.25 + 0.2 * pulse.value,
                   ),
                 ),
               ),
               child: Row(
                 children: [
-                  Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: AppColors.success,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Container(
+                        width: 26 + 8 * pulse.value,
+                        height: 26 + 8 * pulse.value,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
                           color: AppColors.success.withValues(
-                            alpha: 0.4 * pulseCtrl.value,
+                            alpha: 0.15 * (1 - pulse.value),
                           ),
-                          blurRadius: 8,
-                          spreadRadius: 2,
                         ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.wifi_rounded,
-                      color: Colors.white,
-                      size: 14,
-                    ),
+                      ),
+                      Container(
+                        width: 26,
+                        height: 26,
+                        decoration: const BoxDecoration(
+                          color: AppColors.success,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.wifi_rounded,
+                          color: Colors.white,
+                          size: 13,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 7),
                   const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1843,13 +1851,13 @@ class _MockDriverOnline extends StatelessWidget {
                           "You're Online",
                           style: TextStyle(
                             color: AppColors.success,
-                            fontSize: 9,
+                            fontSize: 8,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                         Text(
                           'Waiting for requests...',
-                          style: TextStyle(color: Colors.white38, fontSize: 7),
+                          style: TextStyle(color: Colors.white38, fontSize: 6),
                         ),
                       ],
                     ),
@@ -1860,20 +1868,20 @@ class _MockDriverOnline extends StatelessWidget {
           ),
           const Spacer(),
           const Text(
-            'Waiting for a ride request...',
-            style: TextStyle(color: Colors.white24, fontSize: 8),
+            'Looking for nearby passengers...',
+            style: TextStyle(color: Colors.white24, fontSize: 7),
             textAlign: TextAlign.center,
           ),
+          const Spacer(),
         ],
       ),
     );
   }
 }
 
-class _MockRideRequest extends StatelessWidget {
-  final Color accent;
-  final AnimationController pulseCtrl;
-  const _MockRideRequest({required this.accent, required this.pulseCtrl});
+class _DMockRequest extends StatelessWidget {
+  final AnimationController pulse;
+  const _DMockRequest({required this.pulse});
 
   @override
   Widget build(BuildContext context) {
@@ -1882,26 +1890,26 @@ class _MockRideRequest extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: Column(
         children: [
-          // Timer ring
+          // Countdown ring
           AnimatedBuilder(
-            animation: pulseCtrl,
+            animation: pulse,
             builder: (_, __) => Center(
               child: SizedBox(
-                width: 44,
-                height: 44,
+                width: 42,
+                height: 42,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     CircularProgressIndicator(
-                      value: 1 - pulseCtrl.value * 0.3,
+                      value: 0.7 - 0.2 * pulse.value,
                       strokeWidth: 3,
-                      backgroundColor: Colors.white.withValues(alpha: 0.1),
+                      backgroundColor: Colors.white.withValues(alpha: 0.08),
                       valueColor: AlwaysStoppedAnimation(
                         AppColors.driverAccent,
                       ),
                     ),
-                    const Text(
-                      '28',
+                    Text(
+                      '21',
                       style: TextStyle(
                         color: AppColors.driverAccent,
                         fontSize: 12,
@@ -1924,7 +1932,7 @@ class _MockRideRequest extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(7),
             decoration: BoxDecoration(
               color: AppColors.driverSurface,
               borderRadius: BorderRadius.circular(8),
@@ -1935,40 +1943,64 @@ class _MockRideRequest extends StatelessWidget {
                 Row(
                   children: [
                     const CircleAvatar(
-                      radius: 10,
+                      radius: 9,
                       backgroundColor: AppColors.primary,
                       child: Text(
-                        'AR',
+                        'JD',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 6,
+                          fontSize: 5,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
                     const SizedBox(width: 5),
                     const Expanded(
-                      child: Text(
-                        'Ana Reyes',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Juan Dela Cruz',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.star_rounded,
+                                size: 7,
+                                color: AppColors.amber,
+                              ),
+                              Text(
+                                ' 4.8',
+                                style: TextStyle(
+                                  color: Colors.white54,
+                                  fontSize: 6,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                     Text(
                       '₱65',
                       style: TextStyle(
                         color: AppColors.driverAccent,
-                        fontSize: 13,
+                        fontSize: 14,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 5),
-                _MiniRoute(pickup: 'SM City Cebu', dropoff: 'Ayala Center'),
+                _DMiniRoute(
+                  pickup: 'SM City Cebu',
+                  dropoff: 'Ayala Center Cebu',
+                ),
               ],
             ),
           ),
@@ -2005,7 +2037,7 @@ class _MockRideRequest extends StatelessWidget {
                   ),
                   child: const Center(
                     child: Text(
-                      'Accept Ride',
+                      '✓ Accept Ride',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 7,
@@ -2023,15 +2055,10 @@ class _MockRideRequest extends StatelessWidget {
   }
 }
 
-class _MockDriverNavigation extends StatelessWidget {
-  final Color accent;
-  final AnimationController pulseCtrl;
+class _DMockNav extends StatelessWidget {
+  final AnimationController pulse;
   final bool arrived;
-  const _MockDriverNavigation({
-    required this.accent,
-    required this.pulseCtrl,
-    required this.arrived,
-  });
+  const _DMockNav({required this.pulse, required this.arrived});
 
   @override
   Widget build(BuildContext context) {
@@ -2044,28 +2071,25 @@ class _MockDriverNavigation extends StatelessWidget {
               color: const Color(0xFFE8F0F8),
               child: Stack(
                 children: [
-                  CustomPaint(painter: _MiniMapPainter(), size: Size.infinite),
-                  CustomPaint(
-                    painter: _MiniRoutePainter(),
-                    size: Size.infinite,
-                  ),
+                  CustomPaint(painter: _MapPainter(), size: Size.infinite),
+                  CustomPaint(painter: _RoutePainter(), size: Size.infinite),
                   AnimatedBuilder(
-                    animation: pulseCtrl,
+                    animation: pulse,
                     builder: (_, __) => Positioned(
-                      top: arrived ? 25 : 25 + 25 * (1 - pulseCtrl.value),
-                      left: arrived ? 35 : 35 + 15 * (1 - pulseCtrl.value),
+                      top: arrived ? 18 : 18 + 22 * (1 - pulse.value),
+                      left: arrived ? 28 : 28 + 12 * (1 - pulse.value),
                       child: Container(
-                        width: 20,
-                        height: 20,
+                        width: 18,
+                        height: 18,
                         decoration: BoxDecoration(
                           color: AppColors.driverAccent,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
+                          border: Border.all(color: Colors.white, width: 1.5),
                         ),
                         child: const Icon(
                           Icons.two_wheeler,
                           color: Colors.white,
-                          size: 10,
+                          size: 9,
                         ),
                       ),
                     ),
@@ -2077,7 +2101,7 @@ class _MockDriverNavigation extends StatelessWidget {
                     child: Center(
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                          horizontal: 7,
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
@@ -2087,7 +2111,7 @@ class _MockDriverNavigation extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          arrived ? 'At Pickup' : 'Heading to Pickup',
+                          arrived ? 'At Pickup Point' : 'Heading to Pickup',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 7,
@@ -2102,12 +2126,15 @@ class _MockDriverNavigation extends StatelessWidget {
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(8),
             color: AppColors.driverBg,
+            padding: const EdgeInsets.all(7),
             child: Column(
               children: [
-                _MiniRoute(pickup: 'SM City Cebu', dropoff: 'Ayala Center'),
-                const SizedBox(height: 6),
+                _DMiniRoute(
+                  pickup: 'SM City Cebu',
+                  dropoff: 'Ayala Center Cebu',
+                ),
+                const SizedBox(height: 5),
                 Container(
                   width: double.infinity,
                   height: 20,
@@ -2117,7 +2144,7 @@ class _MockDriverNavigation extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      arrived ? 'Passenger Picked Up' : 'Navigating...',
+                      arrived ? '✓ Passenger Picked Up' : 'Navigating...',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 7,
@@ -2135,10 +2162,9 @@ class _MockDriverNavigation extends StatelessWidget {
   }
 }
 
-class _MockDriverTrip extends StatelessWidget {
-  final Color accent;
-  final AnimationController pulseCtrl;
-  const _MockDriverTrip({required this.accent, required this.pulseCtrl});
+class _DMockTrip extends StatelessWidget {
+  final AnimationController pulse;
+  const _DMockTrip({required this.pulse});
 
   @override
   Widget build(BuildContext context) {
@@ -2151,28 +2177,25 @@ class _MockDriverTrip extends StatelessWidget {
               color: const Color(0xFFE8F0F8),
               child: Stack(
                 children: [
-                  CustomPaint(painter: _MiniMapPainter(), size: Size.infinite),
-                  CustomPaint(
-                    painter: _MiniRoutePainter(),
-                    size: Size.infinite,
-                  ),
+                  CustomPaint(painter: _MapPainter(), size: Size.infinite),
+                  CustomPaint(painter: _RoutePainter(), size: Size.infinite),
                   AnimatedBuilder(
-                    animation: pulseCtrl,
+                    animation: pulse,
                     builder: (_, __) => Positioned(
-                      top: 15 + 35 * pulseCtrl.value,
-                      left: 15 + 25 * pulseCtrl.value,
+                      top: 12 + 35 * pulse.value,
+                      left: 12 + 22 * pulse.value,
                       child: Container(
-                        width: 20,
-                        height: 20,
+                        width: 18,
+                        height: 18,
                         decoration: BoxDecoration(
                           color: AppColors.driverAccent,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
+                          border: Border.all(color: Colors.white, width: 1.5),
                         ),
                         child: const Icon(
                           Icons.navigation,
                           color: Colors.white,
-                          size: 10,
+                          size: 9,
                         ),
                       ),
                     ),
@@ -2184,7 +2207,7 @@ class _MockDriverTrip extends StatelessWidget {
                     child: Center(
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                          horizontal: 7,
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
@@ -2207,8 +2230,8 @@ class _MockDriverTrip extends StatelessWidget {
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(8),
             color: AppColors.driverBg,
+            padding: const EdgeInsets.all(7),
             child: Row(
               children: [
                 const Expanded(
@@ -2216,16 +2239,16 @@ class _MockDriverTrip extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Ana Reyes',
+                        'Juan Dela Cruz',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 9,
+                          fontSize: 8,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
                         '→ Ayala Center Cebu',
-                        style: TextStyle(color: Colors.white38, fontSize: 7),
+                        style: TextStyle(color: Colors.white38, fontSize: 6),
                       ),
                     ],
                   ),
@@ -2243,7 +2266,7 @@ class _MockDriverTrip extends StatelessWidget {
                     ),
                     const Text(
                       '~8 mins',
-                      style: TextStyle(color: Colors.white38, fontSize: 7),
+                      style: TextStyle(color: Colors.white38, fontSize: 6),
                     ),
                   ],
                 ),
@@ -2256,10 +2279,7 @@ class _MockDriverTrip extends StatelessWidget {
   }
 }
 
-class _MockDriverEarnings extends StatelessWidget {
-  final Color accent;
-  const _MockDriverEarnings({required this.accent});
-
+class _DMockEarnings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -2268,15 +2288,15 @@ class _MockDriverEarnings extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(9),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  AppColors.driverAccent.withValues(alpha: 0.2),
-                  AppColors.driverAccent.withValues(alpha: 0.05),
+                  AppColors.driverAccent.withValues(alpha: 0.18),
+                  AppColors.driverAccent.withValues(alpha: 0.04),
                 ],
               ),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(9),
               border: Border.all(
                 color: AppColors.driverAccent.withValues(alpha: 0.3),
               ),
@@ -2285,10 +2305,12 @@ class _MockDriverEarnings extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Today\'s Earnings',
+                  "TODAY'S EARNINGS",
                   style: TextStyle(
                     color: AppColors.driverTextMuted,
-                    fontSize: 7,
+                    fontSize: 6,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.5,
                   ),
                 ),
                 const SizedBox(height: 3),
@@ -2302,7 +2324,7 @@ class _MockDriverEarnings extends StatelessWidget {
                 ),
                 const Text(
                   '13 trips completed',
-                  style: TextStyle(color: Colors.white38, fontSize: 7),
+                  style: TextStyle(color: Colors.white38, fontSize: 6),
                 ),
               ],
             ),
@@ -2310,10 +2332,10 @@ class _MockDriverEarnings extends StatelessWidget {
           const SizedBox(height: 6),
           // Mini bar chart
           SizedBox(
-            height: 40,
+            height: 36,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: [0.5, 0.7, 0.4, 0.8, 0.9, 1.0, 0.95]
+              children: [0.45, 0.6, 0.38, 0.72, 0.85, 0.95, 1.0]
                   .asMap()
                   .entries
                   .map((e) {
@@ -2322,11 +2344,11 @@ class _MockDriverEarnings extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 1.5),
                         child: Container(
-                          height: 40 * e.value,
+                          height: 36 * e.value,
                           decoration: BoxDecoration(
                             color: isLast
                                 ? AppColors.driverAccent
-                                : AppColors.primary.withValues(alpha: 0.5),
+                                : AppColors.primary.withValues(alpha: 0.45),
                             borderRadius: BorderRadius.circular(3),
                           ),
                         ),
@@ -2338,10 +2360,10 @@ class _MockDriverEarnings extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(7),
             decoration: BoxDecoration(
               color: AppColors.driverSurface,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(7),
               border: Border.all(color: AppColors.driverBorder),
             ),
             child: Row(
@@ -2349,7 +2371,7 @@ class _MockDriverEarnings extends StatelessWidget {
                 const Icon(
                   Icons.check_circle_outline,
                   color: AppColors.success,
-                  size: 12,
+                  size: 11,
                 ),
                 const SizedBox(width: 5),
                 const Expanded(
@@ -2357,7 +2379,7 @@ class _MockDriverEarnings extends StatelessWidget {
                     'Trip #13 completed',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 8,
+                      fontSize: 7,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -2366,7 +2388,7 @@ class _MockDriverEarnings extends StatelessWidget {
                   '+₱65',
                   style: TextStyle(
                     color: AppColors.driverAccent,
-                    fontSize: 10,
+                    fontSize: 9,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -2379,12 +2401,13 @@ class _MockDriverEarnings extends StatelessWidget {
   }
 }
 
-// ── Shared mini widgets ───────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// SHARED MINI WIDGETS
+// ─────────────────────────────────────────────────────────────────────────────
 
-class _MiniRoute extends StatelessWidget {
-  final String pickup;
-  final String dropoff;
-  const _MiniRoute({required this.pickup, required this.dropoff});
+class _DMiniRoute extends StatelessWidget {
+  final String pickup, dropoff;
+  const _DMiniRoute({required this.pickup, required this.dropoff});
 
   @override
   Widget build(BuildContext context) {
@@ -2400,7 +2423,7 @@ class _MiniRoute extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(width: 5),
+            const SizedBox(width: 4),
             Expanded(
               child: Text(
                 pickup,
@@ -2412,7 +2435,7 @@ class _MiniRoute extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(left: 2.5),
-          child: Container(width: 1, height: 6, color: Colors.white24),
+          child: Container(width: 1, height: 5, color: Colors.white24),
         ),
         Row(
           children: [
@@ -2424,7 +2447,7 @@ class _MiniRoute extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(width: 5),
+            const SizedBox(width: 4),
             Expanded(
               child: Text(
                 dropoff,
@@ -2439,31 +2462,85 @@ class _MiniRoute extends StatelessWidget {
   }
 }
 
-class _MiniMapPainter extends CustomPainter {
+class _TinyBtn extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  const _TinyBtn({required this.icon, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 22,
+      height: 22,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(icon, color: color, size: 11),
+    );
+  }
+}
+
+class _CircleBtn extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  const _CircleBtn({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 34,
+        height: 34,
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.07),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: Colors.white54, size: 17),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MAP PAINTERS
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _MapPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final road = Paint()..color = Colors.white.withValues(alpha: 0.85);
+    final road = Paint()..color = Colors.white.withValues(alpha: 0.88);
     final minor = Paint()
       ..color = Colors.white.withValues(alpha: 0.5)
-      ..strokeWidth = 2
+      ..strokeWidth = 1.5
       ..style = PaintingStyle.stroke;
-    canvas.drawRect(Rect.fromLTWH(0, size.height * 0.35, size.width, 5), road);
-    canvas.drawRect(Rect.fromLTWH(0, size.height * 0.7, size.width, 7), road);
-    canvas.drawRect(Rect.fromLTWH(size.width * 0.45, 0, 5, size.height), road);
+    canvas.drawRect(Rect.fromLTWH(0, size.height * 0.38, size.width, 5), road);
+    canvas.drawRect(Rect.fromLTWH(0, size.height * 0.68, size.width, 6), road);
+    canvas.drawRect(Rect.fromLTWH(size.width * 0.42, 0, 5, size.height), road);
+    canvas.drawRect(Rect.fromLTWH(size.width * 0.72, 0, 6, size.height), road);
     canvas.drawLine(
-      Offset(0, size.height * 0.15),
-      Offset(size.width, size.height * 0.15),
+      Offset(0, size.height * 0.18),
+      Offset(size.width, size.height * 0.18),
       minor,
     );
     canvas.drawLine(
-      Offset(size.width * 0.2, 0),
-      Offset(size.width * 0.2, size.height),
+      Offset(size.width * 0.22, 0),
+      Offset(size.width * 0.22, size.height),
       minor,
     );
-    canvas.drawLine(
-      Offset(size.width * 0.75, 0),
-      Offset(size.width * 0.75, size.height),
-      minor,
+    // Green block
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          size.width * 0.24,
+          size.height * 0.2,
+          size.width * 0.16,
+          size.height * 0.16,
+        ),
+        const Radius.circular(3),
+      ),
+      Paint()..color = const Color(0xFFD1E8D0).withValues(alpha: 0.5),
     );
   }
 
@@ -2471,7 +2548,7 @@ class _MiniMapPainter extends CustomPainter {
   bool shouldRepaint(_) => false;
 }
 
-class _MiniRoutePainter extends CustomPainter {
+class _RoutePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
@@ -2480,12 +2557,12 @@ class _MiniRoutePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
     final path = Path()
-      ..moveTo(size.width * 0.25, size.height * 0.8)
+      ..moveTo(size.width * 0.22, size.height * 0.82)
       ..quadraticBezierTo(
-        size.width * 0.4,
-        size.height * 0.5,
-        size.width * 0.65,
-        size.height * 0.2,
+        size.width * 0.38,
+        size.height * 0.52,
+        size.width * 0.62,
+        size.height * 0.18,
       );
     canvas.drawPath(path, paint);
   }
@@ -2494,227 +2571,232 @@ class _MiniRoutePainter extends CustomPainter {
   bool shouldRepaint(_) => false;
 }
 
-// ── Nav Controls ──────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// NAVIGATION CONTROLS
+// ─────────────────────────────────────────────────────────────────────────────
 
-class _NavControls extends StatelessWidget {
+class _NavRow extends StatelessWidget {
+  final int step, total;
   final VoidCallback? onPrev;
-  final VoidCallback? onNext;
-  final VoidCallback? onRestart;
-  final VoidCallback onLaunchPassenger;
-  final VoidCallback onLaunchDriver;
-  final int currentStep;
-  final int totalSteps;
+  final VoidCallback onNext;
 
-  const _NavControls({
+  const _NavRow({
+    required this.step,
+    required this.total,
     required this.onPrev,
     required this.onNext,
-    required this.onRestart,
-    required this.onLaunchPassenger,
-    required this.onLaunchDriver,
-    required this.currentStep,
-    required this.totalSteps,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isLast = onRestart != null;
-
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Column(
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      child: Row(
         children: [
-          if (isLast) ...[
-            // Launch buttons on last step
-            Row(
-              children: [
-                Expanded(
-                  child: _LaunchBtn(
-                    label: 'Try Passenger',
-                    icon: Icons.person_rounded,
-                    color: AppColors.primary,
-                    onTap: onLaunchPassenger,
-                  ),
+          // Prev
+          GestureDetector(
+            onTap: onPrev,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: onPrev != null
+                    ? Colors.white.withValues(alpha: 0.07)
+                    : Colors.transparent,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: onPrev != null
+                      ? Colors.white.withValues(alpha: 0.12)
+                      : Colors.transparent,
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _LaunchBtn(
-                    label: 'Try Driver',
-                    icon: Icons.two_wheeler,
-                    color: AppColors.driverAccent,
-                    textColor: AppColors.driverBg,
-                    onTap: onLaunchDriver,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            GestureDetector(
-              onTap: onRestart,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.replay_rounded,
-                    color: Colors.white38,
-                    size: 14,
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    'Restart demo',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.4),
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
+              ),
+              child: Icon(
+                Icons.arrow_back_rounded,
+                color: onPrev != null ? Colors.white60 : Colors.transparent,
+                size: 18,
               ),
             ),
-          ] else ...[
-            // Prev / Next navigation
-            Row(
+          ),
+
+          const SizedBox(width: 12),
+
+          // Progress
+          Expanded(
+            child: Column(
               children: [
-                // Prev
-                GestureDetector(
-                  onTap: onPrev,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: onPrev != null
-                          ? Colors.white.withValues(alpha: 0.08)
-                          : Colors.white.withValues(alpha: 0.03),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: onPrev != null
-                            ? Colors.white.withValues(alpha: 0.15)
-                            : Colors.white.withValues(alpha: 0.05),
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.arrow_back_rounded,
-                      color: onPrev != null ? Colors.white70 : Colors.white24,
-                      size: 18,
-                    ),
+                Text(
+                  '${step + 1} of $total',
+                  style: const TextStyle(
+                    color: Colors.white38,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
                   ),
+                  textAlign: TextAlign.center,
                 ),
-
-                const SizedBox(width: 12),
-
-                // Progress text
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                        '${currentStep + 1} / $totalSteps',
-                        style: const TextStyle(
-                          color: Colors.white54,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 4),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(2),
-                        child: LinearProgressIndicator(
-                          value: (currentStep + 1) / totalSteps,
-                          backgroundColor: Colors.white.withValues(alpha: 0.08),
-                          valueColor: const AlwaysStoppedAnimation(
-                            AppColors.primary,
-                          ),
-                          minHeight: 3,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(width: 12),
-
-                // Next
-                GestureDetector(
-                  onTap: onNext,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: onNext != null
-                          ? AppColors.primary.withValues(alpha: 0.25)
-                          : Colors.white.withValues(alpha: 0.03),
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: onNext != null
-                            ? AppColors.primary.withValues(alpha: 0.5)
-                            : Colors.white.withValues(alpha: 0.05),
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.arrow_forward_rounded,
-                      color: onNext != null
-                          ? AppColors.primaryLight
-                          : Colors.white24,
-                      size: 18,
-                    ),
+                const SizedBox(height: 5),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(2),
+                  child: LinearProgressIndicator(
+                    value: (step + 1) / total,
+                    backgroundColor: Colors.white.withValues(alpha: 0.07),
+                    valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+                    minHeight: 3,
                   ),
                 ),
               ],
             ),
-          ],
+          ),
+
+          const SizedBox(width: 12),
+
+          // Next
+          GestureDetector(
+            onTap: onNext,
+            child: Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: AppColors.primary.withValues(alpha: 0.45),
+                ),
+              ),
+              child: const Icon(
+                Icons.arrow_forward_rounded,
+                color: AppColors.primaryLight,
+                size: 18,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-class _LaunchBtn extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color color;
-  final Color textColor;
-  final VoidCallback onTap;
+class _LaunchRow extends StatelessWidget {
+  final VoidCallback onPassenger;
+  final VoidCallback onDriver;
+  final VoidCallback onRestart;
 
-  const _LaunchBtn({
-    required this.label,
-    required this.icon,
-    required this.color,
-    this.textColor = Colors.white,
-    required this.onTap,
+  const _LaunchRow({
+    required this.onPassenger,
+    required this.onDriver,
+    required this.onRestart,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 46,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.35),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: textColor, size: 16),
-            const SizedBox(width: 7),
-            Text(
-              label,
-              style: TextStyle(
-                color: textColor,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: onPassenger,
+                  child: Container(
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.35),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.person_rounded,
+                          color: Colors.white,
+                          size: 15,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          'Try Passenger',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: GestureDetector(
+                  onTap: onDriver,
+                  child: Container(
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: AppColors.driverAccent,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.driverAccent.withValues(alpha: 0.35),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.two_wheeler,
+                          color: AppColors.driverBg,
+                          size: 15,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          'Try Driver',
+                          style: TextStyle(
+                            color: AppColors.driverBg,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          GestureDetector(
+            onTap: onRestart,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.replay_rounded,
+                  color: Colors.white30,
+                  size: 13,
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  'Restart demo',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.35),
+                    fontSize: 11,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
