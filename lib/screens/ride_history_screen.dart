@@ -137,7 +137,7 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_selected != null)
+    if (_selected != null) {
       return _ReceiptView(
         ride: _selected!,
         label: _label(_selected!.vehicleType),
@@ -149,6 +149,7 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
           });
         },
       );
+    }
 
     final completed = _rides.where((r) => r.status == 'completed').toList();
     final totalSpent = completed.fold<int>(0, (s, r) => s + r.fare);

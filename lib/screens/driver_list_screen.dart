@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
+import '../utils/responsive.dart';
 import '../data/mock_drivers.dart';
 import '../widgets/toast.dart';
 
@@ -74,7 +75,7 @@ class _DriverListScreenState extends State<DriverListScreen>
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -153,7 +154,7 @@ class _DriverListScreenState extends State<DriverListScreen>
   }
 }
 
-// ── Map View ──────────────────────────────────────────────────────────────────
+// â”€â”€ Map View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _MapView extends StatelessWidget {
   final String rideType;
@@ -206,7 +207,7 @@ class _MapView extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(color: AppColors.primary, width: 3),
               boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 8),
+                BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 8),
               ],
             ),
             child: const Center(
@@ -241,7 +242,7 @@ class _MapView extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: Colors.black.withValues(alpha: 0.2),
                       blurRadius: 8,
                     ),
                   ],
@@ -267,7 +268,7 @@ class _MapView extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 8),
+                BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8),
               ],
             ),
             child: const Icon(Icons.navigation, color: AppColors.primary),
@@ -335,7 +336,7 @@ class _MapView extends StatelessWidget {
                                   style: const TextStyle(fontSize: 13),
                                 ),
                                 const Text(
-                                  ' • ',
+                                  ' â€¢ ',
                                   style: TextStyle(
                                     color: AppColors.mutedForeground,
                                   ),
@@ -363,7 +364,7 @@ class _MapView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '₱${selected.fare}',
+                            'â‚±${selected.fare}',
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -445,7 +446,7 @@ class _MapView extends StatelessWidget {
   }
 }
 
-// ── List View ─────────────────────────────────────────────────────────────────
+// â”€â”€ List View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class _ListView extends StatelessWidget {
   final String rideType;
@@ -483,7 +484,7 @@ class _ListView extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.06),
+                          color: Colors.black.withValues(alpha: 0.06),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -532,7 +533,7 @@ class _ListView extends StatelessWidget {
                                         style: const TextStyle(fontSize: 13),
                                       ),
                                       const Text(
-                                        ' • ',
+                                        ' â€¢ ',
                                         style: TextStyle(
                                           color: AppColors.mutedForeground,
                                         ),
@@ -560,7 +561,7 @@ class _ListView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  '₱${driver.fare}',
+                                  'â‚±${driver.fare}',
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -586,7 +587,7 @@ class _ListView extends StatelessWidget {
                               vertical: 8,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.muted.withOpacity(0.5),
+                              color: AppColors.muted.withValues(alpha: 0.5),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
@@ -600,7 +601,7 @@ class _ListView extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  ' • $occupiedSeats/$totalSeats occupied',
+                                  ' â€¢ $occupiedSeats/$totalSeats occupied',
                                   style: const TextStyle(
                                     fontSize: 13,
                                     color: AppColors.mutedForeground,
@@ -676,9 +677,9 @@ class _ListView extends StatelessWidget {
 class _MapPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final roadPaint = Paint()..color = Colors.white.withOpacity(0.8);
+    final roadPaint = Paint()..color = Colors.white.withValues(alpha: 0.8);
     final smallRoadPaint = Paint()
-      ..color = Colors.white.withOpacity(0.6)
+      ..color = Colors.white.withValues(alpha: 0.6)
       ..strokeWidth = 3;
 
     // Horizontal roads

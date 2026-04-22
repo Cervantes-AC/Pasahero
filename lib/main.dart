@@ -22,7 +22,7 @@ class PasaheroApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Pasahero',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.passenger,
+      theme: AppTheme.light,
       routerConfig: appRouter,
     );
   }

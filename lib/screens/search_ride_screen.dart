@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
+import '../utils/responsive.dart';
+import '../widgets/ph_widgets.dart';
 
 class SearchRideScreen extends StatefulWidget {
   final String rideType;
@@ -12,30 +14,43 @@ class SearchRideScreen extends StatefulWidget {
 }
 
 class _SearchRideScreenState extends State<SearchRideScreen> {
-  final _pickupController = TextEditingController(
-    text: 'Cebu City, Philippines',
-  );
-  final _destinationController = TextEditingController();
+  final _pickupCtrl = TextEditingController(text: 'Cebu City, Philippines');
+  final _destCtrl = TextEditingController();
 
-  void _handleSearch() {
-    if (_destinationController.text.isNotEmpty) {
+  @override
+  void dispose() {
+    _pickupCtrl.dispose();
+    _destCtrl.dispose();
+    super.dispose();
+  }
+
+  void _search() {
+    if (_destCtrl.text.isNotEmpty) {
       context.go(
-        '/drivers?type=${widget.rideType}&from=${_pickupController.text}&to=${_destinationController.text}',
+        '/drivers?type=${widget.rideType}&from=${_pickupCtrl.text}&to=${_destCtrl.text}',
       );
     }
   }
 
-  @override
-  void dispose() {
-    _pickupController.dispose();
-    _destinationController.dispose();
-    super.dispose();
+  String get _rideLabel {
+    switch (widget.rideType) {
+      case 'habal-habal':
+        return 'Habal-habal';
+      case 'motorela':
+        return 'Motorela';
+      case 'bao-bao':
+        return 'Bao-bao';
+      default:
+        return widget.rideType;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final hp = Responsive.hPad(context);
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.surface,
       body: Column(
         children: [
           // Header
@@ -49,31 +64,21 @@ class _SearchRideScreenState extends State<SearchRideScreen> {
             ),
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                padding: EdgeInsets.fromLTRB(hp, 16, hp, 20),
                 child: Row(
                   children: [
-                    GestureDetector(
+                    PhIconButton(
+                      icon: Icons.arrow_back,
                       onTap: () => context.go('/home'),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
+                      color: Colors.white.withValues(alpha: 0.15),
+                      iconColor: Colors.white,
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 14),
                     Text(
-                      widget.rideType,
+                      _rideLabel,
                       style: const TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
                         color: Colors.white,
                       ),
                     ),
@@ -84,14 +89,17 @@ class _SearchRideScreenState extends State<SearchRideScreen> {
           ),
 
           // Map placeholder
-          Container(
-            height: 280,
-            color: const Color(0xFFD4CFE8),
+          SizedBox(
+            height: Responsive.isWide(context) ? 320 : 240,
             child: Stack(
               children: [
-                // Grid pattern
-                CustomPaint(painter: _GridPainter(), size: Size.infinite),
-                // Center marker
+                Container(
+                  color: const Color(0xFFE8F0F8),
+                  child: CustomPaint(
+                    painter: _MapGridPainter(),
+                    size: Size.infinite,
+                  ),
+                ),
                 Center(
                   child:
                       Container(
@@ -102,8 +110,11 @@ class _SearchRideScreenState extends State<SearchRideScreen> {
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  blurRadius: 8,
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                  blurRadius: 12,
+                                  spreadRadius: 2,
                                 ),
                               ],
                             ),
@@ -126,15 +137,14 @@ class _SearchRideScreenState extends State<SearchRideScreen> {
                             duration: 1000.ms,
                           ),
                 ),
-                // Zoom controls
                 Positioned(
                   right: 16,
                   top: 16,
                   child: Column(
                     children: [
-                      _MapButton(label: '+'),
+                      _MapBtn(label: '+'),
                       const SizedBox(height: 8),
-                      _MapButton(label: '−'),
+                      _MapBtn(label: 'âˆ’'),
                     ],
                   ),
                 ),
@@ -142,204 +152,198 @@ class _SearchRideScreenState extends State<SearchRideScreen> {
             ),
           ),
 
-          // Location inputs
+          // Form
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.08),
-                              blurRadius: 16,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Pickup Location',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: AppColors.mutedForeground,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            _LocationField(
-                              controller: _pickupController,
-                              icon: Icons.place,
-                              iconColor: AppColors.primary,
-                              hint: 'Enter pickup location',
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                const Expanded(child: Divider()),
-                                Container(
-                                  width: 32,
-                                  height: 32,
-                                  margin: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: AppColors.yellow,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: const Center(
-                                    child: CircleAvatar(
-                                      radius: 4,
-                                      backgroundColor: AppColors.yellow,
-                                    ),
-                                  ),
-                                ),
-                                const Expanded(child: Divider()),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              'Drop-off Location',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: AppColors.mutedForeground,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            _LocationField(
-                              controller: _destinationController,
-                              icon: Icons.search,
-                              iconColor: AppColors.mutedForeground,
-                              hint: 'Where do you want to go?',
-                            ),
-                            const SizedBox(height: 16),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 48,
-                              child: ElevatedButton(
-                                onPressed:
-                                    _destinationController.text.isNotEmpty
-                                    ? _handleSearch
-                                    : null,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.red,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Search Drivers',
-                                  style: TextStyle(fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                      .animate()
-                      .fadeIn(duration: 400.ms)
-                      .slideY(begin: 0.3, end: 0),
-                  const SizedBox(height: 24),
-                  // Saved locations
-                  const Text(
-                    'Saved Locations',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.mutedForeground,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      _SavedChip(
-                        icon: Icons.home,
-                        label: 'Home',
-                        color: AppColors.primary,
-                        onTap: () => setState(
-                          () => _destinationController.text =
-                              '123 Mabolo St, Cebu City',
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      _SavedChip(
-                        icon: Icons.work,
-                        label: 'Work',
-                        color: AppColors.red,
-                        onTap: () => setState(
-                          () => _destinationController.text =
-                              'IT Park, Lahug, Cebu City',
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      _SavedChip(
-                        icon: Icons.star,
-                        label: 'Favorite',
-                        color: AppColors.yellow,
-                        onTap: () => setState(
-                          () => _destinationController.text =
-                              'South Road Properties, Cebu City',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Recent Destinations',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.mutedForeground,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  ...['SM City Cebu', 'Ayala Center Cebu', 'IT Park'].map(
-                    (place) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: GestureDetector(
-                        onTap: () =>
-                            setState(() => _destinationController.text = place),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
+              padding: EdgeInsets.all(hp),
+              child: ResponsiveContainer(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: AppColors.border),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.04),
-                                blurRadius: 4,
+                                color: Colors.black.withValues(alpha: 0.05),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
                               ),
                             ],
                           ),
-                          child: Row(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
                             children: [
-                              const Icon(
-                                Icons.place,
-                                color: AppColors.mutedForeground,
-                                size: 16,
+                              _LocationField(
+                                controller: _pickupCtrl,
+                                icon: Icons.place,
+                                iconColor: AppColors.primary,
+                                hint: 'Pickup location',
+                                label: 'Pickup',
                               ),
-                              const SizedBox(width: 12),
-                              Text(place, style: const TextStyle(fontSize: 14)),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Expanded(child: Divider()),
+                                    Container(
+                                      width: 28,
+                                      height: 28,
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: AppColors.amber,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      child: const Center(
+                                        child: CircleAvatar(
+                                          radius: 4,
+                                          backgroundColor: AppColors.amber,
+                                        ),
+                                      ),
+                                    ),
+                                    const Expanded(child: Divider()),
+                                  ],
+                                ),
+                              ),
+                              _LocationField(
+                                controller: _destCtrl,
+                                icon: Icons.search,
+                                iconColor: AppColors.textTertiary,
+                                hint: 'Where do you want to go?',
+                                label: 'Drop-off',
+                                onChanged: (_) => setState(() {}),
+                              ),
+                              const SizedBox(height: 14),
+                              SizedBox(
+                                width: double.infinity,
+                                height: 48,
+                                child: ElevatedButton(
+                                  onPressed: _destCtrl.text.isNotEmpty
+                                      ? _search
+                                      : null,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primary,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Search Drivers',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
+                          ),
+                        )
+                        .animate()
+                        .fadeIn(duration: 350.ms)
+                        .slideY(begin: 0.2, end: 0),
+
+                    const SizedBox(height: 20),
+
+                    const Text(
+                      'Saved Locations',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textTertiary,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        _SavedChip(
+                          icon: Icons.home_outlined,
+                          label: 'Home',
+                          color: AppColors.primary,
+                          onTap: () => setState(
+                            () => _destCtrl.text = '123 Mabolo St, Cebu City',
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        _SavedChip(
+                          icon: Icons.work_outline,
+                          label: 'Work',
+                          color: AppColors.error,
+                          onTap: () => setState(
+                            () => _destCtrl.text = 'IT Park, Lahug, Cebu City',
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        _SavedChip(
+                          icon: Icons.star_outline,
+                          label: 'Favorite',
+                          color: AppColors.amber,
+                          onTap: () => setState(
+                            () => _destCtrl.text =
+                                'South Road Properties, Cebu City',
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    const Text(
+                      'Recent Destinations',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textTertiary,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ...['SM City Cebu', 'Ayala Center Cebu', 'IT Park'].map(
+                      (place) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: GestureDetector(
+                          onTap: () => setState(() => _destCtrl.text = place),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 13,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppColors.border),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.history,
+                                  color: AppColors.textTertiary,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  place,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -353,37 +357,66 @@ class _LocationField extends StatelessWidget {
   final TextEditingController controller;
   final IconData icon;
   final Color iconColor;
-  final String hint;
+  final String hint, label;
+  final ValueChanged<String>? onChanged;
 
   const _LocationField({
     required this.controller,
     required this.icon,
     required this.iconColor,
     required this.hint,
+    required this.label,
+    this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        prefixIcon: Icon(icon, color: iconColor, size: 20),
-        hintText: hint,
-        hintStyle: const TextStyle(
-          color: AppColors.mutedForeground,
-          fontSize: 14,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 11,
+            color: AppColors.textTertiary,
+            fontWeight: FontWeight.w500,
+          ),
         ),
-        filled: true,
-        fillColor: AppColors.muted,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          onChanged: onChanged,
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: iconColor, size: 18),
+            hintText: hint,
+            hintStyle: const TextStyle(
+              color: AppColors.textTertiary,
+              fontSize: 14,
+            ),
+            filled: true,
+            fillColor: AppColors.surfaceVariant,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: AppColors.border),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: AppColors.border),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(
+                color: AppColors.primary,
+                width: 1.5,
+              ),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 12,
+            ),
+          ),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 14,
-        ),
-      ),
+      ],
     );
   }
 }
@@ -407,31 +440,30 @@ class _SavedChip extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4),
-            ],
+            border: Border.all(color: AppColors.border),
           ),
           child: Column(
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, color: color, size: 20),
+                child: Icon(icon, color: color, size: 18),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Text(
                 label,
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   fontWeight: FontWeight.w500,
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -442,45 +474,54 @@ class _SavedChip extends StatelessWidget {
   }
 }
 
-class _MapButton extends StatelessWidget {
+class _MapBtn extends StatelessWidget {
   final String label;
-  const _MapButton({required this.label});
+  const _MapBtn({required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 40,
-      height: 40,
+      width: 36,
+      height: 36,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4),
         ],
       ),
       child: Center(
         child: Text(
           label,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
         ),
       ),
     );
   }
 }
 
-class _GridPainter extends CustomPainter {
+class _MapGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.grey.withOpacity(0.2)
-      ..strokeWidth = 0.5;
-    const step = 40.0;
-    for (double x = 0; x < size.width; x += step) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
-    }
-    for (double y = 0; y < size.height; y += step) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
-    }
+    final road = Paint()..color = Colors.white.withValues(alpha: 0.85);
+    final minor = Paint()
+      ..color = Colors.white.withValues(alpha: 0.5)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+    canvas.drawRect(Rect.fromLTWH(0, size.height * 0.35, size.width, 6), road);
+    canvas.drawRect(Rect.fromLTWH(0, size.height * 0.68, size.width, 8), road);
+    canvas.drawRect(Rect.fromLTWH(size.width * 0.42, 0, 6, size.height), road);
+    canvas.drawRect(Rect.fromLTWH(size.width * 0.72, 0, 8, size.height), road);
+    canvas.drawLine(
+      Offset(0, size.height * 0.18),
+      Offset(size.width, size.height * 0.18),
+      minor,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.22, 0),
+      Offset(size.width * 0.22, size.height),
+      minor,
+    );
   }
 
   @override

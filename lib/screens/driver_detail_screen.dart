@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
+import '../utils/responsive.dart';
 import '../data/mock_drivers.dart';
 import '../widgets/toast.dart';
 
@@ -55,7 +56,7 @@ class DriverDetailScreen extends StatelessWidget {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(
@@ -151,7 +152,7 @@ class DriverDetailScreen extends StatelessWidget {
                                             ),
                                           ),
                                           const Text(
-                                            ' • ',
+                                            ' â€¢ ',
                                             style: TextStyle(
                                               color: AppColors.mutedForeground,
                                             ),
@@ -202,7 +203,7 @@ class DriverDetailScreen extends StatelessWidget {
                                 Expanded(
                                   child: _StatBox(
                                     label: 'Estimated Fare',
-                                    value: '₱${driver.fare}',
+                                    value: 'â‚±${driver.fare}',
                                   ),
                                 ),
                               ],
@@ -268,7 +269,7 @@ class DriverDetailScreen extends StatelessWidget {
                                       vertical: 4,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: AppColors.primary.withOpacity(0.1),
+                                      color: AppColors.primary.withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Text(
@@ -338,7 +339,7 @@ class DriverDetailScreen extends StatelessWidget {
                           children: [
                             _DetailRow(
                               icon: icon,
-                              iconBg: AppColors.primary.withOpacity(0.1),
+                              iconBg: AppColors.primary.withValues(alpha: 0.1),
                               iconColor: AppColors.primary,
                               label: 'Service Type',
                               value: _serviceLabel(driver.vehicleType),
@@ -347,7 +348,7 @@ class DriverDetailScreen extends StatelessWidget {
                               const Divider(height: 24),
                               _DetailRow(
                                 icon: Icons.verified_user,
-                                iconBg: AppColors.green.withOpacity(0.1),
+                                iconBg: AppColors.green.withValues(alpha: 0.1),
                                 iconColor: AppColors.green,
                                 label: 'Safety Equipment',
                                 value: driver.helmetsAvailable
@@ -358,7 +359,7 @@ class DriverDetailScreen extends StatelessWidget {
                             const Divider(height: 24),
                             _DetailRow(
                               icon: Icons.calendar_today,
-                              iconBg: AppColors.yellow.withOpacity(0.2),
+                              iconBg: AppColors.yellow.withValues(alpha: 0.2),
                               iconColor: AppColors.primary,
                               label: 'Driver Since',
                               value: driver.verifiedDate,
@@ -490,7 +491,7 @@ class DriverDetailScreen extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Order Ride - ₱${driver.fare}',
+                'Order Ride - â‚±${driver.fare}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -518,7 +519,7 @@ class _Card extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: const Offset(0, 2),
           ),

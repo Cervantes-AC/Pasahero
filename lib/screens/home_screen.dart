@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
 import '../data/app_state.dart';
+import '../utils/responsive.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -15,7 +16,12 @@ class HomeScreen extends StatelessWidget {
         slivers: [
           SliverToBoxAdapter(child: _HomeHeader()),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            padding: EdgeInsets.fromLTRB(
+              Responsive.hPad(context),
+              0,
+              Responsive.hPad(context),
+              32,
+            ),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 Transform.translate(
@@ -45,50 +51,8 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      _RideCard(
-                            icon: Icons.two_wheeler,
-                            iconColor: AppColors.primary,
-                            iconBg: AppColors.primarySurface,
-                            title: 'Habal-habal',
-                            subtitle: 'Single motorcycle ride',
-                            price: 'From ₱25',
-                            badge: 'Fastest',
-                            badgeColor: AppColors.success,
-                            onTap: () => context.go('/search?type=habal-habal'),
-                          )
-                          .animate()
-                          .fadeIn(delay: 120.ms, duration: 350.ms)
-                          .slideY(begin: 0.15, end: 0),
-                      const SizedBox(height: 10),
-                      _RideCard(
-                            icon: Icons.two_wheeler,
-                            iconColor: AppColors.error,
-                            iconBg: AppColors.errorSurface,
-                            title: 'Motorela',
-                            subtitle: 'Motorcycle with sidecar',
-                            price: 'From ₱35',
-                            badge: 'Shared',
-                            badgeColor: AppColors.warning,
-                            onTap: () => context.go('/search?type=motorela'),
-                          )
-                          .animate()
-                          .fadeIn(delay: 160.ms, duration: 350.ms)
-                          .slideY(begin: 0.15, end: 0),
-                      const SizedBox(height: 10),
-                      _RideCard(
-                            icon: Icons.directions_car_outlined,
-                            iconColor: AppColors.amber,
-                            iconBg: AppColors.warningSurface,
-                            title: 'Bao-bao',
-                            subtitle: 'Tricycle for groups',
-                            price: 'From ₱50',
-                            badge: 'Groups',
-                            badgeColor: AppColors.primary,
-                            onTap: () => context.go('/search?type=bao-bao'),
-                          )
-                          .animate()
-                          .fadeIn(delay: 200.ms, duration: 350.ms)
-                          .slideY(begin: 0.15, end: 0),
+                      // On tablet/desktop show 2-col grid
+                      Responsive.isWide(context) ? _RideGrid() : _RideList(),
                       const SizedBox(height: 24),
                       _PromoBanner().animate().fadeIn(
                         delay: 240.ms,
@@ -106,9 +70,12 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+// ── Header ────────────────────────────────────────────────────────────────────
+
 class _HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final hp = Responsive.hPad(context);
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -124,7 +91,7 @@ class _HomeHeader extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 52),
+          padding: EdgeInsets.fromLTRB(hp, 16, hp, 52),
           child: Column(
             children: [
               Row(
@@ -251,6 +218,8 @@ class _HomeHeader extends StatelessWidget {
   }
 }
 
+// ── Search bar ────────────────────────────────────────────────────────────────
+
 class _SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -313,6 +282,8 @@ class _SearchBar extends StatelessWidget {
     );
   }
 }
+
+// ── Payment row ───────────────────────────────────────────────────────────────
 
 class _PaymentRow extends StatefulWidget {
   @override
@@ -381,15 +352,107 @@ class _PaymentRowState extends State<_PaymentRow> {
   }
 }
 
+// ── Ride cards ────────────────────────────────────────────────────────────────
+
+const _rideTypes = [
+  (
+    icon: Icons.two_wheeler,
+    iconColor: AppColors.primary,
+    iconBg: AppColors.primarySurface,
+    title: 'Habal-habal',
+    subtitle: 'Single motorcycle ride',
+    price: 'From ₱25',
+    badge: 'Fastest',
+    badgeColor: AppColors.success,
+    route: '/search?type=habal-habal',
+  ),
+  (
+    icon: Icons.two_wheeler,
+    iconColor: AppColors.error,
+    iconBg: AppColors.errorSurface,
+    title: 'Motorela',
+    subtitle: 'Motorcycle with sidecar',
+    price: 'From ₱35',
+    badge: 'Shared',
+    badgeColor: AppColors.warning,
+    route: '/search?type=motorela',
+  ),
+  (
+    icon: Icons.directions_car_outlined,
+    iconColor: AppColors.amber,
+    iconBg: AppColors.warningSurface,
+    title: 'Bao-bao',
+    subtitle: 'Tricycle for groups',
+    price: 'From ₱50',
+    badge: 'Groups',
+    badgeColor: AppColors.primary,
+    route: '/search?type=bao-bao',
+  ),
+];
+
+class _RideList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: _rideTypes.asMap().entries.map((e) {
+        final t = e.value;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child:
+              _RideCard(
+                    icon: t.icon,
+                    iconColor: t.iconColor,
+                    iconBg: t.iconBg,
+                    title: t.title,
+                    subtitle: t.subtitle,
+                    price: t.price,
+                    badge: t.badge,
+                    badgeColor: t.badgeColor,
+                    onTap: () => context.go(t.route),
+                  )
+                  .animate()
+                  .fadeIn(delay: (120 + e.key * 50).ms, duration: 350.ms)
+                  .slideY(begin: 0.15, end: 0),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _RideGrid extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: _rideTypes.map((t) {
+        return SizedBox(
+          width:
+              (Responsive.maxWidth(context) -
+                  Responsive.hPad(context) * 2 -
+                  12) /
+              2,
+          child: _RideCard(
+            icon: t.icon,
+            iconColor: t.iconColor,
+            iconBg: t.iconBg,
+            title: t.title,
+            subtitle: t.subtitle,
+            price: t.price,
+            badge: t.badge,
+            badgeColor: t.badgeColor,
+            onTap: () => context.go(t.route),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
 class _RideCard extends StatelessWidget {
   final IconData icon;
-  final Color iconColor;
-  final Color iconBg;
-  final String title;
-  final String subtitle;
-  final String price;
-  final String badge;
-  final Color badgeColor;
+  final Color iconColor, iconBg, badgeColor;
+  final String title, subtitle, price, badge;
   final VoidCallback onTap;
 
   const _RideCard({
@@ -500,6 +563,8 @@ class _RideCard extends StatelessWidget {
     );
   }
 }
+
+// ── Promo banner ──────────────────────────────────────────────────────────────
 
 class _PromoBanner extends StatelessWidget {
   @override
