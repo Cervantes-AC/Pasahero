@@ -723,7 +723,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: () {
                       showToast(context, 'Logged out successfully');
                       Future.delayed(const Duration(milliseconds: 800), () {
-                        if (context.mounted) context.go('/');
+                        if (context.mounted) context.replace('/');
                       });
                     },
                   ).animate().fadeIn(delay: 300.ms, duration: 350.ms),

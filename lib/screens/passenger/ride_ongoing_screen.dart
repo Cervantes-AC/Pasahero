@@ -101,7 +101,7 @@ class _RideOngoingScreenState extends State<RideOngoingScreen>
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Location: Cebu City, Philippines',
+                    'Location: Valencia City, Philippines',
                     style: TextStyle(
                       fontSize: 13,
                       color: AppColors.textTertiary,
@@ -221,7 +221,7 @@ class _RideOngoingScreenState extends State<RideOngoingScreen>
                               ],
                             ),
                             child: Text(
-                              'SM City Cebu',
+                              'Robinsons Place',
                               style: TextStyle(
                                 fontSize: Responsive.fontSize(context, 10),
                                 fontWeight: FontWeight.w600,
@@ -503,6 +503,96 @@ class _TripInfoCard extends StatelessWidget {
           ),
           SizedBox(height: Responsive.spacing(context, units: 2)),
 
+          // Vehicle selection display
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: Responsive.spacing(context, units: 2),
+              vertical: Responsive.spacing(context, units: 1.5),
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 12),
+              ),
+              border: Border.all(
+                color: AppColors.primary.withValues(alpha: 0.2),
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: Responsive.iconSize(context, base: 36),
+                  height: Responsive.iconSize(context, base: 36),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(
+                      Responsive.radius(context, base: 8),
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.two_wheeler,
+                    size: Responsive.iconSize(context, base: 18),
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(width: Responsive.spacing(context, units: 1.5)),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Habal-habal',
+                        style: TextStyle(
+                          fontSize: Responsive.fontSize(context, 13),
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      Text(
+                        'Motorcycle · 1 seat',
+                        style: TextStyle(
+                          fontSize: Responsive.fontSize(context, 11),
+                          color: AppColors.mutedForeground,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Responsive.spacing(context, units: 1),
+                    vertical: Responsive.spacing(context, units: 0.5),
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.green.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(
+                      Responsive.radius(context, base: 6),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.check_circle,
+                        size: Responsive.iconSize(context, base: 12),
+                        color: AppColors.green,
+                      ),
+                      SizedBox(width: Responsive.spacing(context, units: 0.5)),
+                      Text(
+                        'Active',
+                        style: TextStyle(
+                          fontSize: Responsive.fontSize(context, 10),
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.green,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 2)),
+
           // Route
           Container(
             padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
@@ -517,7 +607,7 @@ class _TripInfoCard extends StatelessWidget {
                 _RouteRow(
                   dotColor: AppColors.primary,
                   label: 'Pickup',
-                  address: 'Cebu City, Philippines',
+                  address: 'Valencia City, Philippines',
                 ),
                 Padding(
                   padding: EdgeInsets.only(
@@ -532,7 +622,7 @@ class _TripInfoCard extends StatelessWidget {
                 _RouteRow(
                   dotColor: AppColors.red,
                   label: 'Destination',
-                  address: 'SM City Cebu',
+                  address: 'Robinsons Place',
                 ),
               ],
             ),

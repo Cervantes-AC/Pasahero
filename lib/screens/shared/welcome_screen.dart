@@ -209,7 +209,7 @@ class _WideLayout extends StatelessWidget {
                   Text(
                     isDriver
                         ? 'Drive.\nEarn.\nRepeat.'
-                        : 'Your trusted\nride in Cebu.',
+                        : 'Your trusted\nride in Valencia.',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: Responsive.fontSize(context, 48),

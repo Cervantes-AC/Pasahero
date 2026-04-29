@@ -42,27 +42,27 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
       id: '1',
       type: 'home',
       label: 'Home',
-      address: '123 Mabolo, Cebu City',
+      address: '123 Mabolo, Valencia City',
       details: 'Near Mabolo Church',
     ),
     _Loc(
       id: '2',
       type: 'work',
       label: 'Work',
-      address: 'IT Park, Lahug, Cebu City',
+      address: 'Robinsons Place, Valencia City',
       details: 'Building 5, 3rd Floor',
     ),
     _Loc(
       id: '3',
       type: 'favorite',
       label: 'Ayala Mall',
-      address: 'Ayala Center Cebu, Cebu Business Park',
+      address: 'Paseo de Santa Rosa, Valencia City',
     ),
     _Loc(
       id: '4',
       type: 'favorite',
       label: 'SM Seaside',
-      address: 'SM Seaside City Cebu, South Road Properties',
+      address: 'Puregold, Valencia City',
     ),
   ];
 

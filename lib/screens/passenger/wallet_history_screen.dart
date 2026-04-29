@@ -30,11 +30,16 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    try {
+      _tabController.dispose();
+    } catch (e) {
+      debugPrint('Error disposing TabController: $e');
+    }
     super.dispose();
   }
 
   Future<void> _loadTransactions() async {
+    if (!mounted) return;
     setState(() => _loading = true);
     try {
       final wallet = await WalletService.instance.getWalletByUserId(
@@ -49,7 +54,9 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
     } catch (e) {
       debugPrint('Error loading transactions: $e');
     } finally {
-      setState(() => _loading = false);
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
   }
 
@@ -60,6 +67,13 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (!mounted) {
+      return const Scaffold(
+        backgroundColor: AppColors.surface,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: Column(
@@ -71,7 +85,8 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
                 ? const Center(
                     child: CircularProgressIndicator(color: AppColors.primary),
                   )
-                : TabBarView(
+                : _tabController.index >= 0
+                ? TabBarView(
                     controller: _tabController,
                     children: [
                       _transactionList(transactions: _filtered(null)),
@@ -85,7 +100,8 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
                         transactions: _filtered(TransactionType.refund),
                       ),
                     ],
-                  ),
+                  )
+                : const SizedBox.shrink(),
           ),
         ],
       ),
@@ -169,7 +185,7 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
 
     return RefreshIndicator(
       color: AppColors.primary,
-      onRefresh: () async {},
+      onRefresh: _loadTransactions,
       child: ListView.builder(
         padding: EdgeInsets.symmetric(
           horizontal: Responsive.spacing(context, units: 2),

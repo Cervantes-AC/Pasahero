@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
@@ -284,6 +284,110 @@ class _MapView extends StatelessWidget {
             ),
           ),
         ),
+
+        // Vehicle selection display
+        if (selected != null)
+          Positioned(
+            bottom:
+                Responsive.buttonHeight(context) * 3.5 +
+                Responsive.spacing(context, units: 2),
+            left: Responsive.spacing(context, units: 2),
+            right: Responsive.spacing(context, units: 2),
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: Responsive.spacing(context, units: 2),
+                vertical: Responsive.spacing(context, units: 1.5),
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 12),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: Responsive.iconSize(context, base: 40),
+                    height: Responsive.iconSize(context, base: 40),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(
+                        Responsive.radius(context, base: 8),
+                      ),
+                    ),
+                    child: Icon(
+                      vehicleIcon,
+                      size: Responsive.iconSize(context, base: 20),
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  SizedBox(width: Responsive.spacing(context, units: 1.5)),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          rideType == 'bao-bao' ? 'Bao-bao' : 'Habal-habal',
+                          style: TextStyle(
+                            fontSize: Responsive.fontSize(context, 14),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          rideType == 'bao-bao'
+                              ? 'Van · 6 seats'
+                              : 'Motorcycle · 1 seat',
+                          style: TextStyle(
+                            fontSize: Responsive.fontSize(context, 12),
+                            color: AppColors.mutedForeground,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Responsive.spacing(context, units: 1.5),
+                      vertical: Responsive.spacing(context, units: 0.75),
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.green.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(
+                        Responsive.radius(context, base: 8),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.check_circle,
+                          size: Responsive.iconSize(context, base: 14),
+                          color: AppColors.green,
+                        ),
+                        SizedBox(
+                          width: Responsive.spacing(context, units: 0.5),
+                        ),
+                        Text(
+                          'Selected',
+                          style: TextStyle(
+                            fontSize: Responsive.fontSize(context, 11),
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.green,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ).animate().slideY(begin: 1, end: 0, duration: 300.ms),
+          ),
 
         // Driver info card
         if (selected != null)

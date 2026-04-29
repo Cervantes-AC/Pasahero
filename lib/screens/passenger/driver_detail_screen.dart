@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../data/mock_drivers.dart';
 import '../../widgets/toast.dart';
+import '../../utils/responsive.dart';
 
 class DriverDetailScreen extends StatelessWidget {
   final String driverId;
@@ -45,30 +46,35 @@ class DriverDetailScreen extends StatelessWidget {
             ),
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                padding: EdgeInsets.fromLTRB(
+                  Responsive.spacing(context, units: 3),
+                  Responsive.spacing(context, units: 2),
+                  Responsive.spacing(context, units: 3),
+                  Responsive.spacing(context, units: 3),
+                ),
                 child: Row(
                   children: [
                     GestureDetector(
                       onTap: () => context.pop(),
                       child: Container(
-                        width: 40,
-                        height: 40,
+                        width: Responsive.iconSize(context, base: 40),
+                        height: Responsive.iconSize(context, base: 40),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.arrow_back,
                           color: Colors.white,
-                          size: 20,
+                          size: Responsive.iconSize(context, base: 20),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    const Text(
+                    SizedBox(width: Responsive.spacing(context, units: 2)),
+                    Text(
                       'Driver Details',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: Responsive.fontSize(context, 20),
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
@@ -82,7 +88,12 @@ class DriverDetailScreen extends StatelessWidget {
           // Scrollable content
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 100),
+              padding: EdgeInsets.fromLTRB(
+                Responsive.spacing(context, units: 3),
+                Responsive.spacing(context, units: 3),
+                Responsive.spacing(context, units: 3),
+                Responsive.spacing(context, units: 12),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -95,8 +106,11 @@ class DriverDetailScreen extends StatelessWidget {
                               children: [
                                 // Avatar
                                 Container(
-                                  width: 80,
-                                  height: 80,
+                                  width: Responsive.iconSize(context, base: 80),
+                                  height: Responsive.iconSize(
+                                    context,
+                                    base: 80,
+                                  ),
                                   decoration: const BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
@@ -112,15 +126,20 @@ class DriverDetailScreen extends StatelessWidget {
                                           .split(' ')
                                           .map((n) => n[0])
                                           .join(),
-                                      style: const TextStyle(
-                                        fontSize: 24,
+                                      style: TextStyle(
+                                        fontSize: Responsive.fontSize(
+                                          context,
+                                          24,
+                                        ),
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 16),
+                                SizedBox(
+                                  width: Responsive.spacing(context, units: 2),
+                                ),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -128,55 +147,97 @@ class DriverDetailScreen extends StatelessWidget {
                                     children: [
                                       Text(
                                         driver.name,
-                                        style: const TextStyle(
-                                          fontSize: 20,
+                                        style: TextStyle(
+                                          fontSize: Responsive.fontSize(
+                                            context,
+                                            20,
+                                          ),
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(height: 4),
+                                      SizedBox(
+                                        height: Responsive.spacing(
+                                          context,
+                                          units: 0.5,
+                                        ),
+                                      ),
                                       Row(
                                         children: [
-                                          const Icon(
+                                          Icon(
                                             Icons.star,
-                                            size: 18,
+                                            size: Responsive.iconSize(
+                                              context,
+                                              base: 18,
+                                            ),
                                             color: AppColors.yellow,
                                           ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            '${driver.rating}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 15,
+                                          SizedBox(
+                                            width: Responsive.spacing(
+                                              context,
+                                              units: 0.5,
                                             ),
                                           ),
-                                          const Text(
-                                            ' â€¢ ',
+                                          Text(
+                                            '${driver.rating}',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: Responsive.fontSize(
+                                                context,
+                                                15,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            ' • ',
                                             style: TextStyle(
                                               color: AppColors.mutedForeground,
+                                              fontSize: Responsive.fontSize(
+                                                context,
+                                                15,
+                                              ),
                                             ),
                                           ),
                                           Text(
                                             '${driver.totalRides} rides',
-                                            style: const TextStyle(
-                                              fontSize: 13,
+                                            style: TextStyle(
+                                              fontSize: Responsive.fontSize(
+                                                context,
+                                                13,
+                                              ),
                                               color: AppColors.mutedForeground,
                                             ),
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 6),
+                                      SizedBox(
+                                        height: Responsive.spacing(
+                                          context,
+                                          units: 0.75,
+                                        ),
+                                      ),
                                       Row(
                                         children: [
-                                          const Icon(
+                                          Icon(
                                             Icons.verified_user,
-                                            size: 14,
+                                            size: Responsive.iconSize(
+                                              context,
+                                              base: 14,
+                                            ),
                                             color: AppColors.green,
                                           ),
-                                          const SizedBox(width: 4),
-                                          const Text(
+                                          SizedBox(
+                                            width: Responsive.spacing(
+                                              context,
+                                              units: 0.5,
+                                            ),
+                                          ),
+                                          Text(
                                             'Verified Driver',
                                             style: TextStyle(
-                                              fontSize: 13,
+                                              fontSize: Responsive.fontSize(
+                                                context,
+                                                13,
+                                              ),
                                               color: AppColors.green,
                                               fontWeight: FontWeight.w500,
                                             ),
@@ -188,7 +249,9 @@ class DriverDetailScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(
+                              height: Responsive.spacing(context, units: 2),
+                            ),
                             Row(
                               children: [
                                 Expanded(
@@ -197,11 +260,16 @@ class DriverDetailScreen extends StatelessWidget {
                                     value: driver.eta,
                                   ),
                                 ),
-                                const SizedBox(width: 12),
+                                SizedBox(
+                                  width: Responsive.spacing(
+                                    context,
+                                    units: 1.5,
+                                  ),
+                                ),
                                 Expanded(
                                   child: _StatBox(
                                     label: 'Estimated Fare',
-                                    value: 'â‚±${driver.fare}',
+                                    value: '₱${driver.fare}',
                                   ),
                                 ),
                               ],
@@ -213,69 +281,107 @@ class DriverDetailScreen extends StatelessWidget {
                       .fadeIn(duration: 400.ms)
                       .slideY(begin: 0.2, end: 0),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: Responsive.spacing(context, units: 2.5)),
 
                   // Vehicle details
-                  const Text(
+                  Text(
                     'Vehicle Details',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 17),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: Responsive.spacing(context, units: 1.5)),
                   _Card(
                         child: Row(
                           children: [
                             Container(
-                              width: 96,
-                              height: 96,
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(
+                              width: Responsive.iconSize(context, base: 96),
+                              height: Responsive.iconSize(context, base: 96),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
                                   colors: [
                                     AppColors.primary,
                                     AppColors.primaryDark,
                                   ],
                                 ),
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(16),
+                                  Radius.circular(
+                                    Responsive.radius(context, base: 16),
+                                  ),
                                 ),
                               ),
-                              child: Icon(icon, size: 48, color: Colors.white),
+                              child: Icon(
+                                icon,
+                                size: Responsive.iconSize(context, base: 48),
+                                color: Colors.white,
+                              ),
                             ),
-                            const SizedBox(width: 16),
+                            SizedBox(
+                              width: Responsive.spacing(context, units: 2),
+                            ),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     driver.vehicleName,
-                                    style: const TextStyle(
-                                      fontSize: 16,
+                                    style: TextStyle(
+                                      fontSize: Responsive.fontSize(
+                                        context,
+                                        16,
+                                      ),
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
+                                  SizedBox(
+                                    height: Responsive.spacing(
+                                      context,
+                                      units: 0.5,
+                                    ),
+                                  ),
                                   Text(
                                     'Plate: ${driver.plateNumber}',
-                                    style: const TextStyle(
-                                      fontSize: 13,
+                                    style: TextStyle(
+                                      fontSize: Responsive.fontSize(
+                                        context,
+                                        13,
+                                      ),
                                       color: AppColors.mutedForeground,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  SizedBox(
+                                    height: Responsive.spacing(
+                                      context,
+                                      units: 1,
+                                    ),
+                                  ),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 4,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: Responsive.spacing(
+                                        context,
+                                        units: 1.5,
+                                      ),
+                                      vertical: Responsive.spacing(
+                                        context,
+                                        units: 0.5,
+                                      ),
                                     ),
                                     decoration: BoxDecoration(
                                       color: AppColors.primary.withValues(
                                         alpha: 0.1,
                                       ),
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(
+                                        Responsive.radius(context, base: 20),
+                                      ),
                                     ),
                                     child: Text(
                                       driver.vehicleType,
-                                      style: const TextStyle(
-                                        fontSize: 12,
+                                      style: TextStyle(
+                                        fontSize: Responsive.fontSize(
+                                          context,
+                                          12,
+                                        ),
                                         color: AppColors.primary,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -291,14 +397,17 @@ class DriverDetailScreen extends StatelessWidget {
                       .fadeIn(delay: 100.ms, duration: 400.ms)
                       .slideY(begin: 0.2, end: 0),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: Responsive.spacing(context, units: 2.5)),
 
                   // Contact
-                  const Text(
+                  Text(
                     'Contact Driver',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 17),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: Responsive.spacing(context, units: 1.5)),
                   Row(
                         children: [
                           Expanded(
@@ -311,7 +420,9 @@ class DriverDetailScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(
+                            width: Responsive.spacing(context, units: 1.5),
+                          ),
                           Expanded(
                             child: _ContactButton(
                               icon: Icons.message,
@@ -326,14 +437,17 @@ class DriverDetailScreen extends StatelessWidget {
                       .fadeIn(delay: 200.ms, duration: 400.ms)
                       .slideY(begin: 0.2, end: 0),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: Responsive.spacing(context, units: 2.5)),
 
                   // Additional details
-                  const Text(
+                  Text(
                     'Additional Details',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 17),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: Responsive.spacing(context, units: 1.5)),
                   _Card(
                         child: Column(
                           children: [
@@ -345,7 +459,9 @@ class DriverDetailScreen extends StatelessWidget {
                               value: _serviceLabel(driver.vehicleType),
                             ),
                             if (driver.vehicleType == 'habal-habal') ...[
-                              const Divider(height: 24),
+                              Divider(
+                                height: Responsive.spacing(context, units: 3),
+                              ),
                               _DetailRow(
                                 icon: Icons.verified_user,
                                 iconBg: AppColors.green.withValues(alpha: 0.1),
@@ -356,7 +472,9 @@ class DriverDetailScreen extends StatelessWidget {
                                     : 'No Helmets Available',
                               ),
                             ],
-                            const Divider(height: 24),
+                            Divider(
+                              height: Responsive.spacing(context, units: 3),
+                            ),
                             _DetailRow(
                               icon: Icons.calendar_today,
                               iconBg: AppColors.yellow.withValues(alpha: 0.2),
@@ -364,15 +482,19 @@ class DriverDetailScreen extends StatelessWidget {
                               label: 'Driver Since',
                               value: driver.verifiedDate,
                             ),
-                            const Divider(height: 24),
+                            Divider(
+                              height: Responsive.spacing(context, units: 3),
+                            ),
                             _DetailRow(
                               icon: Icons.location_on_outlined,
                               iconBg: AppColors.primary.withValues(alpha: 0.1),
                               iconColor: AppColors.primary,
                               label: 'Current Location',
-                              value: 'Near Ayala Center Cebu',
+                              value: 'Near Paseo de Santa Rosa',
                             ),
-                            const Divider(height: 24),
+                            Divider(
+                              height: Responsive.spacing(context, units: 3),
+                            ),
                             _DetailRow(
                               icon: Icons.access_time_outlined,
                               iconBg: AppColors.amber.withValues(alpha: 0.1),
@@ -387,14 +509,17 @@ class DriverDetailScreen extends StatelessWidget {
                       .fadeIn(delay: 300.ms, duration: 400.ms)
                       .slideY(begin: 0.2, end: 0),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: Responsive.spacing(context, units: 2.5)),
 
                   // Driver stats
-                  const Text(
+                  Text(
                     'Driver Statistics',
-                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 17),
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: Responsive.spacing(context, units: 1.5)),
                   _Card(
                     child: Column(
                       children: [
@@ -408,7 +533,9 @@ class DriverDetailScreen extends StatelessWidget {
                                 color: AppColors.primary,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(
+                              width: Responsive.spacing(context, units: 1.5),
+                            ),
                             Expanded(
                               child: _StatCard(
                                 icon: Icons.schedule_rounded,
@@ -419,7 +546,9 @@ class DriverDetailScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(
+                          height: Responsive.spacing(context, units: 1.5),
+                        ),
                         Row(
                           children: [
                             Expanded(
@@ -430,7 +559,9 @@ class DriverDetailScreen extends StatelessWidget {
                                 color: AppColors.amber,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(
+                              width: Responsive.spacing(context, units: 1.5),
+                            ),
                             Expanded(
                               child: _StatCard(
                                 icon: Icons.cancel_outlined,
@@ -445,34 +576,36 @@ class DriverDetailScreen extends StatelessWidget {
                     ),
                   ).animate().fadeIn(delay: 350.ms, duration: 400.ms),
 
-                  const SizedBox(height: 20),
+                  SizedBox(height: Responsive.spacing(context, units: 2.5)),
 
                   // Reviews
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Passenger Reviews',
                         style: TextStyle(
-                          fontSize: 17,
+                          fontSize: Responsive.fontSize(context, 17),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
                         '${mockReviews.length} reviews',
-                        style: const TextStyle(
-                          fontSize: 13,
+                        style: TextStyle(
+                          fontSize: Responsive.fontSize(context, 13),
                           color: AppColors.mutedForeground,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: Responsive.spacing(context, units: 1.5)),
                   ...mockReviews.asMap().entries.map((entry) {
                     final i = entry.key;
                     final review = entry.value;
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
+                      padding: EdgeInsets.only(
+                        bottom: Responsive.spacing(context, units: 1.5),
+                      ),
                       child:
                           _Card(
                                 child: Column(
@@ -488,15 +621,21 @@ class DriverDetailScreen extends StatelessWidget {
                                           children: [
                                             Text(
                                               review.passengerName,
-                                              style: const TextStyle(
-                                                fontSize: 14,
+                                              style: TextStyle(
+                                                fontSize: Responsive.fontSize(
+                                                  context,
+                                                  14,
+                                                ),
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
                                             Text(
                                               review.date,
-                                              style: const TextStyle(
-                                                fontSize: 12,
+                                              style: TextStyle(
+                                                fontSize: Responsive.fontSize(
+                                                  context,
+                                                  12,
+                                                ),
                                                 color:
                                                     AppColors.mutedForeground,
                                               ),
@@ -505,16 +644,27 @@ class DriverDetailScreen extends StatelessWidget {
                                         ),
                                         Row(
                                           children: [
-                                            const Icon(
+                                            Icon(
                                               Icons.star,
-                                              size: 14,
+                                              size: Responsive.iconSize(
+                                                context,
+                                                base: 14,
+                                              ),
                                               color: AppColors.yellow,
                                             ),
-                                            const SizedBox(width: 4),
+                                            SizedBox(
+                                              width: Responsive.spacing(
+                                                context,
+                                                units: 0.5,
+                                              ),
+                                            ),
                                             Text(
                                               '${review.rating}',
-                                              style: const TextStyle(
-                                                fontSize: 13,
+                                              style: TextStyle(
+                                                fontSize: Responsive.fontSize(
+                                                  context,
+                                                  13,
+                                                ),
                                                 fontWeight: FontWeight.w600,
                                               ),
                                             ),
@@ -522,11 +672,19 @@ class DriverDetailScreen extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 8),
+                                    SizedBox(
+                                      height: Responsive.spacing(
+                                        context,
+                                        units: 1,
+                                      ),
+                                    ),
                                     Text(
                                       review.comment,
-                                      style: const TextStyle(
-                                        fontSize: 13,
+                                      style: TextStyle(
+                                        fontSize: Responsive.fontSize(
+                                          context,
+                                          13,
+                                        ),
                                         color: AppColors.mutedForeground,
                                       ),
                                     ),
@@ -551,23 +709,30 @@ class DriverDetailScreen extends StatelessWidget {
       // Fixed bottom button
       bottomNavigationBar: Container(
         color: Colors.white,
-        padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+        padding: EdgeInsets.fromLTRB(
+          Responsive.spacing(context, units: 3),
+          Responsive.spacing(context, units: 1.5),
+          Responsive.spacing(context, units: 3),
+          Responsive.spacing(context, units: 3),
+        ),
         child: SafeArea(
           child: SizedBox(
-            height: 56,
+            height: Responsive.buttonHeight(context),
             child: ElevatedButton(
               onPressed: handleOrderRide,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.red,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(
+                    Responsive.radius(context, base: 16),
+                  ),
                 ),
               ),
               child: Text(
-                'Order Ride - â‚±${driver.fare}',
-                style: const TextStyle(
-                  fontSize: 16,
+                'Order Ride - ₱${driver.fare}',
+                style: TextStyle(
+                  fontSize: Responsive.fontSize(context, 16),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -587,10 +752,12 @@ class _Card extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 2.5)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 20),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -612,26 +779,28 @@ class _StatBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 1.5)),
       decoration: BoxDecoration(
         color: AppColors.muted,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 12),
+        ),
       ),
       child: Column(
         children: [
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 18,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 18),
               fontWeight: FontWeight.bold,
               color: AppColors.primary,
             ),
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: Responsive.spacing(context, units: 0.25)),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 11,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 11),
               color: AppColors.mutedForeground,
             ),
           ),
@@ -656,21 +825,28 @@ class _ContactButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 56,
+        height: Responsive.buttonHeight(context),
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.primary, width: 2),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            Responsive.radius(context, base: 12),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: AppColors.primary, size: 20),
-            const SizedBox(width: 8),
+            Icon(
+              icon,
+              color: AppColors.primary,
+              size: Responsive.iconSize(context, base: 20),
+            ),
+            SizedBox(width: Responsive.spacing(context, units: 1)),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w600,
+                fontSize: Responsive.fontSize(context, 16),
               ),
             ),
           ],
@@ -699,30 +875,36 @@ class _DetailRow extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 40,
-          height: 40,
+          width: Responsive.iconSize(context, base: 40),
+          height: Responsive.iconSize(context, base: 40),
           decoration: BoxDecoration(
             color: iconBg,
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(
+              Responsive.radius(context, base: 10),
+            ),
           ),
-          child: Icon(icon, size: 20, color: iconColor),
+          child: Icon(
+            icon,
+            size: Responsive.iconSize(context, base: 20),
+            color: iconColor,
+          ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: Responsive.spacing(context, units: 1.5)),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: const TextStyle(
-                  fontSize: 12,
+                style: TextStyle(
+                  fontSize: Responsive.fontSize(context, 12),
                   color: AppColors.mutedForeground,
                 ),
               ),
               Text(
                 value,
-                style: const TextStyle(
-                  fontSize: 14,
+                style: TextStyle(
+                  fontSize: Responsive.fontSize(context, 14),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -750,10 +932,12 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 1.75)),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 12),
+        ),
         border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
@@ -761,13 +945,17 @@ class _StatCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, size: 16, color: color),
-              const SizedBox(width: 6),
+              Icon(
+                icon,
+                size: Responsive.iconSize(context, base: 16),
+                color: color,
+              ),
+              SizedBox(width: Responsive.spacing(context, units: 0.75)),
               Expanded(
                 child: Text(
                   label,
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: Responsive.fontSize(context, 11),
                     color: color,
                     fontWeight: FontWeight.w500,
                   ),
@@ -775,11 +963,11 @@ class _StatCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: Responsive.spacing(context, units: 0.75)),
           Text(
             value,
             style: TextStyle(
-              fontSize: 16,
+              fontSize: Responsive.fontSize(context, 16),
               fontWeight: FontWeight.w700,
               color: color,
             ),

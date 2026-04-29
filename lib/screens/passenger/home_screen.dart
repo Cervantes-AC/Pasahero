@@ -85,7 +85,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
-              context.go('/login');
+              // Use replace to clear the navigation stack and prevent back navigation
+              context.replace('/');
               showToast(context, 'Logged out successfully');
             },
             child: const Text(
@@ -115,88 +116,76 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           SliverToBoxAdapter(
             child: ResponsiveContainer(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 32),
+                padding: EdgeInsets.fromLTRB(
+                  0,
+                  Responsive.spacing(context, units: 2),
+                  0,
+                  32,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Transform.translate(
-                      offset: Offset(
-                        0,
-                        -Responsive.spacing(context, units: 2.5),
-                      ),
-                      child: _SearchBar()
-                          .animate()
-                          .fadeIn(duration: 350.ms)
-                          .slideY(begin: 0.2, end: 0),
-                    ),
-                    Transform.translate(
-                      offset: Offset(
-                        0,
-                        -Responsive.spacing(context, units: 1.5),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: Responsive.spacing(context, units: 1),
-                          ),
+                    _SearchBar()
+                        .animate()
+                        .fadeIn(duration: 350.ms)
+                        .slideY(begin: 0.2, end: 0),
+                    SizedBox(height: Responsive.spacing(context, units: 1.5)),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: Responsive.spacing(context, units: 1)),
 
-                          // Quick Actions Row
-                          _QuickActionsRow(
-                            selectedIndex: _selectedQuickAction,
-                            onActionTap: (index) =>
-                                setState(() => _selectedQuickAction = index),
-                          ).animate().fadeIn(delay: 100.ms, duration: 350.ms),
+                        // Quick Actions Row
+                        _QuickActionsRow(
+                          selectedIndex: _selectedQuickAction,
+                          onActionTap: (index) =>
+                              setState(() => _selectedQuickAction = index),
+                        ).animate().fadeIn(delay: 100.ms, duration: 350.ms),
 
-                          SizedBox(
-                            height: Responsive.spacing(context, units: 2.5),
-                          ),
+                        SizedBox(
+                          height: Responsive.spacing(context, units: 2.5),
+                        ),
 
-                          // Weather & Traffic Card
-                          _WeatherTrafficCard(
-                            weatherController: _weatherController,
-                          ).animate().fadeIn(delay: 150.ms, duration: 350.ms),
+                        // Weather & Traffic Card
+                        _WeatherTrafficCard(
+                          weatherController: _weatherController,
+                        ).animate().fadeIn(delay: 150.ms, duration: 350.ms),
 
-                          SizedBox(
-                            height: Responsive.spacing(context, units: 2.5),
-                          ),
+                        SizedBox(
+                          height: Responsive.spacing(context, units: 2.5),
+                        ),
 
-                          Text(
-                            'Choose your ride',
-                            style: TextStyle(
-                              fontSize: Responsive.fontSize(context, 17),
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
-                              letterSpacing: -0.3,
-                            ),
+                        Text(
+                          'Choose your ride',
+                          style: TextStyle(
+                            fontSize: Responsive.fontSize(context, 17),
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                            letterSpacing: -0.3,
                           ),
-                          SizedBox(
-                            height: Responsive.spacing(context, units: 1.5),
-                          ),
-                          // On tablet/desktop show 2-col grid
-                          Responsive.isWide(context)
-                              ? _RideGrid()
-                              : _RideList(),
-                          SizedBox(
-                            height: Responsive.spacing(context, units: 3),
-                          ),
+                        ),
+                        SizedBox(
+                          height: Responsive.spacing(context, units: 1.5),
+                        ),
+                        // On tablet/desktop show 2-col grid
+                        Responsive.isWide(context) ? _RideGrid() : _RideList(),
+                        SizedBox(height: Responsive.spacing(context, units: 3)),
 
-                          // Recent Activity
-                          _RecentActivityCard().animate().fadeIn(
-                            delay: 200.ms,
-                            duration: 350.ms,
-                          ),
+                        // Recent Activity
+                        _RecentActivityCard().animate().fadeIn(
+                          delay: 200.ms,
+                          duration: 350.ms,
+                        ),
 
-                          SizedBox(
-                            height: Responsive.spacing(context, units: 2.5),
-                          ),
+                        SizedBox(
+                          height: Responsive.spacing(context, units: 2.5),
+                        ),
 
-                          _PromoBanner().animate().fadeIn(
-                            delay: 240.ms,
-                            duration: 350.ms,
-                          ),
-                        ],
-                      ),
+                        _PromoBanner().animate().fadeIn(
+                          delay: 240.ms,
+                          duration: 350.ms,
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -417,7 +406,7 @@ class _HomeHeader extends StatelessWidget {
                     SizedBox(width: Responsive.spacing(context, units: 1)),
                     Expanded(
                       child: Text(
-                        'Cebu City, Philippines',
+                        'Valencia City, Philippines',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: Responsive.fontSize(context, 13),
@@ -580,16 +569,18 @@ class _RideList extends StatelessWidget {
 class _RideGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final spacing = Responsive.spacing(context, units: 1.5);
+    final maxWidth = Responsive.maxWidth(context);
+    final hPad = Responsive.hPad(context);
+    final availableWidth = maxWidth - (hPad * 2);
+    final cardWidth = (availableWidth - spacing) / 2;
+
     return Wrap(
-      spacing: 12,
-      runSpacing: 12,
+      spacing: spacing,
+      runSpacing: spacing,
       children: _rideTypes.map((t) {
         return SizedBox(
-          width:
-              (Responsive.maxWidth(context) -
-                  Responsive.hPad(context) * 2 -
-                  12) /
-              2,
+          width: cardWidth,
           child: _RideCard(
             icon: t.icon,
             iconColor: t.iconColor,
@@ -735,85 +726,90 @@ class _RideCard extends StatelessWidget {
 class _PromoBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.primary, Color(0xFF1347C0)],
+    return GestureDetector(
+      onTap: () {
+        showToast(context, 'Promo claimed! ₱10 added to your account');
+      },
+      child: Container(
+        padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.primary, Color(0xFF1347C0)],
+          ),
+          borderRadius: BorderRadius.circular(
+            Responsive.radius(context, base: 16),
+          ),
         ),
-        borderRadius: BorderRadius.circular(
-          Responsive.radius(context, base: 16),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Responsive.spacing(context, units: 1),
-                    vertical: Responsive.spacing(context, units: 0.375),
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.amber.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(
-                      Responsive.radius(context, base: 6),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Responsive.spacing(context, units: 1),
+                      vertical: Responsive.spacing(context, units: 0.375),
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.amber.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(
+                        Responsive.radius(context, base: 6),
+                      ),
+                    ),
+                    child: Text(
+                      'LIMITED OFFER',
+                      style: TextStyle(
+                        color: AppColors.amber,
+                        fontSize: Responsive.fontSize(context, 10),
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ),
-                  child: Text(
-                    'LIMITED OFFER',
+                  SizedBox(height: Responsive.spacing(context, units: 1)),
+                  Text(
+                    '₱10 off your\nnext 3 rides!',
                     style: TextStyle(
-                      color: AppColors.amber,
-                      fontSize: Responsive.fontSize(context, 10),
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-                SizedBox(height: Responsive.spacing(context, units: 1)),
-                Text(
-                  '₱10 off your\nnext 3 rides!',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: Responsive.fontSize(context, 16),
-                    fontWeight: FontWeight.w700,
-                    height: 1.3,
-                  ),
-                ),
-                SizedBox(height: Responsive.spacing(context, units: 1.25)),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: Responsive.spacing(context, units: 1.5),
-                    vertical: Responsive.spacing(context, units: 0.75),
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.amber,
-                    borderRadius: BorderRadius.circular(
-                      Responsive.radius(context, base: 8),
-                    ),
-                  ),
-                  child: Text(
-                    'Claim Now',
-                    style: TextStyle(
-                      color: AppColors.driverBg,
-                      fontSize: Responsive.fontSize(context, 12),
+                      color: Colors.white,
+                      fontSize: Responsive.fontSize(context, 16),
                       fontWeight: FontWeight.w700,
+                      height: 1.3,
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(height: Responsive.spacing(context, units: 1.25)),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Responsive.spacing(context, units: 1.5),
+                      vertical: Responsive.spacing(context, units: 0.75),
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.amber,
+                      borderRadius: BorderRadius.circular(
+                        Responsive.radius(context, base: 8),
+                      ),
+                    ),
+                    child: Text(
+                      'Claim Now',
+                      style: TextStyle(
+                        color: AppColors.driverBg,
+                        fontSize: Responsive.fontSize(context, 12),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Icon(
-            Icons.local_offer_outlined,
-            color: Colors.white24,
-            size: Responsive.iconSize(context, base: 64),
-          ),
-        ],
+            Icon(
+              Icons.local_offer_outlined,
+              color: Colors.white24,
+              size: Responsive.iconSize(context, base: 64),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -829,6 +825,501 @@ class _QuickActionsRow extends StatelessWidget {
     required this.selectedIndex,
     required this.onActionTap,
   });
+
+  void _handleActionTap(BuildContext context, int index, String label) {
+    onActionTap(index);
+
+    switch (index) {
+      case 0: // Schedule
+        _showScheduleSheet(context);
+        break;
+      case 1: // Favorites
+        _showFavoritesSheet(context);
+        break;
+      case 2: // Share Ride
+        _showShareRideSheet(context);
+        break;
+      case 3: // Promos
+        _showPromosSheet(context);
+        break;
+    }
+  }
+
+  void _showScheduleSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Text(
+              'Schedule a Ride',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 18),
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Container(
+              padding: EdgeInsets.all(Responsive.spacing(context, units: 1.5)),
+              decoration: BoxDecoration(
+                color: AppColors.primarySurface,
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 12),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Scheduled Rides',
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 14),
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  SizedBox(height: Responsive.spacing(context, units: 1)),
+                  Text(
+                    '1 upcoming ride scheduled',
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 13),
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  SizedBox(height: Responsive.spacing(context, units: 1)),
+                  Text(
+                    'Tomorrow, 6:00 AM to Robinsons Place',
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 12),
+                      color: AppColors.textTertiary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  showToast(context, 'Schedule ride feature coming soon');
+                },
+                child: Text(
+                  'Schedule New Ride',
+                  style: TextStyle(fontSize: Responsive.fontSize(context, 14)),
+                ),
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showFavoritesSheet(BuildContext context) {
+    final favorites = AppState.instance.favoriteDrivers;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Text(
+              'Favorite Drivers',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 18),
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            ...favorites.map(
+              (driver) => Padding(
+                padding: EdgeInsets.only(
+                  bottom: Responsive.spacing(context, units: 1.5),
+                ),
+                child: Container(
+                  padding: EdgeInsets.all(
+                    Responsive.spacing(context, units: 1.5),
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: AppColors.border),
+                    borderRadius: BorderRadius.circular(
+                      Responsive.radius(context, base: 12),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: Responsive.iconSize(context, base: 44),
+                        height: Responsive.iconSize(context, base: 44),
+                        decoration: BoxDecoration(
+                          color: AppColors.primarySurface,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            driver.name.split(' ').map((n) => n[0]).join(),
+                            style: TextStyle(
+                              fontSize: Responsive.fontSize(context, 14),
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: Responsive.spacing(context, units: 1.5)),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              driver.name,
+                              style: TextStyle(
+                                fontSize: Responsive.fontSize(context, 14),
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            Text(
+                              '${driver.vehicleType} • ${driver.plateNumber}',
+                              style: TextStyle(
+                                fontSize: Responsive.fontSize(context, 12),
+                                color: AppColors.textTertiary,
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  size: Responsive.iconSize(context, base: 14),
+                                  color: AppColors.amber,
+                                ),
+                                SizedBox(
+                                  width: Responsive.spacing(
+                                    context,
+                                    units: 0.5,
+                                  ),
+                                ),
+                                Text(
+                                  '${driver.rating}',
+                                  style: TextStyle(
+                                    fontSize: Responsive.fontSize(context, 12),
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          showToast(context, 'Booking with ${driver.name}...');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Responsive.spacing(context, units: 1),
+                            vertical: Responsive.spacing(context, units: 0.75),
+                          ),
+                        ),
+                        child: Text(
+                          'Book',
+                          style: TextStyle(
+                            fontSize: Responsive.fontSize(context, 12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showShareRideSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Text(
+              'Share a Ride',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 18),
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+            Text(
+              'Split the fare with friends going the same way',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 13),
+                color: AppColors.textSecondary,
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Container(
+              padding: EdgeInsets.all(Responsive.spacing(context, units: 1.5)),
+              decoration: BoxDecoration(
+                color: AppColors.successLight,
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 12),
+                ),
+                border: Border.all(
+                  color: AppColors.success.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    color: AppColors.success,
+                    size: Responsive.iconSize(context, base: 18),
+                  ),
+                  SizedBox(width: Responsive.spacing(context, units: 1)),
+                  Expanded(
+                    child: Text(
+                      'Save up to 50% on your ride fare',
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 13),
+                        color: AppColors.success,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  showToast(context, 'Share ride feature coming soon');
+                },
+                child: Text(
+                  'Find Ride Sharers',
+                  style: TextStyle(fontSize: Responsive.fontSize(context, 14)),
+                ),
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPromosSheet(BuildContext context) {
+    final promos = AppState.instance.promoCodes;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Text(
+              'Available Promos',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 18),
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            ...promos.map(
+              (promo) => Padding(
+                padding: EdgeInsets.only(
+                  bottom: Responsive.spacing(context, units: 1.5),
+                ),
+                child: Container(
+                  padding: EdgeInsets.all(
+                    Responsive.spacing(context, units: 1.5),
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primary.withValues(alpha: 0.05),
+                        AppColors.primary.withValues(alpha: 0.02),
+                      ],
+                    ),
+                    border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.2),
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      Responsive.radius(context, base: 12),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: Responsive.iconSize(context, base: 44),
+                        height: Responsive.iconSize(context, base: 44),
+                        decoration: BoxDecoration(
+                          color: AppColors.amber.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(
+                            Responsive.radius(context, base: 10),
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.local_offer_outlined,
+                          color: AppColors.amber,
+                          size: Responsive.iconSize(context, base: 22),
+                        ),
+                      ),
+                      SizedBox(width: Responsive.spacing(context, units: 1.5)),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              promo.code,
+                              style: TextStyle(
+                                fontSize: Responsive.fontSize(context, 14),
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            Text(
+                              promo.description,
+                              style: TextStyle(
+                                fontSize: Responsive.fontSize(context, 12),
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                            Text(
+                              'Expires: ${promo.expiryDate}',
+                              style: TextStyle(
+                                fontSize: Responsive.fontSize(context, 11),
+                                color: AppColors.textTertiary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(ctx);
+                          showToast(context, 'Promo ${promo.code} applied!');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Responsive.spacing(context, units: 1),
+                            vertical: Responsive.spacing(context, units: 0.75),
+                          ),
+                        ),
+                        child: Text(
+                          'Apply',
+                          style: TextStyle(
+                            fontSize: Responsive.fontSize(context, 12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -863,7 +1354,7 @@ class _QuickActionsRow extends StatelessWidget {
 
         return Expanded(
           child: GestureDetector(
-            onTap: () => onActionTap(index),
+            onTap: () => _handleActionTap(context, index, action.label),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               margin: EdgeInsets.only(
@@ -1108,7 +1599,7 @@ class _RecentActivityCard extends StatelessWidget {
           _ActivityItem(
             icon: Icons.check_circle_outline,
             iconColor: AppColors.success,
-            title: 'Trip to SM City Cebu',
+            title: 'Trip to Robinsons Place',
             subtitle: 'Yesterday, 2:30 PM • ₱45',
             trailing: '4.9 ⭐',
           ),

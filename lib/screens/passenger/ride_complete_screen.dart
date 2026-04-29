@@ -189,8 +189,8 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                             ),
                             const SizedBox(height: 14),
                             PhRouteDisplay(
-                              pickup: 'Cebu City, Philippines',
-                              dropoff: 'SM City Cebu',
+                              pickup: 'Valencia City, Philippines',
+                              dropoff: 'Robinsons Place',
                             ),
                             const SizedBox(height: 14),
                             Row(

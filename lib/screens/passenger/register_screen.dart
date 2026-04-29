@@ -148,7 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Thousands of riders trust us in Cebu',
+                      'Thousands of riders trust us in Valencia',
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 16,
@@ -250,7 +250,7 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Join thousands of riders in Cebu',
+            'Join thousands of riders in Valencia',
             style: TextStyle(
               fontSize: 14,
               color: Colors.white.withValues(alpha: 0.6),

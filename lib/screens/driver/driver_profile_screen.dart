@@ -383,7 +383,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen>
                         onPressed: () {
                           showToast(context, 'Logged out');
                           Future.delayed(const Duration(milliseconds: 600), () {
-                            if (context.mounted) context.go('/');
+                            if (context.mounted) context.replace('/');
                           });
                         },
                         icon: Icon(

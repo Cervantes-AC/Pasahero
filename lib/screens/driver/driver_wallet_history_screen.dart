@@ -31,11 +31,16 @@ class _DriverWalletHistoryScreenState extends State<DriverWalletHistoryScreen>
 
   @override
   void dispose() {
-    _tabController.dispose();
+    try {
+      _tabController.dispose();
+    } catch (e) {
+      debugPrint('Error disposing TabController: $e');
+    }
     super.dispose();
   }
 
   Future<void> _loadTransactions() async {
+    if (!mounted) return;
     setState(() => _loading = true);
     try {
       final wallet = await WalletService.instance.getWalletByUserId(
@@ -50,7 +55,9 @@ class _DriverWalletHistoryScreenState extends State<DriverWalletHistoryScreen>
     } catch (e) {
       debugPrint('Error loading driver transactions: $e');
     } finally {
-      setState(() => _loading = false);
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
   }
 
@@ -61,6 +68,13 @@ class _DriverWalletHistoryScreenState extends State<DriverWalletHistoryScreen>
 
   @override
   Widget build(BuildContext context) {
+    if (!mounted) {
+      return const Scaffold(
+        backgroundColor: AppColors.driverBg,
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.driverBg,
       body: Column(
@@ -74,7 +88,8 @@ class _DriverWalletHistoryScreenState extends State<DriverWalletHistoryScreen>
                       color: AppColors.driverAccent,
                     ),
                   )
-                : TabBarView(
+                : _tabController.index >= 0
+                ? TabBarView(
                     controller: _tabController,
                     children: [
                       _driverTransactionList(transactions: _filtered(null)),
@@ -88,7 +103,8 @@ class _DriverWalletHistoryScreenState extends State<DriverWalletHistoryScreen>
                         transactions: _filtered(TransactionType.commission),
                       ),
                     ],
-                  ),
+                  )
+                : const SizedBox.shrink(),
           ),
         ],
       ),

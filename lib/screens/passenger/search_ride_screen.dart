@@ -15,7 +15,7 @@ class SearchRideScreen extends StatefulWidget {
 
 class _SearchRideScreenState extends State<SearchRideScreen>
     with TickerProviderStateMixin {
-  final _pickupCtrl = TextEditingController(text: 'Cebu City, Philippines');
+  final _pickupCtrl = TextEditingController(text: 'Valencia City, Philippines');
   final _destCtrl = TextEditingController();
   late AnimationController _mapController;
   late AnimationController _pulseController;
@@ -399,7 +399,8 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                           label: 'Home',
                           color: AppColors.primary,
                           onTap: () => setState(
-                            () => _destCtrl.text = '123 Mabolo St, Cebu City',
+                            () =>
+                                _destCtrl.text = '123 Mabolo St, Valencia City',
                           ),
                         ),
                         SizedBox(
@@ -410,7 +411,8 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                           label: 'Work',
                           color: AppColors.error,
                           onTap: () => setState(
-                            () => _destCtrl.text = 'IT Park, Lahug, Cebu City',
+                            () => _destCtrl.text =
+                                'Robinsons Place, Valencia City',
                           ),
                         ),
                         SizedBox(
@@ -422,7 +424,7 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                           color: AppColors.amber,
                           onTap: () => setState(
                             () => _destCtrl.text =
-                                'South Road Properties, Cebu City',
+                                'Paseo de Santa Rosa, Valencia City',
                           ),
                         ),
                       ],
@@ -439,7 +441,11 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                       ),
                     ),
                     SizedBox(height: Responsive.spacing(context, units: 1.25)),
-                    ...['SM City Cebu', 'Ayala Center Cebu', 'IT Park'].map(
+                    ...[
+                      'Robinsons Place',
+                      'Paseo de Santa Rosa',
+                      'Puregold',
+                    ].map(
                       (place) => Padding(
                         padding: EdgeInsets.only(
                           bottom: Responsive.spacing(context, units: 1),

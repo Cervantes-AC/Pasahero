@@ -1740,7 +1740,41 @@ class _MiniRideRow extends StatelessWidget {
   }
 }
 
-class _PMockDriverCard extends StatelessWidget {
+class _PMockDriverCard extends StatefulWidget {
+  @override
+  State<_PMockDriverCard> createState() => _PMockDriverCardState();
+}
+
+class _PMockDriverCardState extends State<_PMockDriverCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _vehicleController;
+  late Animation<double> _topAnim;
+  late Animation<double> _leftAnim;
+  String? _selectedVehicle;
+
+  @override
+  void initState() {
+    super.initState();
+    _vehicleController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat();
+    _topAnim = Tween<double>(
+      begin: 0.85,
+      end: 0.25,
+    ).animate(_vehicleController);
+    _leftAnim = Tween<double>(
+      begin: 0.25,
+      end: 0.65,
+    ).animate(_vehicleController);
+  }
+
+  @override
+  void dispose() {
+    _vehicleController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -1754,6 +1788,7 @@ class _PMockDriverCard extends StatelessWidget {
                 children: [
                   CustomPaint(painter: _MapPainter(), size: Size.infinite),
                   CustomPaint(painter: _RoutePainter(), size: Size.infinite),
+                  // Destination marker
                   Positioned(
                     top: 22,
                     left: 28,
@@ -1772,6 +1807,7 @@ class _PMockDriverCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // Your location
                   Positioned(
                     bottom: 22,
                     right: 26,
@@ -1785,6 +1821,39 @@ class _PMockDriverCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // Animated driver vehicle
+                  AnimatedBuilder(
+                    animation: _vehicleController,
+                    builder: (context, child) {
+                      return Positioned(
+                        top: 60 * _topAnim.value,
+                        left: 60 * _leftAnim.value,
+                        child: Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: _selectedVehicle != null
+                                ? _AppColors.primary
+                                : _AppColors.amber,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.two_wheeler,
+                            color: Colors.white,
+                            size: 8,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  // ETA badge
                   Positioned(
                     top: 7,
                     right: 7,
