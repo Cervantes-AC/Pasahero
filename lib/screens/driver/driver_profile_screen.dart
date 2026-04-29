@@ -527,7 +527,7 @@ class _InfoRow extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: AppColors.driverTextMuted,
+            color: Colors.black,
             fontSize: Responsive.fontSize(context, 13),
           ),
         ),
@@ -565,7 +565,7 @@ class _DocRow extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: Colors.white,
+              color: Colors.black,
               fontSize: Responsive.fontSize(context, 13),
             ),
           ),

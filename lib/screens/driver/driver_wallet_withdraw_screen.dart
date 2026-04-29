@@ -4,7 +4,6 @@ library;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../models/wallet.dart';
-import '../../services/wallet_service.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/responsive.dart';
@@ -25,20 +24,11 @@ class _DriverWalletWithdrawScreenState
 
   WithdrawMethod _selectedMethod = WithdrawMethod.gcash;
   bool _processing = false;
-  Wallet? _wallet;
+
+  // Mock wallet balance
+  final double _balance = 912.50;
 
   final List<double> _quickAmounts = [100, 200, 500, 1000, 2000];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadWallet();
-  }
-
-  Future<void> _loadWallet() async {
-    final wallet = await WalletService.instance.getWalletByUserId('driver_001');
-    setState(() => _wallet = wallet);
-  }
 
   Future<void> _processWithdrawal() async {
     if (_amountController.text.isEmpty) {
@@ -57,7 +47,7 @@ class _DriverWalletWithdrawScreenState
       return;
     }
 
-    if (_wallet == null || amount > _wallet!.balance) {
+    if (amount > _balance) {
       _showError('Insufficient balance');
       return;
     }
@@ -70,29 +60,12 @@ class _DriverWalletWithdrawScreenState
 
     setState(() => _processing = true);
 
-    try {
-      final request = WithdrawalRequest(
-        walletId: _wallet!.walletId,
-        amount: amount,
-        method: _selectedMethod,
-        accountNumber: _accountController.text.isNotEmpty
-            ? _accountController.text
-            : null,
-        accountName: _nameController.text.isNotEmpty
-            ? _nameController.text
-            : null,
-      );
+    // Simulate processing delay
+    await Future.delayed(const Duration(seconds: 2));
 
-      await WalletService.instance.processWithdrawal(request);
+    if (!mounted) return;
 
-      if (context.mounted) {
-        _showSuccessSheet(amount);
-      }
-    } catch (e) {
-      _showError('Error: $e');
-    } finally {
-      setState(() => _processing = false);
-    }
+    _showSuccessSheet(amount);
   }
 
   void _showError(String message) {
@@ -167,7 +140,7 @@ class _DriverWalletWithdrawScreenState
   }
 
   Widget _buildBalanceInfo() {
-    final balance = _wallet?.balance ?? 0.0;
+    final balance = _balance;
     return Container(
       padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
       decoration: BoxDecoration(
@@ -220,9 +193,7 @@ class _DriverWalletWithdrawScreenState
           ),
           GestureDetector(
             onTap: () {
-              _amountController.text = (_wallet?.balance ?? 0).toStringAsFixed(
-                0,
-              );
+              _amountController.text = _balance.toStringAsFixed(0);
             },
             child: Container(
               padding: EdgeInsets.symmetric(

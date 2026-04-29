@@ -1,6 +1,5 @@
 import 'package:go_router/go_router.dart';
 import 'screens/shared/welcome_screen.dart';
-import 'screens/shared/showcase_screen.dart';
 import 'screens/passenger/login_screen.dart';
 import 'screens/passenger/register_screen.dart';
 import 'screens/passenger/home_screen.dart';
@@ -37,7 +36,6 @@ final appRouter = GoRouter(
   routes: [
     // ── Shared ──────────────────────────────────────────────────────────────
     GoRoute(path: '/', builder: (ctx, s) => const WelcomeScreen()),
-    GoRoute(path: '/showcase', builder: (ctx, s) => const ShowcaseScreen()),
 
     // ── Passenger auth ───────────────────────────────────────────────────────
     GoRoute(path: '/login', builder: (ctx, s) => const LoginScreen()),

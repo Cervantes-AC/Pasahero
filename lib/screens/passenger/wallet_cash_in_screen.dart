@@ -4,7 +4,6 @@ library;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../models/wallet.dart';
-import '../../services/wallet_service.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/responsive.dart';
@@ -20,22 +19,8 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
   final TextEditingController _amountController = TextEditingController();
   CashInMethod _selectedMethod = CashInMethod.gcash;
   bool _processing = false;
-  Wallet? _wallet;
 
   final List<double> _quickAmounts = [50, 100, 200, 500, 1000];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadWallet();
-  }
-
-  Future<void> _loadWallet() async {
-    final wallet = await WalletService.instance.getWalletByUserId(
-      'passenger_001',
-    );
-    setState(() => _wallet = wallet);
-  }
 
   Future<void> _processCashIn() async {
     if (_amountController.text.isEmpty) {
@@ -62,37 +47,23 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
 
     setState(() => _processing = true);
 
-    try {
-      final request = CashInRequest(
-        walletId: _wallet!.walletId,
-        amount: amount,
-        method: _selectedMethod,
-      );
+    // Simulate processing delay
+    await Future.delayed(const Duration(seconds: 2));
 
-      await WalletService.instance.processCashIn(request);
+    if (!mounted) return;
 
-      if (!mounted) return;
-
-      // Show success
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Successfully added ₱${amount.toStringAsFixed(2)} to your wallet',
-          ),
-          backgroundColor: AppColors.success,
+    // Show success (mock)
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Successfully added ₱${amount.toStringAsFixed(2)} to your wallet',
         ),
-      );
+        backgroundColor: AppColors.success,
+      ),
+    );
 
-      // Navigate back
-      context.pop();
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error),
-      );
-    } finally {
-      setState(() => _processing = false);
-    }
+    // Navigate back
+    context.pop();
   }
 
   void _selectQuickAmount(double amount) {

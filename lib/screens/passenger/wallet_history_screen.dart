@@ -3,7 +3,6 @@ library;
 
 import 'package:flutter/material.dart';
 import '../../models/wallet.dart';
-import '../../services/wallet_service.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/responsive.dart';
@@ -41,23 +40,77 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
   Future<void> _loadTransactions() async {
     if (!mounted) return;
     setState(() => _loading = true);
-    try {
-      final wallet = await WalletService.instance.getWalletByUserId(
-        'passenger_001',
-      );
-      if (wallet != null) {
-        _allTransactions = await WalletService.instance.getTransactionHistory(
-          wallet.walletId,
-          limit: 100,
-        );
-      }
-    } catch (e) {
-      debugPrint('Error loading transactions: $e');
-    } finally {
-      if (mounted) {
-        setState(() => _loading = false);
-      }
-    }
+
+    // Simulate loading delay
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    if (!mounted) return;
+
+    // Mock transaction data
+    _allTransactions = [
+      WalletTransaction(
+        transactionId: 'TXN-2024-001',
+        walletId: 'wallet_001',
+        type: TransactionType.cashIn,
+        amount: 500,
+        status: TransactionStatus.completed,
+        timestamp: DateTime.now().subtract(const Duration(hours: 2)),
+        method: 'gcash',
+        description: 'Cash In via GCash',
+      ),
+      WalletTransaction(
+        transactionId: 'TXN-2024-002',
+        walletId: 'wallet_001',
+        type: TransactionType.cashIn,
+        amount: 1000,
+        status: TransactionStatus.completed,
+        timestamp: DateTime.now().subtract(const Duration(hours: 5)),
+        method: 'maya',
+        description: 'Cash In via Maya',
+      ),
+      WalletTransaction(
+        transactionId: 'TXN-2024-003',
+        walletId: 'wallet_001',
+        type: TransactionType.payment,
+        amount: 85.50,
+        status: TransactionStatus.completed,
+        timestamp: DateTime.now().subtract(const Duration(days: 1)),
+        rideId: 'RIDE-001',
+        description: 'Ride Payment',
+      ),
+      WalletTransaction(
+        transactionId: 'TXN-2024-004',
+        walletId: 'wallet_001',
+        type: TransactionType.payment,
+        amount: 120,
+        status: TransactionStatus.completed,
+        timestamp: DateTime.now().subtract(const Duration(days: 2)),
+        rideId: 'RIDE-002',
+        description: 'Ride Payment',
+      ),
+      WalletTransaction(
+        transactionId: 'TXN-2024-005',
+        walletId: 'wallet_001',
+        type: TransactionType.payment,
+        amount: 65.75,
+        status: TransactionStatus.completed,
+        timestamp: DateTime.now().subtract(const Duration(days: 3)),
+        rideId: 'RIDE-003',
+        description: 'Ride Payment',
+      ),
+      WalletTransaction(
+        transactionId: 'TXN-2024-006',
+        walletId: 'wallet_001',
+        type: TransactionType.refund,
+        amount: 50,
+        status: TransactionStatus.completed,
+        timestamp: DateTime.now().subtract(const Duration(days: 4)),
+        rideId: 'RIDE-004',
+        description: 'Ride Cancellation Refund',
+      ),
+    ];
+
+    setState(() => _loading = false);
   }
 
   List<WalletTransaction> _filtered(TransactionType? type) {

@@ -451,6 +451,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               label: 'Edit Profile',
                               outlined: true,
                               height: 48,
+                              foregroundColor: Colors.black,
                               onTap: () async {
                                 await context.push('/edit-profile');
                                 setState(() {});

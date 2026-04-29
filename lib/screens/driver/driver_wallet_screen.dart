@@ -4,7 +4,6 @@ library;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../models/wallet.dart';
-import '../../services/wallet_service.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/responsive.dart';
@@ -32,30 +31,77 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
 
   Future<void> _loadData() async {
     setState(() => _loading = true);
-    try {
-      await WalletService.instance.initializeMockData();
-      final wallet = await WalletService.instance.getWalletByUserId(
-        'driver_001',
-      );
-      if (wallet != null) {
-        _wallet = wallet;
-        _todayEarnings = await WalletService.instance.getTodayEarnings(
-          wallet.walletId,
-        );
-        _totalEarnings = await WalletService.instance.getTotalEarnings(
-          wallet.walletId,
-        );
-        _todayTrips = await WalletService.instance.getTodayTripCount(
-          wallet.walletId,
-        );
-        _recentTransactions = await WalletService.instance
-            .getTransactionHistory(wallet.walletId, limit: 5);
-      }
-    } catch (e) {
-      debugPrint('Error loading driver wallet: $e');
-    } finally {
-      setState(() => _loading = false);
-    }
+
+    // Simulate loading delay
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    // Mock wallet data
+    _wallet = Wallet(
+      walletId: 'wallet_driver_001',
+      userId: 'driver_001',
+      balance: 912.50,
+      userType: UserType.driver,
+      createdAt: DateTime.now().subtract(const Duration(days: 30)),
+      updatedAt: DateTime.now(),
+    );
+
+    _todayEarnings = 912.50;
+    _totalEarnings = 5432.75;
+    _todayTrips = 13;
+
+    // Mock recent transactions
+    _recentTransactions = [
+      WalletTransaction(
+        transactionId: 'TXN-DRV-001',
+        walletId: 'wallet_driver_001',
+        type: TransactionType.earnings,
+        amount: 65.00,
+        status: TransactionStatus.completed,
+        timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
+        rideId: 'RIDE-DRV-001',
+        commissionRate: 0.17,
+        commissionAmount: 13.00,
+        description: 'Ride Earnings',
+      ),
+      WalletTransaction(
+        transactionId: 'TXN-DRV-002',
+        walletId: 'wallet_driver_001',
+        type: TransactionType.earnings,
+        amount: 120.00,
+        status: TransactionStatus.completed,
+        timestamp: DateTime.now().subtract(const Duration(minutes: 45)),
+        rideId: 'RIDE-DRV-002',
+        commissionRate: 0.17,
+        commissionAmount: 24.00,
+        description: 'Ride Earnings',
+      ),
+      WalletTransaction(
+        transactionId: 'TXN-DRV-003',
+        walletId: 'wallet_driver_001',
+        type: TransactionType.earnings,
+        amount: 95.50,
+        status: TransactionStatus.completed,
+        timestamp: DateTime.now().subtract(const Duration(hours: 1)),
+        rideId: 'RIDE-DRV-003',
+        commissionRate: 0.17,
+        commissionAmount: 19.50,
+        description: 'Ride Earnings',
+      ),
+      WalletTransaction(
+        transactionId: 'TXN-DRV-004',
+        walletId: 'wallet_driver_001',
+        type: TransactionType.earnings,
+        amount: 630.00,
+        status: TransactionStatus.completed,
+        timestamp: DateTime.now().subtract(const Duration(hours: 2)),
+        rideId: 'RIDE-DRV-004',
+        commissionRate: 0.17,
+        commissionAmount: 130.00,
+        description: 'Ride Earnings',
+      ),
+    ];
+
+    setState(() => _loading = false);
   }
 
   @override
@@ -481,7 +527,7 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
         todayEarnings: _todayEarnings,
         totalEarnings: _totalEarnings,
         todayTrips: _todayTrips,
-        commissionRate: WalletService.commissionRate,
+        commissionRate: 0.17, // 17% commission
       ),
     );
   }
