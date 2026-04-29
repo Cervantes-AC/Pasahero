@@ -41,7 +41,7 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Success header
+            // Success header - now scrollable with content
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -53,7 +53,7 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
               child: SafeArea(
                 bottom: false,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 40),
+                  padding: const EdgeInsets.fromLTRB(24, 32, 24, 32),
                   child: Column(
                     children: [
                       Container(
@@ -99,21 +99,22 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                             curve: Curves.elasticOut,
                           )
                           .fadeIn(duration: 400.ms),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 24),
                       const Text(
                         'Trip Complete!',
                         style: TextStyle(
-                          fontSize: 28,
+                          fontSize: 32,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 8),
                       Text(
                         'Thank you for riding with us',
                         style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.white.withValues(alpha: 0.85),
+                          fontSize: 16,
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -124,7 +125,7 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
 
             // Content section
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -136,17 +137,17 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                             const Text(
                               'Trip Summary',
                               style: TextStyle(
-                                fontSize: 15,
+                                fontSize: 16,
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.textPrimary,
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 14),
                             PhRouteDisplay(
                               pickup: 'Cebu City, Philippines',
                               dropoff: 'SM City Cebu',
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 14),
                             Row(
                               children: [
                                 Expanded(
@@ -173,14 +174,14 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                       .fadeIn(duration: 350.ms)
                       .slideY(begin: 0.1, end: 0),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
 
                   // Driver
                   PhCard(
                     child: Row(
                       children: [
-                        PhAvatar(initials: 'PS', size: 52),
-                        const SizedBox(width: 12),
+                        PhAvatar(initials: 'PS', size: 56),
+                        const SizedBox(width: 14),
                         const Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,14 +190,14 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                                 'Pedro Santos',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  fontSize: 14,
+                                  fontSize: 15,
                                   color: AppColors.textPrimary,
                                 ),
                               ),
                               Text(
                                 'Habal-habal · ABC 1234',
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 13,
                                   color: AppColors.textTertiary,
                                 ),
                               ),
@@ -208,7 +209,7 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                             5,
                             (i) => const Icon(
                               Icons.star_rounded,
-                              size: 14,
+                              size: 16,
                               color: AppColors.amber,
                             ),
                           ),
@@ -217,7 +218,7 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                     ),
                   ).animate().fadeIn(delay: 60.ms, duration: 350.ms),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
 
                   // Rating
                   PhCard(
@@ -227,12 +228,12 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                         const Text(
                           'Rate Your Driver',
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 16),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(5, (i) {
@@ -241,13 +242,13 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                               onTap: () => setState(() => _rating = star),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
+                                  horizontal: 8,
                                 ),
                                 child: Icon(
                                   star <= _rating
                                       ? Icons.star_rounded
                                       : Icons.star_outline_rounded,
-                                  size: 40,
+                                  size: 44,
                                   color: star <= _rating
                                       ? AppColors.amber
                                       : AppColors.border,
@@ -260,7 +261,7 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                     ),
                   ).animate().fadeIn(delay: 120.ms, duration: 350.ms),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
 
                   // Payment
                   PhCard(
@@ -270,20 +271,20 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                         const Text(
                           'Payment',
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: AppColors.textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 14),
                         _PayRow(label: 'Fare', value: '₱45.00'),
                         if (_tip > 0) ...[
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 8),
                           _PayRow(label: 'Tip', value: '₱$_tip.00'),
                         ],
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 12),
                         const PhDivider(),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 12),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -291,30 +292,30 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                               'Total',
                               style: TextStyle(
                                 fontWeight: FontWeight.w700,
-                                fontSize: 15,
+                                fontSize: 16,
                                 color: AppColors.textPrimary,
                               ),
                             ),
                             Text(
                               '₱${45 + _tip}.00',
                               style: const TextStyle(
-                                fontSize: 22,
+                                fontSize: 24,
                                 fontWeight: FontWeight.w800,
                                 color: AppColors.primary,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 18),
                         const Text(
                           'Add Tip (Optional)',
                           style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
                             color: AppColors.textSecondary,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 10),
                         Row(
                           children: _tips.map((amt) {
                             final sel = _tip == amt && _tipCtrl.text.isEmpty;
@@ -325,24 +326,25 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                                   _tipCtrl.clear();
                                 }),
                                 child: Container(
-                                  margin: const EdgeInsets.only(right: 6),
-                                  height: 40,
+                                  margin: const EdgeInsets.only(right: 8),
+                                  height: 44,
                                   decoration: BoxDecoration(
                                     color: sel
                                         ? AppColors.primarySurface
                                         : AppColors.surfaceVariant,
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
                                       color: sel
                                           ? AppColors.primary
                                           : AppColors.border,
+                                      width: sel ? 2 : 1,
                                     ),
                                   ),
                                   child: Center(
                                     child: Text(
                                       amt == 0 ? 'None' : '₱$amt',
                                       style: TextStyle(
-                                        fontSize: 12,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w600,
                                         color: sel
                                             ? AppColors.primary
@@ -355,7 +357,7 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                             );
                           }).toList(),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 10),
                         TextField(
                           controller: _tipCtrl,
                           keyboardType: TextInputType.number,
@@ -363,32 +365,32 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                             hintText: 'Custom tip amount',
                             hintStyle: const TextStyle(
                               color: AppColors.textTertiary,
-                              fontSize: 13,
+                              fontSize: 14,
                             ),
                             filled: true,
                             fillColor: AppColors.surfaceVariant,
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(
                                 color: AppColors.border,
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(
                                 color: AppColors.border,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(12),
                               borderSide: const BorderSide(
                                 color: AppColors.primary,
-                                width: 1.5,
+                                width: 2,
                               ),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 12,
+                              horizontal: 16,
+                              vertical: 14,
                             ),
                           ),
                           onChanged: (v) =>
@@ -398,12 +400,12 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                     ),
                   ).animate().fadeIn(delay: 180.ms, duration: 350.ms),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   PhButton(
                     label: 'Pay ₱${45 + _tip}',
                     onTap: _submit,
                   ).animate().fadeIn(delay: 240.ms, duration: 350.ms),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10),
                   SizedBox(
                     width: double.infinity,
                     child: TextButton(
@@ -412,12 +414,12 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                         'Skip for now',
                         style: TextStyle(
                           color: AppColors.textTertiary,
-                          fontSize: 13,
+                          fontSize: 14,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28),
                 ],
               ),
             ),

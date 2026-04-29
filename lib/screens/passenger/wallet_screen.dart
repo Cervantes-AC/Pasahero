@@ -7,6 +7,7 @@ import '../../models/wallet.dart';
 import '../../services/wallet_service.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/responsive.dart';
 
 class PassengerWalletScreen extends StatefulWidget {
   const PassengerWalletScreen({super.key});
@@ -67,16 +68,18 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(
+              horizontal: Responsive.spacing(context, units: 2),
+            ),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                const SizedBox(height: 20),
+                SizedBox(height: Responsive.spacing(context, units: 2.5)),
                 _buildBalanceCard(),
-                const SizedBox(height: 24),
+                SizedBox(height: Responsive.spacing(context, units: 3)),
                 _buildQuickActions(),
-                const SizedBox(height: 24),
+                SizedBox(height: Responsive.spacing(context, units: 3)),
                 _buildRecentTransactions(),
-                const SizedBox(height: 40),
+                SizedBox(height: Responsive.spacing(context, units: 5)),
               ]),
             ),
           ),
@@ -87,10 +90,10 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
 
   Widget _buildBalanceCard() {
     if (_loading) {
-      return const PhCard(
+      return PhCard(
         child: SizedBox(
-          height: 160,
-          child: Center(
+          height: Responsive.buttonHeight(context) * 2,
+          child: const Center(
             child: CircularProgressIndicator(color: AppColors.primary),
           ),
         ),
@@ -102,26 +105,32 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
     return PhCard(
       child: Column(
         children: [
-          const Text(
+          Text(
             'Available Balance',
-            style: TextStyle(fontSize: 13, color: AppColors.textTertiary),
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 13),
+              color: AppColors.textTertiary,
+            ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: Responsive.spacing(context, units: 1)),
           Text(
             '₱${balance.toStringAsFixed(2)}',
-            style: const TextStyle(
-              fontSize: 48,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 48),
               fontWeight: FontWeight.w700,
               color: AppColors.textPrimary,
               letterSpacing: -1,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: Responsive.spacing(context, units: 0.5)),
           Text(
-            '≈ \$${(balance / 56).toStringAsFixed(2)} USD',
-            style: const TextStyle(fontSize: 12, color: AppColors.textTertiary),
+            '≈ \${(balance / 56).toStringAsFixed(2)} USD',
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 12),
+              color: AppColors.textTertiary,
+            ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: Responsive.spacing(context, units: 2.5)),
           Row(
             children: [
               Expanded(
@@ -131,7 +140,7 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
                   onTap: () => context.go('/wallet-cash-in'),
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: Responsive.spacing(context, units: 1.5)),
               Expanded(
                 child: PhButton(
                   label: 'History',
@@ -151,12 +160,12 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const PhSectionHeader(title: 'Quick Actions'),
-        const SizedBox(height: 12),
+        PhSectionHeader(title: 'Quick Actions'),
+        SizedBox(height: Responsive.spacing(context, units: 1.5)),
         Row(
           children: [
             Expanded(
-              child: _QuickActionTile(
+              child: _quickActionTile(
                 icon: Icons.payment_outlined,
                 label: 'Pay Ride',
                 color: AppColors.primary,
@@ -167,9 +176,9 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: Responsive.spacing(context, units: 1.5)),
             Expanded(
-              child: _QuickActionTile(
+              child: _quickActionTile(
                 icon: Icons.qr_code_outlined,
                 label: 'Scan QR',
                 color: AppColors.success,
@@ -178,9 +187,9 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
                 ),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: Responsive.spacing(context, units: 1.5)),
             Expanded(
-              child: _QuickActionTile(
+              child: _quickActionTile(
                 icon: Icons.share_outlined,
                 label: 'Send Money',
                 color: AppColors.amber,
@@ -195,6 +204,48 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
     );
   }
 
+  Widget _quickActionTile({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          vertical: Responsive.spacing(context, units: 2),
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(
+            Responsive.radius(context, base: 12),
+          ),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              color: color,
+              size: Responsive.iconSize(context, base: 24),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 12),
+                fontWeight: FontWeight.w600,
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildRecentTransactions() {
     if (_loading) return const SizedBox.shrink();
 
@@ -202,28 +253,31 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const PhSectionHeader(title: 'Recent Transactions'),
-          const SizedBox(height: 12),
-          const PhCard(
+          PhSectionHeader(title: 'Recent Transactions'),
+          SizedBox(height: Responsive.spacing(context, units: 1.5)),
+          PhCard(
             child: Column(
               children: [
                 Icon(
                   Icons.receipt_long_outlined,
                   color: AppColors.textTertiary,
-                  size: 48,
+                  size: Responsive.iconSize(context, base: 48),
                 ),
-                SizedBox(height: 12),
+                SizedBox(height: Responsive.spacing(context, units: 1.5)),
                 Text(
                   'No transactions yet',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: Responsive.fontSize(context, 14),
                     color: AppColors.textSecondary,
                   ),
                 ),
-                SizedBox(height: 4),
+                SizedBox(height: Responsive.spacing(context, units: 0.5)),
                 Text(
                   'Start by adding money to your wallet',
-                  style: TextStyle(fontSize: 12, color: AppColors.textTertiary),
+                  style: TextStyle(
+                    fontSize: Responsive.fontSize(context, 12),
+                    color: AppColors.textTertiary,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -241,7 +295,7 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
           action: 'View All',
           onAction: () => context.go('/wallet-history'),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: Responsive.spacing(context, units: 1.5)),
         PhCard(
           padding: EdgeInsets.zero,
           child: Column(
@@ -251,7 +305,7 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
                 .asMap()
                 .entries
                 .map(
-                  (e) => _TransactionTile(
+                  (e) => _transactionTile(
                     transaction: e.value,
                     isLast:
                         e.key ==
@@ -267,68 +321,19 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
       ],
     );
   }
-}
 
-// ── Quick Action Tile ─────────────────────────────────────────────────────────
-
-class _QuickActionTile extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _QuickActionTile({
-    required this.icon,
-    required this.label,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textSecondary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ── Transaction Tile ──────────────────────────────────────────────────────────
-
-class _TransactionTile extends StatelessWidget {
-  final WalletTransaction transaction;
-  final bool isLast;
-
-  const _TransactionTile({required this.transaction, required this.isLast});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _transactionTile({
+    required WalletTransaction transaction,
+    required bool isLast,
+  }) {
     final isPositive = transaction.isPositive;
     final amountColor = isPositive ? AppColors.success : AppColors.error;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: EdgeInsets.symmetric(
+        horizontal: Responsive.spacing(context, units: 2),
+        vertical: Responsive.spacing(context, units: 1.75),
+      ),
       decoration: BoxDecoration(
         border: isLast
             ? null
@@ -339,38 +344,40 @@ class _TransactionTile extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: Responsive.iconSize(context, base: 40),
+            height: Responsive.iconSize(context, base: 40),
             decoration: BoxDecoration(
               color: isPositive
                   ? AppColors.successSurface
                   : AppColors.errorSurface,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 10),
+              ),
             ),
             child: Icon(
               _iconFor(transaction.type),
               color: isPositive ? AppColors.success : AppColors.error,
-              size: 20,
+              size: Responsive.iconSize(context, base: 20),
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: Responsive.spacing(context, units: 1.5)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   transaction.displayTitle,
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TextStyle(
+                    fontSize: Responsive.fontSize(context, 14),
                     fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: Responsive.spacing(context, units: 0.25)),
                 Text(
                   _formatDate(transaction.timestamp),
-                  style: const TextStyle(
-                    fontSize: 11,
+                  style: TextStyle(
+                    fontSize: Responsive.fontSize(context, 11),
                     color: AppColors.textTertiary,
                   ),
                 ),
@@ -380,7 +387,7 @@ class _TransactionTile extends StatelessWidget {
           Text(
             '${isPositive ? '+' : '-'}₱${transaction.amount.toStringAsFixed(2)}',
             style: TextStyle(
-              fontSize: 15,
+              fontSize: Responsive.fontSize(context, 15),
               fontWeight: FontWeight.w700,
               color: amountColor,
             ),

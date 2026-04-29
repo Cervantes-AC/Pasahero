@@ -138,6 +138,10 @@ class AppState {
   String driverName = 'Pedro Santos';
   String driverPhone = '+63 912 345 6789';
 
+  void updatePassengerName(String name) {
+    passengerName = name;
+  }
+
   // ── Driver status ─────────────────────────────────────────────────────────
   DriverStatus driverStatus = DriverStatus.offline;
   RideRequest? pendingRequest;

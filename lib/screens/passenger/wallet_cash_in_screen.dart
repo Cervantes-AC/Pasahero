@@ -7,6 +7,7 @@ import '../../models/wallet.dart';
 import '../../services/wallet_service.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/responsive.dart';
 
 class WalletCashInScreen extends StatefulWidget {
   const WalletCashInScreen({super.key});
@@ -110,18 +111,20 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
       backgroundColor: AppColors.surface,
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(child: _CashInHeader()),
+          SliverToBoxAdapter(child: _cashInHeader()),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(
+              horizontal: Responsive.spacing(context, units: 2),
+            ),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                const SizedBox(height: 20),
-                _AmountSection(),
-                const SizedBox(height: 24),
-                _MethodSection(),
-                const SizedBox(height: 32),
-                _ActionButtons(),
-                const SizedBox(height: 40),
+                SizedBox(height: Responsive.spacing(context, units: 2.5)),
+                _amountSection(),
+                SizedBox(height: Responsive.spacing(context, units: 3)),
+                _methodSection(),
+                SizedBox(height: Responsive.spacing(context, units: 4)),
+                _actionButtons(),
+                SizedBox(height: Responsive.spacing(context, units: 5)),
               ]),
             ),
           ),
@@ -130,7 +133,7 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
     );
   }
 
-  Widget _CashInHeader() {
+  Widget _cashInHeader() {
     return PhAppBar(
       title: 'Cash In',
       subtitle: 'Add money to your PasaWallet',
@@ -138,46 +141,46 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
     );
   }
 
-  Widget _AmountSection() {
+  Widget _amountSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'How much would you like to add?',
           style: TextStyle(
-            fontSize: 15,
+            fontSize: Responsive.fontSize(context, 15),
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: Responsive.spacing(context, units: 1.5)),
         PhCard(
           child: Column(
             children: [
               Row(
                 children: [
-                  const Text(
+                  Text(
                     '₱',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: Responsive.fontSize(context, 24),
                       fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: Responsive.spacing(context, units: 1)),
                   Expanded(
                     child: TextField(
                       controller: _amountController,
                       keyboardType: TextInputType.number,
-                      style: const TextStyle(
-                        fontSize: 32,
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 32),
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
                       ),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: '0',
                         hintStyle: TextStyle(
-                          fontSize: 32,
+                          fontSize: Responsive.fontSize(context, 32),
                           fontWeight: FontWeight.w700,
                           color: AppColors.textTertiary,
                         ),
@@ -187,34 +190,39 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: Responsive.spacing(context, units: 2)),
               const PhDivider(),
-              const SizedBox(height: 16),
-              const Text(
+              SizedBox(height: Responsive.spacing(context, units: 2)),
+              Text(
                 'Quick Amounts',
-                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                style: TextStyle(
+                  fontSize: Responsive.fontSize(context, 13),
+                  color: AppColors.textSecondary,
+                ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: Responsive.spacing(context, units: 1.5)),
               Wrap(
-                spacing: 8,
-                runSpacing: 8,
+                spacing: Responsive.spacing(context, units: 1),
+                runSpacing: Responsive.spacing(context, units: 1),
                 children: _quickAmounts.map((amount) {
                   return GestureDetector(
                     onTap: () => _selectQuickAmount(amount),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Responsive.spacing(context, units: 2),
+                        vertical: Responsive.spacing(context, units: 1.25),
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.surfaceVariant,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(
+                          Responsive.radius(context, base: 12),
+                        ),
                         border: Border.all(color: AppColors.border),
                       ),
                       child: Text(
                         '₱${amount.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                          fontSize: 14,
+                        style: TextStyle(
+                          fontSize: Responsive.fontSize(context, 14),
                           fontWeight: FontWeight.w600,
                           color: AppColors.textPrimary,
                         ),
@@ -230,22 +238,22 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
     );
   }
 
-  Widget _MethodSection() {
+  Widget _methodSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Select payment method',
           style: TextStyle(
-            fontSize: 15,
+            fontSize: Responsive.fontSize(context, 15),
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: Responsive.spacing(context, units: 1.5)),
         Column(
           children: [
-            _MethodOption(
+            _methodOption(
               icon: Icons.account_balance_wallet_outlined,
               title: 'GCash',
               subtitle: 'Instant transfer',
@@ -253,8 +261,8 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
               isSelected: _selectedMethod == CashInMethod.gcash,
               onTap: () => setState(() => _selectedMethod = CashInMethod.gcash),
             ),
-            const SizedBox(height: 8),
-            _MethodOption(
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+            _methodOption(
               icon: Icons.credit_card_outlined,
               title: 'Maya',
               subtitle: 'Bank transfer',
@@ -262,8 +270,8 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
               isSelected: _selectedMethod == CashInMethod.maya,
               onTap: () => setState(() => _selectedMethod = CashInMethod.maya),
             ),
-            const SizedBox(height: 8),
-            _MethodOption(
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+            _methodOption(
               icon: Icons.person_outline,
               title: 'Manual Cash-in',
               subtitle: 'Admin-assisted',
@@ -278,7 +286,7 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
     );
   }
 
-  Widget _MethodOption({
+  Widget _methodOption({
     required IconData icon,
     required String title,
     required String subtitle,
@@ -289,10 +297,12 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primarySurface : Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            Responsive.radius(context, base: 12),
+          ),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.border,
             width: isSelected ? 1.5 : 1,
@@ -301,21 +311,23 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
         child: Row(
           children: [
             Container(
-              width: 48,
-              height: 48,
+              width: Responsive.iconSize(context, base: 48),
+              height: Responsive.iconSize(context, base: 48),
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppColors.primary.withValues(alpha: 0.1)
                     : AppColors.surfaceVariant,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 10),
+                ),
               ),
               child: Icon(
                 icon,
                 color: isSelected ? AppColors.primary : AppColors.textTertiary,
-                size: 24,
+                size: Responsive.iconSize(context, base: 24),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: Responsive.spacing(context, units: 1.5)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,18 +335,18 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: Responsive.fontSize(context, 15),
                       fontWeight: FontWeight.w600,
                       color: isSelected
                           ? AppColors.primary
                           : AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: Responsive.spacing(context, units: 0.25)),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 12),
                       color: AppColors.textTertiary,
                     ),
                   ),
@@ -342,10 +354,10 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
               ),
             ),
             if (isSelected)
-              const Icon(
+              Icon(
                 Icons.check_circle,
                 color: AppColors.primary,
-                size: 20,
+                size: Responsive.iconSize(context, base: 20),
               ),
           ],
         ),
@@ -353,7 +365,7 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
     );
   }
 
-  Widget _ActionButtons() {
+  Widget _actionButtons() {
     return Column(
       children: [
         PhButton(
@@ -361,7 +373,7 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
           onTap: _processing ? null : _processCashIn,
           loading: _processing,
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: Responsive.spacing(context, units: 1.5)),
         PhButton(label: 'Cancel', outlined: true, onTap: () => context.pop()),
       ],
     );

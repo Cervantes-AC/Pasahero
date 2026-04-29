@@ -5,6 +5,7 @@ import '../../theme/app_colors.dart';
 import '../../data/mock_drivers.dart';
 import '../../widgets/toast.dart';
 import '../../widgets/ph_widgets.dart';
+import '../../utils/responsive.dart';
 
 class DriverListScreen extends StatefulWidget {
   final String rideType;
@@ -57,11 +58,16 @@ class _DriverListScreenState extends State<DriverListScreen>
 
           // Tab bar
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-            padding: const EdgeInsets.all(4),
+            margin: EdgeInsets.symmetric(
+              horizontal: Responsive.spacing(context, units: 3),
+              vertical: Responsive.spacing(context, units: 1),
+            ),
+            padding: EdgeInsets.all(Responsive.spacing(context, units: 0.5)),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 16),
+              ),
               border: Border.all(
                 color: AppColors.border.withValues(alpha: 0.5),
               ),
@@ -73,17 +79,22 @@ class _DriverListScreenState extends State<DriverListScreen>
               indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(
                 color: AppColors.primary,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 12),
+                ),
               ),
               dividerColor: Colors.transparent,
-              tabs: const [
+              tabs: [
                 Tab(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.map_rounded, size: 18),
-                      SizedBox(width: 8),
-                      Text('Map'),
+                      Icon(
+                        Icons.map_rounded,
+                        size: Responsive.iconSize(context, base: 18),
+                      ),
+                      SizedBox(width: Responsive.spacing(context, units: 1)),
+                      const Text('Map'),
                     ],
                   ),
                 ),
@@ -91,9 +102,12 @@ class _DriverListScreenState extends State<DriverListScreen>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.list_rounded, size: 18),
-                      SizedBox(width: 8),
-                      Text('List'),
+                      Icon(
+                        Icons.list_rounded,
+                        size: Responsive.iconSize(context, base: 18),
+                      ),
+                      SizedBox(width: Responsive.spacing(context, units: 1)),
+                      const Text('List'),
                     ],
                   ),
                 ),
@@ -171,11 +185,15 @@ class _MapView extends StatelessWidget {
 
         // Current location
         Positioned(
-          left: MediaQuery.of(context).size.width * 0.30 - 20,
-          top: MediaQuery.of(context).size.height * 0.35 - 20,
+          left:
+              MediaQuery.of(context).size.width * 0.30 -
+              Responsive.iconSize(context, base: 20),
+          top:
+              MediaQuery.of(context).size.height * 0.35 -
+              Responsive.iconSize(context, base: 20),
           child: Container(
-            width: 40,
-            height: 40,
+            width: Responsive.iconSize(context, base: 40),
+            height: Responsive.iconSize(context, base: 40),
             decoration: BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
@@ -187,9 +205,9 @@ class _MapView extends StatelessWidget {
                 ),
               ],
             ),
-            child: const Center(
+            child: Center(
               child: CircleAvatar(
-                radius: 4,
+                radius: Responsive.iconSize(context, base: 4),
                 backgroundColor: AppColors.primary,
               ),
             ),
@@ -203,17 +221,21 @@ class _MapView extends StatelessWidget {
           final pos = positions[i];
           final isSelected = selectedDriverId == driver.id;
           return Positioned(
-            left: MediaQuery.of(context).size.width * pos.dx - 20,
+            left:
+                MediaQuery.of(context).size.width * pos.dx -
+                Responsive.iconSize(context, base: 20),
             top:
                 (MediaQuery.of(context).size.height -
-                        (selected != null ? 280 : 0)) *
+                        (selected != null
+                            ? Responsive.buttonHeight(context) * 3.5
+                            : 0)) *
                     pos.dy -
-                20,
+                Responsive.iconSize(context, base: 20),
             child: GestureDetector(
               onTap: () => onSelectDriver(driver.id),
               child: Container(
-                width: 40,
-                height: 40,
+                width: Responsive.iconSize(context, base: 40),
+                height: Responsive.iconSize(context, base: 40),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.red : Colors.white,
                   shape: BoxShape.circle,
@@ -226,7 +248,7 @@ class _MapView extends StatelessWidget {
                 ),
                 child: Icon(
                   vehicleIcon,
-                  size: 22,
+                  size: Responsive.iconSize(context, base: 22),
                   color: isSelected ? Colors.white : AppColors.primary,
                 ),
               ),
@@ -236,14 +258,18 @@ class _MapView extends StatelessWidget {
 
         // Navigation button
         Positioned(
-          right: 16,
-          bottom: selected != null ? 296 : 16,
+          right: Responsive.spacing(context, units: 2),
+          bottom: selected != null
+              ? Responsive.buttonHeight(context) * 3.5
+              : Responsive.spacing(context, units: 2),
           child: Container(
-            width: 48,
-            height: 48,
+            width: Responsive.iconSize(context, base: 48),
+            height: Responsive.iconSize(context, base: 48),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 12),
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.1),
@@ -251,7 +277,11 @@ class _MapView extends StatelessWidget {
                 ),
               ],
             ),
-            child: const Icon(Icons.navigation, color: AppColors.primary),
+            child: Icon(
+              Icons.navigation,
+              color: AppColors.primary,
+              size: Responsive.iconSize(context, base: 24),
+            ),
           ),
         ),
 
@@ -262,13 +292,17 @@ class _MapView extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
+                  topLeft: Radius.circular(
+                    Responsive.radius(context, base: 24),
+                  ),
+                  topRight: Radius.circular(
+                    Responsive.radius(context, base: 24),
+                  ),
                 ),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 16,
@@ -276,55 +310,69 @@ class _MapView extends StatelessWidget {
                   ),
                 ],
               ),
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(Responsive.spacing(context, units: 3)),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     children: [
                       Container(
-                        width: 64,
-                        height: 64,
+                        width: Responsive.iconSize(context, base: 64),
+                        height: Responsive.iconSize(context, base: 64),
                         decoration: BoxDecoration(
                           color: AppColors.primary,
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(
+                            Responsive.radius(context, base: 16),
+                          ),
                         ),
-                        child: Icon(vehicleIcon, size: 32, color: Colors.white),
+                        child: Icon(
+                          vehicleIcon,
+                          size: Responsive.iconSize(context, base: 32),
+                          color: Colors.white,
+                        ),
                       ),
-                      const SizedBox(width: 16),
+                      SizedBox(width: Responsive.spacing(context, units: 2)),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               selected.name,
-                              style: const TextStyle(
-                                fontSize: 16,
+                              style: TextStyle(
+                                fontSize: Responsive.fontSize(context, 16),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                             Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.star,
-                                  size: 14,
+                                  size: Responsive.iconSize(context, base: 14),
                                   color: AppColors.yellow,
                                 ),
-                                const SizedBox(width: 4),
+                                SizedBox(
+                                  width: Responsive.spacing(
+                                    context,
+                                    units: 0.5,
+                                  ),
+                                ),
                                 Text(
                                   '${selected.rating}',
-                                  style: const TextStyle(fontSize: 13),
+                                  style: TextStyle(
+                                    fontSize: Responsive.fontSize(context, 13),
+                                  ),
                                 ),
-                                const Text(
-                                  ' â€¢ ',
+                                Text(
+                                  ' • ',
                                   style: TextStyle(
                                     color: AppColors.mutedForeground,
+                                    fontSize: Responsive.fontSize(context, 13),
                                   ),
                                 ),
                                 Text(
                                   '${selected.totalRides} rides',
-                                  style: const TextStyle(
-                                    fontSize: 13,
+                                  style: TextStyle(
+                                    fontSize: Responsive.fontSize(context, 13),
                                     color: AppColors.mutedForeground,
                                   ),
                                 ),
@@ -332,8 +380,8 @@ class _MapView extends StatelessWidget {
                             ),
                             Text(
                               selected.plateNumber,
-                              style: const TextStyle(
-                                fontSize: 13,
+                              style: TextStyle(
+                                fontSize: Responsive.fontSize(context, 13),
                                 color: AppColors.mutedForeground,
                               ),
                             ),
@@ -344,17 +392,17 @@ class _MapView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            'â‚±${selected.fare}',
-                            style: const TextStyle(
-                              fontSize: 24,
+                            '₱${selected.fare}',
+                            style: TextStyle(
+                              fontSize: Responsive.fontSize(context, 24),
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
                             ),
                           ),
-                          const Text(
+                          Text(
                             'Estimated fare',
                             style: TextStyle(
-                              fontSize: 11,
+                              fontSize: Responsive.fontSize(context, 11),
                               color: AppColors.mutedForeground,
                             ),
                           ),
@@ -362,60 +410,102 @@ class _MapView extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: Responsive.spacing(context, units: 1.5)),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Responsive.spacing(context, units: 2),
+                      vertical: Responsive.spacing(context, units: 1.25),
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.muted,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        Responsive.radius(context, base: 12),
+                      ),
                     ),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.access_time,
-                          size: 16,
+                          size: Responsive.iconSize(context, base: 16),
                           color: AppColors.mutedForeground,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: Responsive.spacing(context, units: 1)),
                         Text(
                           '${selected.eta} away',
-                          style: const TextStyle(fontSize: 13),
+                          style: TextStyle(
+                            fontSize: Responsive.fontSize(context, 13),
+                          ),
                         ),
-                        const SizedBox(width: 16),
-                        const Icon(
+                        SizedBox(width: Responsive.spacing(context, units: 2)),
+                        Icon(
                           Icons.navigation,
-                          size: 16,
+                          size: Responsive.iconSize(context, base: 16),
                           color: AppColors.mutedForeground,
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: Responsive.spacing(context, units: 1)),
                         Text(
                           selected.distance,
-                          style: const TextStyle(fontSize: 13),
+                          style: TextStyle(
+                            fontSize: Responsive.fontSize(context, 13),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: () => onOrderRide(selected),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.red,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                  SizedBox(height: Responsive.spacing(context, units: 1.5)),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: Responsive.buttonHeight(context),
+                          child: ElevatedButton(
+                            onPressed: () =>
+                                context.go('/driver-detail?id=${selected.id}'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  Responsive.radius(context, base: 12),
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              'View Full Profile',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: Responsive.fontSize(context, 16),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                      child: const Text(
-                        'Order Ride',
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                      SizedBox(width: Responsive.spacing(context, units: 1)),
+                      Expanded(
+                        child: SizedBox(
+                          height: Responsive.buttonHeight(context),
+                          child: ElevatedButton(
+                            onPressed: () => onOrderRide(selected),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.red,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  Responsive.radius(context, base: 12),
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              'Order Ride',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: Responsive.fontSize(context, 16),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
@@ -442,7 +532,7 @@ class _ListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 3)),
       itemCount: mockDrivers.length,
       itemBuilder: (context, index) {
         final driver = mockDrivers[index];
@@ -458,10 +548,14 @@ class _ListView extends StatelessWidget {
           onTap: () => context.go('/driver-detail?id=${driver.id}'),
           child:
               Container(
-                    margin: const EdgeInsets.only(bottom: 16),
+                    margin: EdgeInsets.only(
+                      bottom: Responsive.spacing(context, units: 2),
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(
+                        Responsive.radius(context, base: 20),
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.06),
@@ -470,58 +564,87 @@ class _ListView extends StatelessWidget {
                         ),
                       ],
                     ),
-                    padding: const EdgeInsets.all(16),
+                    padding: EdgeInsets.all(
+                      Responsive.spacing(context, units: 2),
+                    ),
                     child: Column(
                       children: [
                         Row(
                           children: [
                             Container(
-                              width: 64,
-                              height: 64,
+                              width: Responsive.iconSize(context, base: 64),
+                              height: Responsive.iconSize(context, base: 64),
                               decoration: BoxDecoration(
                                 color: AppColors.primary,
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(
+                                  Responsive.radius(context, base: 16),
+                                ),
                               ),
                               child: Icon(
                                 vehicleIcon,
-                                size: 32,
+                                size: Responsive.iconSize(context, base: 32),
                                 color: Colors.white,
                               ),
                             ),
-                            const SizedBox(width: 16),
+                            SizedBox(
+                              width: Responsive.spacing(context, units: 2),
+                            ),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     driver.name,
-                                    style: const TextStyle(
-                                      fontSize: 15,
+                                    style: TextStyle(
+                                      fontSize: Responsive.fontSize(
+                                        context,
+                                        15,
+                                      ),
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                   Row(
                                     children: [
-                                      const Icon(
+                                      Icon(
                                         Icons.star,
-                                        size: 14,
+                                        size: Responsive.iconSize(
+                                          context,
+                                          base: 14,
+                                        ),
                                         color: AppColors.yellow,
                                       ),
-                                      const SizedBox(width: 4),
+                                      SizedBox(
+                                        width: Responsive.spacing(
+                                          context,
+                                          units: 0.5,
+                                        ),
+                                      ),
                                       Text(
                                         '${driver.rating}',
-                                        style: const TextStyle(fontSize: 13),
+                                        style: TextStyle(
+                                          fontSize: Responsive.fontSize(
+                                            context,
+                                            13,
+                                          ),
+                                        ),
                                       ),
-                                      const Text(
-                                        ' â€¢ ',
+                                      Text(
+                                        ' • ',
                                         style: TextStyle(
                                           color: AppColors.mutedForeground,
+                                          fontSize: Responsive.fontSize(
+                                            context,
+                                            13,
+                                          ),
                                         ),
                                       ),
                                       Text(
                                         '${driver.totalRides} rides',
-                                        style: const TextStyle(
-                                          fontSize: 13,
+                                        style: TextStyle(
+                                          fontSize: Responsive.fontSize(
+                                            context,
+                                            13,
+                                          ),
                                           color: AppColors.mutedForeground,
                                         ),
                                       ),
@@ -529,8 +652,11 @@ class _ListView extends StatelessWidget {
                                   ),
                                   Text(
                                     driver.plateNumber,
-                                    style: const TextStyle(
-                                      fontSize: 13,
+                                    style: TextStyle(
+                                      fontSize: Responsive.fontSize(
+                                        context,
+                                        13,
+                                      ),
                                       color: AppColors.mutedForeground,
                                     ),
                                   ),
@@ -541,17 +667,17 @@ class _ListView extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  'â‚±${driver.fare}',
-                                  style: const TextStyle(
-                                    fontSize: 20,
+                                  '₱${driver.fare}',
+                                  style: TextStyle(
+                                    fontSize: Responsive.fontSize(context, 20),
                                     fontWeight: FontWeight.bold,
                                     color: AppColors.primary,
                                   ),
                                 ),
-                                const Text(
+                                Text(
                                   'Estimated',
                                   style: TextStyle(
-                                    fontSize: 11,
+                                    fontSize: Responsive.fontSize(context, 11),
                                     color: AppColors.mutedForeground,
                                   ),
                                 ),
@@ -560,30 +686,37 @@ class _ListView extends StatelessWidget {
                           ],
                         ),
                         if (totalSeats > 0) ...[
-                          const SizedBox(height: 10),
+                          SizedBox(
+                            height: Responsive.spacing(context, units: 1.25),
+                          ),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: Responsive.spacing(
+                                context,
+                                units: 1.5,
+                              ),
+                              vertical: Responsive.spacing(context, units: 1),
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.muted.withValues(alpha: 0.5),
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(
+                                Responsive.radius(context, base: 8),
+                              ),
                             ),
                             child: Row(
                               children: [
                                 Text(
                                   '$availableSeats seat${availableSeats != 1 ? 's' : ''} available',
-                                  style: const TextStyle(
-                                    fontSize: 13,
+                                  style: TextStyle(
+                                    fontSize: Responsive.fontSize(context, 13),
                                     fontWeight: FontWeight.w600,
                                     color: AppColors.green,
                                   ),
                                 ),
                                 Text(
-                                  ' â€¢ $occupiedSeats/$totalSeats occupied',
-                                  style: const TextStyle(
-                                    fontSize: 13,
+                                  ' • $occupiedSeats/$totalSeats occupied',
+                                  style: TextStyle(
+                                    fontSize: Responsive.fontSize(context, 13),
                                     color: AppColors.mutedForeground,
                                   ),
                                 ),
@@ -591,54 +724,69 @@ class _ListView extends StatelessWidget {
                             ),
                           ),
                         ],
-                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: Responsive.spacing(context, units: 1.25),
+                        ),
                         Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.access_time,
-                              size: 14,
+                              size: Responsive.iconSize(context, base: 14),
                               color: AppColors.mutedForeground,
                             ),
-                            const SizedBox(width: 4),
+                            SizedBox(
+                              width: Responsive.spacing(context, units: 0.5),
+                            ),
                             Text(
                               driver.eta,
-                              style: const TextStyle(
-                                fontSize: 13,
+                              style: TextStyle(
+                                fontSize: Responsive.fontSize(context, 13),
                                 color: AppColors.mutedForeground,
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            const Icon(
+                            SizedBox(
+                              width: Responsive.spacing(context, units: 2),
+                            ),
+                            Icon(
                               Icons.navigation,
-                              size: 14,
+                              size: Responsive.iconSize(context, base: 14),
                               color: AppColors.mutedForeground,
                             ),
-                            const SizedBox(width: 4),
+                            SizedBox(
+                              width: Responsive.spacing(context, units: 0.5),
+                            ),
                             Text(
                               driver.distance,
-                              style: const TextStyle(
-                                fontSize: 13,
+                              style: TextStyle(
+                                fontSize: Responsive.fontSize(context, 13),
                                 color: AppColors.mutedForeground,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(
+                          height: Responsive.spacing(context, units: 1.5),
+                        ),
                         SizedBox(
                           width: double.infinity,
-                          height: 40,
+                          height: Responsive.buttonHeight(context) * 0.75,
                           child: ElevatedButton(
                             onPressed: () => onOrderRide(driver),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.red,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(
+                                  Responsive.radius(context, base: 12),
+                                ),
                               ),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Order Ride',
-                              style: TextStyle(fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: Responsive.fontSize(context, 14),
+                              ),
                             ),
                           ),
                         ),

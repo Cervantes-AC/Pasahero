@@ -7,6 +7,7 @@ import '../../models/wallet.dart';
 import '../../services/wallet_service.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/responsive.dart';
 
 class DriverWalletScreen extends StatefulWidget {
   const DriverWalletScreen({super.key});
@@ -65,18 +66,20 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
         slivers: [
           SliverToBoxAdapter(child: _buildHeader()),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(
+              horizontal: Responsive.spacing(context, units: 2),
+            ),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                const SizedBox(height: 20),
+                SizedBox(height: Responsive.spacing(context, units: 2.5)),
                 _buildBalanceCard(),
-                const SizedBox(height: 16),
+                SizedBox(height: Responsive.spacing(context, units: 2)),
                 _buildStatsRow(),
-                const SizedBox(height: 24),
+                SizedBox(height: Responsive.spacing(context, units: 3)),
                 _buildActionButtons(),
-                const SizedBox(height: 24),
+                SizedBox(height: Responsive.spacing(context, units: 3)),
                 _buildRecentTransactions(),
-                const SizedBox(height: 40),
+                SizedBox(height: Responsive.spacing(context, units: 5)),
               ]),
             ),
           ),
@@ -105,10 +108,12 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
   Widget _buildBalanceCard() {
     if (_loading) {
       return Container(
-        height: 160,
+        height: Responsive.buttonHeight(context) * 2,
         decoration: BoxDecoration(
           color: AppColors.driverSurface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(
+            Responsive.radius(context, base: 16),
+          ),
           border: Border.all(color: AppColors.driverBorder),
         ),
         child: const Center(
@@ -120,14 +125,16 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
     final balance = _wallet?.balance ?? 0.0;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 2.5)),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 20),
+        ),
         border: Border.all(
           color: AppColors.driverAccent.withValues(alpha: 0.3),
         ),
@@ -138,13 +145,15 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
+                padding: EdgeInsets.symmetric(
+                  horizontal: Responsive.spacing(context, units: 1.25),
+                  vertical: Responsive.spacing(context, units: 0.5),
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.driverAccent.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(
+                    Responsive.radius(context, base: 8),
+                  ),
                   border: Border.all(
                     color: AppColors.driverAccent.withValues(alpha: 0.3),
                   ),
@@ -159,11 +168,11 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
                         shape: BoxShape.circle,
                       ),
                     ),
-                    const SizedBox(width: 6),
-                    const Text(
+                    SizedBox(width: Responsive.spacing(context, units: 0.75)),
+                    Text(
                       'PASAWALLET',
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: Responsive.fontSize(context, 10),
                         fontWeight: FontWeight.w700,
                         color: AppColors.driverAccent,
                         letterSpacing: 0.5,
@@ -174,26 +183,29 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          const Text(
+          SizedBox(height: Responsive.spacing(context, units: 2)),
+          Text(
             'Available Balance',
-            style: TextStyle(fontSize: 13, color: AppColors.driverTextMuted),
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 13),
+              color: AppColors.driverTextMuted,
+            ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: Responsive.spacing(context, units: 0.75)),
           Text(
             '₱${balance.toStringAsFixed(2)}',
-            style: const TextStyle(
-              fontSize: 44,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 44),
               fontWeight: FontWeight.w700,
               color: AppColors.driverText,
               letterSpacing: -1,
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: Responsive.spacing(context, units: 0.5)),
           Text(
             'Today\'s earnings: ₱${_todayEarnings.toStringAsFixed(2)}',
-            style: const TextStyle(
-              fontSize: 13,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 13),
               color: AppColors.driverAccent,
               fontWeight: FontWeight.w500,
             ),
@@ -214,7 +226,7 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
             dark: true,
           ),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: Responsive.spacing(context, units: 1.25)),
         Expanded(
           child: PhStatBox(
             value: '$_todayTrips',
@@ -223,7 +235,7 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
             dark: true,
           ),
         ),
-        const SizedBox(width: 10),
+        SizedBox(width: Responsive.spacing(context, units: 1.25)),
         Expanded(
           child: PhStatBox(
             value: '₱${_totalEarnings.toStringAsFixed(0)}',
@@ -240,37 +252,37 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Actions',
           style: TextStyle(
-            fontSize: 15,
+            fontSize: Responsive.fontSize(context, 15),
             fontWeight: FontWeight.w700,
             color: AppColors.driverText,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: Responsive.spacing(context, units: 1.5)),
         Row(
           children: [
             Expanded(
-              child: _ActionButton(
+              child: _actionBtn(
                 icon: Icons.account_balance_outlined,
                 label: 'Withdraw',
                 color: AppColors.driverAccent,
                 onTap: () => context.go('/driver-wallet-withdraw'),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: Responsive.spacing(context, units: 1.5)),
             Expanded(
-              child: _ActionButton(
+              child: _actionBtn(
                 icon: Icons.history_outlined,
                 label: 'History',
                 color: AppColors.primaryLight,
                 onTap: () => context.go('/driver-wallet-history'),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: Responsive.spacing(context, units: 1.5)),
             Expanded(
-              child: _ActionButton(
+              child: _actionBtn(
                 icon: Icons.bar_chart_outlined,
                 label: 'Summary',
                 color: AppColors.success,
@@ -283,7 +295,7 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
     );
   }
 
-  Widget _ActionButton({
+  Widget _actionBtn({
     required IconData icon,
     required String label,
     required Color color,
@@ -292,23 +304,32 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.symmetric(
+          vertical: Responsive.spacing(context, units: 2),
+        ),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            Responsive.radius(context, base: 12),
+          ),
           border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 8),
+            Icon(
+              icon,
+              color: color,
+              size: Responsive.iconSize(context, base: 24),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 1)),
             Text(
               label,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: Responsive.fontSize(context, 12),
                 fontWeight: FontWeight.w600,
                 color: color,
               ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -328,7 +349,7 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
           onAction: () => context.go('/driver-wallet-history'),
           dark: true,
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: Responsive.spacing(context, units: 1.5)),
         if (_recentTransactions.isEmpty)
           PhDriverCard(
             child: Column(
@@ -336,13 +357,13 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
                 Icon(
                   Icons.receipt_long_outlined,
                   color: AppColors.driverTextMuted,
-                  size: 40,
+                  size: Responsive.iconSize(context, base: 40),
                 ),
-                const SizedBox(height: 12),
-                const Text(
+                SizedBox(height: Responsive.spacing(context, units: 1.5)),
+                Text(
                   'No transactions yet',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: Responsive.fontSize(context, 14),
                     color: AppColors.driverTextMuted,
                   ),
                 ),
@@ -355,7 +376,7 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
             child: Column(
               children: _recentTransactions
                   .take(4)
-                  .map((t) => _DriverTransactionTile(transaction: t))
+                  .map((t) => _driverTransactionTile(transaction: t))
                   .toList(),
             ),
           ),
@@ -363,31 +384,15 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
     );
   }
 
-  void _showEarningsSummary() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => _EarningsSummarySheet(
-        todayEarnings: _todayEarnings,
-        totalEarnings: _totalEarnings,
-        todayTrips: _todayTrips,
-        commissionRate: WalletService.commissionRate,
-      ),
-    );
-  }
-}
-
-class _DriverTransactionTile extends StatelessWidget {
-  final WalletTransaction transaction;
-  const _DriverTransactionTile({required this.transaction});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _driverTransactionTile({required WalletTransaction transaction}) {
     final isPositive = transaction.isPositive;
     final amountColor = isPositive ? AppColors.success : AppColors.error;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: EdgeInsets.symmetric(
+        horizontal: Responsive.spacing(context, units: 2),
+        vertical: Responsive.spacing(context, units: 1.75),
+      ),
       decoration: const BoxDecoration(
         border: Border(
           bottom: BorderSide(color: AppColors.driverBorder, width: 1),
@@ -396,38 +401,40 @@ class _DriverTransactionTile extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: Responsive.iconSize(context, base: 40),
+            height: Responsive.iconSize(context, base: 40),
             decoration: BoxDecoration(
               color: isPositive
                   ? AppColors.success.withValues(alpha: 0.15)
                   : AppColors.error.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 10),
+              ),
             ),
             child: Icon(
               _iconFor(transaction.type),
               color: isPositive ? AppColors.success : AppColors.error,
-              size: 20,
+              size: Responsive.iconSize(context, base: 20),
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: Responsive.spacing(context, units: 1.5)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   transaction.displayTitle,
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: TextStyle(
+                    fontSize: Responsive.fontSize(context, 14),
                     fontWeight: FontWeight.w600,
                     color: AppColors.driverText,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: Responsive.spacing(context, units: 0.25)),
                 Text(
                   _formatTime(transaction.timestamp),
-                  style: const TextStyle(
-                    fontSize: 11,
+                  style: TextStyle(
+                    fontSize: Responsive.fontSize(context, 11),
                     color: AppColors.driverTextMuted,
                   ),
                 ),
@@ -437,7 +444,7 @@ class _DriverTransactionTile extends StatelessWidget {
           Text(
             '${isPositive ? '+' : '-'}₱${transaction.amount.toStringAsFixed(2)}',
             style: TextStyle(
-              fontSize: 15,
+              fontSize: Responsive.fontSize(context, 15),
               fontWeight: FontWeight.w700,
               color: amountColor,
             ),
@@ -465,32 +472,37 @@ class _DriverTransactionTile extends StatelessWidget {
     final m = date.minute.toString().padLeft(2, '0');
     return '$h:$m';
   }
-}
 
-class _EarningsSummarySheet extends StatelessWidget {
-  final double todayEarnings;
-  final double totalEarnings;
-  final int todayTrips;
-  final double commissionRate;
+  void _showEarningsSummary() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _earningsSummarySheet(
+        todayEarnings: _todayEarnings,
+        totalEarnings: _totalEarnings,
+        todayTrips: _todayTrips,
+        commissionRate: WalletService.commissionRate,
+      ),
+    );
+  }
 
-  const _EarningsSummarySheet({
-    required this.todayEarnings,
-    required this.totalEarnings,
-    required this.todayTrips,
-    required this.commissionRate,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _earningsSummarySheet({
+    required double todayEarnings,
+    required double totalEarnings,
+    required int todayTrips,
+    required double commissionRate,
+  }) {
     final grossToday = todayEarnings / (1 - commissionRate);
     final commissionToday = grossToday - todayEarnings;
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.driverSurface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(Responsive.radius(context, base: 24)),
+        ),
       ),
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 3)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -502,40 +514,38 @@ class _EarningsSummarySheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          const SizedBox(height: 20),
-          const Text(
+          SizedBox(height: Responsive.spacing(context, units: 2.5)),
+          Text(
             "Today's Earnings Summary",
             style: TextStyle(
-              fontSize: 17,
+              fontSize: Responsive.fontSize(context, 17),
               fontWeight: FontWeight.w700,
               color: AppColors.driverText,
             ),
           ),
-          const SizedBox(height: 20),
-          _SummaryRow(
-            label: 'Gross Earnings',
-            value: '₱${grossToday.toStringAsFixed(2)}',
-            color: AppColors.driverText,
+          SizedBox(height: Responsive.spacing(context, units: 2.5)),
+          _summaryRow(
+            'Gross Earnings',
+            '₱${grossToday.toStringAsFixed(2)}',
+            AppColors.driverText,
           ),
-          _SummaryRow(
-            label:
-                'Platform Commission (${(commissionRate * 100).toStringAsFixed(0)}%)',
-            value: '-₱${commissionToday.toStringAsFixed(2)}',
-            color: AppColors.error,
+          _summaryRow(
+            'Platform Commission (${(commissionRate * 100).toStringAsFixed(0)}%)',
+            '-₱${commissionToday.toStringAsFixed(2)}',
+            AppColors.error,
           ),
-          const Divider(color: AppColors.driverBorder, height: 24),
-          _SummaryRow(
-            label: 'Net Earnings',
-            value: '₱${todayEarnings.toStringAsFixed(2)}',
-            color: AppColors.driverAccent,
+          Divider(
+            color: AppColors.driverBorder,
+            height: Responsive.spacing(context, units: 3),
+          ),
+          _summaryRow(
+            'Net Earnings',
+            '₱${todayEarnings.toStringAsFixed(2)}',
+            AppColors.driverAccent,
             bold: true,
           ),
-          _SummaryRow(
-            label: 'Trips Completed',
-            value: '$todayTrips',
-            color: AppColors.driverText,
-          ),
-          const SizedBox(height: 20),
+          _summaryRow('Trips Completed', '$todayTrips', AppColors.driverText),
+          SizedBox(height: Responsive.spacing(context, units: 2.5)),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -543,48 +553,47 @@ class _EarningsSummarySheet extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.driverAccent,
                 foregroundColor: AppColors.driverBg,
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: EdgeInsets.symmetric(
+                  vertical: Responsive.spacing(context, units: 1.75),
+                ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(
+                    Responsive.radius(context, base: 12),
+                  ),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'Close',
-                style: TextStyle(fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: Responsive.fontSize(context, 16),
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: Responsive.spacing(context, units: 1)),
         ],
       ),
     );
   }
-}
 
-class _SummaryRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color color;
-  final bool bold;
-
-  const _SummaryRow({
-    required this.label,
-    required this.value,
-    required this.color,
-    this.bold = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _summaryRow(
+    String label,
+    String value,
+    Color color, {
+    bool bold = false,
+  }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(
+        vertical: Responsive.spacing(context, units: 1),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             label,
             style: TextStyle(
-              fontSize: 13,
+              fontSize: Responsive.fontSize(context, 13),
               color: bold ? AppColors.driverText : AppColors.driverTextMuted,
               fontWeight: bold ? FontWeight.w600 : FontWeight.w400,
             ),
@@ -592,7 +601,7 @@ class _SummaryRow extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              fontSize: bold ? 16 : 14,
+              fontSize: Responsive.fontSize(context, bold ? 16 : 14),
               fontWeight: bold ? FontWeight.w700 : FontWeight.w600,
               color: color,
             ),

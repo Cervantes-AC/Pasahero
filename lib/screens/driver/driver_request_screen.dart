@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../data/app_state.dart';
 import '../../widgets/toast.dart';
+import '../../utils/responsive.dart';
 
 class DriverRequestScreen extends StatefulWidget {
   const DriverRequestScreen({super.key});
@@ -101,7 +102,12 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
             children: [
               // Enhanced timer ring with multiple effects
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                padding: EdgeInsets.fromLTRB(
+                  Responsive.spacing(context, units: 3),
+                  Responsive.spacing(context, units: 3),
+                  Responsive.spacing(context, units: 3),
+                  0,
+                ),
                 child: Column(
                   children: [
                     Stack(
@@ -111,8 +117,14 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                         AnimatedBuilder(
                           animation: _pulseController,
                           builder: (_, __) => Container(
-                            width: 140 + 20 * _pulseController.value,
-                            height: 140 + 20 * _pulseController.value,
+                            width:
+                                Responsive.iconSize(context, base: 140) +
+                                Responsive.iconSize(context, base: 20) *
+                                    _pulseController.value,
+                            height:
+                                Responsive.iconSize(context, base: 140) +
+                                Responsive.iconSize(context, base: 20) *
+                                    _pulseController.value,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color:
@@ -141,8 +153,8 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                             child: child,
                           ),
                           child: Container(
-                            width: 120,
-                            height: 120,
+                            width: Responsive.iconSize(context, base: 120),
+                            height: Responsive.iconSize(context, base: 120),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               gradient: LinearGradient(
@@ -173,8 +185,14 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                               children: [
                                 // Progress indicator
                                 SizedBox(
-                                  width: 100,
-                                  height: 100,
+                                  width: Responsive.iconSize(
+                                    context,
+                                    base: 100,
+                                  ),
+                                  height: Responsive.iconSize(
+                                    context,
+                                    base: 100,
+                                  ),
                                   child: AnimatedBuilder(
                                     animation: _timerController,
                                     builder: (_, __) =>
@@ -196,18 +214,24 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                                   children: [
                                     Text(
                                       '$_secondsLeft',
-                                      style: const TextStyle(
-                                        fontSize: 36,
+                                      style: TextStyle(
+                                        fontSize: Responsive.fontSize(
+                                          context,
+                                          36,
+                                        ),
                                         fontWeight: FontWeight.w900,
                                         color: Colors.white,
                                         letterSpacing: -1,
                                       ),
                                     ),
-                                    const Text(
+                                    Text(
                                       'seconds',
                                       style: TextStyle(
                                         color: Colors.white70,
-                                        fontSize: 11,
+                                        fontSize: Responsive.fontSize(
+                                          context,
+                                          11,
+                                        ),
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -219,12 +243,12 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: Responsive.spacing(context, units: 2)),
                     Text(
                           'New Ride Request!',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 24,
+                            fontSize: Responsive.fontSize(context, 24),
                             fontWeight: FontWeight.w900,
                             letterSpacing: -0.5,
                           ),
@@ -237,11 +261,11 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                           duration: 2000.ms,
                           color: AppColors.driverAccent.withValues(alpha: 0.3),
                         ),
-                    const SizedBox(height: 6),
+                    SizedBox(height: Responsive.spacing(context, units: 0.75)),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Responsive.spacing(context, units: 1.5),
+                        vertical: Responsive.spacing(context, units: 0.75),
                       ),
                       decoration: BoxDecoration(
                         color:
@@ -249,7 +273,9 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                                     ? AppColors.driverAccent
                                     : AppColors.error)
                                 .withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(
+                          Responsive.radius(context, base: 20),
+                        ),
                         border: Border.all(
                           color:
                               (_secondsLeft > 10
@@ -266,7 +292,7 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                           color: _secondsLeft > 10
                               ? AppColors.driverAccent
                               : AppColors.error,
-                          fontSize: 12,
+                          fontSize: Responsive.fontSize(context, 12),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -280,16 +306,22 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
               // Request card
               Expanded(
                     child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      margin: EdgeInsets.symmetric(
+                        horizontal: Responsive.spacing(context, units: 2),
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFF1E293B),
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(
+                          Responsive.radius(context, base: 24),
+                        ),
                         border: Border.all(
                           color: Colors.white.withValues(alpha: 0.08),
                         ),
                       ),
                       child: SingleChildScrollView(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.all(
+                          Responsive.spacing(context, units: 2.5),
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -297,8 +329,11 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                             Row(
                               children: [
                                 Container(
-                                  width: 52,
-                                  height: 52,
+                                  width: Responsive.iconSize(context, base: 52),
+                                  height: Responsive.iconSize(
+                                    context,
+                                    base: 52,
+                                  ),
                                   decoration: BoxDecoration(
                                     gradient: const LinearGradient(
                                       colors: [
@@ -314,15 +349,23 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                                           .split(' ')
                                           .map((n) => n[0])
                                           .join(),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 18,
+                                        fontSize: Responsive.fontSize(
+                                          context,
+                                          18,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 14),
+                                SizedBox(
+                                  width: Responsive.spacing(
+                                    context,
+                                    units: 1.75,
+                                  ),
+                                ),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
@@ -330,18 +373,24 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                                     children: [
                                       Text(
                                         req.passengerName,
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w700,
-                                          fontSize: 17,
+                                          fontSize: Responsive.fontSize(
+                                            context,
+                                            17,
+                                          ),
                                         ),
                                       ),
                                       Row(
                                         children: List.generate(
                                           req.passengerRating,
-                                          (_) => const Icon(
+                                          (_) => Icon(
                                             Icons.star,
-                                            size: 13,
+                                            size: Responsive.iconSize(
+                                              context,
+                                              base: 13,
+                                            ),
                                             color: AppColors.yellow,
                                           ),
                                         ),
@@ -351,15 +400,23 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                                 ),
                                 // Fare highlight
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 8,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: Responsive.spacing(
+                                      context,
+                                      units: 1.75,
+                                    ),
+                                    vertical: Responsive.spacing(
+                                      context,
+                                      units: 1,
+                                    ),
                                   ),
                                   decoration: BoxDecoration(
                                     color: AppColors.driverAccent.withValues(
                                       alpha: 0.15,
                                     ),
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(
+                                      Responsive.radius(context, base: 12),
+                                    ),
                                     border: Border.all(
                                       color: AppColors.driverAccent.withValues(
                                         alpha: 0.4,
@@ -373,14 +430,20 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                                         style: TextStyle(
                                           color: AppColors.driverAccent,
                                           fontWeight: FontWeight.w800,
-                                          fontSize: 22,
+                                          fontSize: Responsive.fontSize(
+                                            context,
+                                            22,
+                                          ),
                                         ),
                                       ),
-                                      const Text(
+                                      Text(
                                         'fare',
                                         style: TextStyle(
                                           color: Colors.white54,
-                                          fontSize: 10,
+                                          fontSize: Responsive.fontSize(
+                                            context,
+                                            10,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -389,9 +452,13 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                               ],
                             ),
 
-                            const SizedBox(height: 20),
+                            SizedBox(
+                              height: Responsive.spacing(context, units: 2.5),
+                            ),
                             const Divider(color: Colors.white12),
-                            const SizedBox(height: 16),
+                            SizedBox(
+                              height: Responsive.spacing(context, units: 2),
+                            ),
 
                             // Route
                             _RouteItem(
@@ -400,9 +467,11 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                               address: req.pickup,
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(left: 11),
+                              padding: EdgeInsets.only(
+                                left: Responsive.spacing(context, units: 1.375),
+                              ),
                               child: Container(
-                                height: 28,
+                                height: Responsive.spacing(context, units: 3.5),
                                 width: 2,
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
@@ -419,7 +488,9 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                               address: req.dropoff,
                             ),
 
-                            const SizedBox(height: 20),
+                            SizedBox(
+                              height: Responsive.spacing(context, units: 2.5),
+                            ),
 
                             // Trip stats
                             Row(
@@ -431,7 +502,12 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                                     value: '${req.distance} km',
                                   ),
                                 ),
-                                const SizedBox(width: 10),
+                                SizedBox(
+                                  width: Responsive.spacing(
+                                    context,
+                                    units: 1.25,
+                                  ),
+                                ),
                                 Expanded(
                                   child: _TripStat(
                                     icon: Icons.access_time,
@@ -439,7 +515,12 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                                     value: req.eta,
                                   ),
                                 ),
-                                const SizedBox(width: 10),
+                                SizedBox(
+                                  width: Responsive.spacing(
+                                    context,
+                                    units: 1.25,
+                                  ),
+                                ),
                                 Expanded(
                                   child: _TripStat(
                                     icon: Icons.monetization_on_outlined,
@@ -461,12 +542,17 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
 
               // Action buttons
               Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                    padding: EdgeInsets.fromLTRB(
+                      Responsive.spacing(context, units: 2),
+                      Responsive.spacing(context, units: 2),
+                      Responsive.spacing(context, units: 2),
+                      Responsive.spacing(context, units: 3),
+                    ),
                     child: Row(
                       children: [
                         Expanded(
                           child: SizedBox(
-                            height: 56,
+                            height: Responsive.buttonHeight(context),
                             child: OutlinedButton(
                               onPressed: _handleDecline,
                               style: OutlinedButton.styleFrom(
@@ -476,47 +562,67 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                                   width: 1.5,
                                 ),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(
+                                    Responsive.radius(context, base: 16),
+                                  ),
                                 ),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Decline',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 16,
+                                  fontSize: Responsive.fontSize(context, 16),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        SizedBox(
+                          width: Responsive.spacing(context, units: 1.5),
+                        ),
                         Expanded(
                           flex: 2,
                           child: SizedBox(
-                            height: 56,
+                            height: Responsive.buttonHeight(context),
                             child: ElevatedButton(
                               onPressed: _handleAccept,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.green,
                                 foregroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(
+                                    Responsive.radius(context, base: 16),
+                                  ),
                                 ),
                                 elevation: 6,
                                 shadowColor: AppColors.green.withValues(
                                   alpha: 0.4,
                                 ),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.check_circle_outline, size: 20),
-                                  SizedBox(width: 8),
+                                  Icon(
+                                    Icons.check_circle_outline,
+                                    size: Responsive.iconSize(
+                                      context,
+                                      base: 20,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: Responsive.spacing(
+                                      context,
+                                      units: 1,
+                                    ),
+                                  ),
                                   Text(
                                     'Accept Ride',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w700,
-                                      fontSize: 16,
+                                      fontSize: Responsive.fontSize(
+                                        context,
+                                        16,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -553,28 +659,31 @@ class _RouteItem extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 24,
-          height: 24,
+          width: Responsive.iconSize(context, base: 24),
+          height: Responsive.iconSize(context, base: 24),
           decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
           child: const Center(
             child: CircleAvatar(radius: 4, backgroundColor: Colors.white),
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: Responsive.spacing(context, units: 1.5)),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: const TextStyle(color: Colors.white54, fontSize: 11),
+                style: TextStyle(
+                  color: Colors.white54,
+                  fontSize: Responsive.fontSize(context, 11),
+                ),
               ),
               Text(
                 address,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  fontSize: Responsive.fontSize(context, 14),
                 ),
               ),
             ],
@@ -598,27 +707,36 @@ class _TripStat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 1.5)),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 12),
+        ),
         border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Column(
         children: [
-          Icon(icon, color: Colors.white54, size: 18),
-          const SizedBox(height: 4),
+          Icon(
+            icon,
+            color: Colors.white54,
+            size: Responsive.iconSize(context, base: 18),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 0.5)),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w700,
-              fontSize: 13,
+              fontSize: Responsive.fontSize(context, 13),
             ),
           ),
           Text(
             label,
-            style: const TextStyle(color: Colors.white38, fontSize: 10),
+            style: TextStyle(
+              color: Colors.white38,
+              fontSize: Responsive.fontSize(context, 10),
+            ),
             textAlign: TextAlign.center,
           ),
         ],

@@ -6,6 +6,7 @@ import '../../models/wallet.dart';
 import '../../services/wallet_service.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/responsive.dart';
 
 class WalletHistoryScreen extends StatefulWidget {
   const WalletHistoryScreen({super.key});
@@ -73,14 +74,14 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
                 : TabBarView(
                     controller: _tabController,
                     children: [
-                      _TransactionList(transactions: _filtered(null)),
-                      _TransactionList(
+                      _transactionList(transactions: _filtered(null)),
+                      _transactionList(
                         transactions: _filtered(TransactionType.payment),
                       ),
-                      _TransactionList(
+                      _transactionList(
                         transactions: _filtered(TransactionType.cashIn),
                       ),
-                      _TransactionList(
+                      _transactionList(
                         transactions: _filtered(TransactionType.refund),
                       ),
                     ],
@@ -108,9 +109,12 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
         unselectedLabelColor: AppColors.textTertiary,
         indicatorColor: AppColors.primary,
         indicatorWeight: 2,
-        labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: const TextStyle(
-          fontSize: 12,
+        labelStyle: TextStyle(
+          fontSize: Responsive.fontSize(context, 12),
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontSize: Responsive.fontSize(context, 12),
           fontWeight: FontWeight.w500,
         ),
         tabs: const [
@@ -122,15 +126,8 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
       ),
     );
   }
-}
 
-class _TransactionList extends StatelessWidget {
-  final List<WalletTransaction> transactions;
-
-  const _TransactionList({required this.transactions});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _transactionList({required List<WalletTransaction> transactions}) {
     if (transactions.isEmpty) {
       return Center(
         child: Column(
@@ -138,22 +135,25 @@ class _TransactionList extends StatelessWidget {
           children: [
             Icon(
               Icons.receipt_long_outlined,
-              size: 56,
+              size: Responsive.iconSize(context, base: 56),
               color: AppColors.textTertiary,
             ),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Text(
               'No transactions found',
               style: TextStyle(
-                fontSize: 15,
+                fontSize: Responsive.fontSize(context, 15),
                 fontWeight: FontWeight.w600,
                 color: AppColors.textSecondary,
               ),
             ),
-            const SizedBox(height: 6),
-            const Text(
+            SizedBox(height: Responsive.spacing(context, units: 0.75)),
+            Text(
               'Your transactions will appear here',
-              style: TextStyle(fontSize: 13, color: AppColors.textTertiary),
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 13),
+                color: AppColors.textTertiary,
+              ),
             ),
           ],
         ),
@@ -171,7 +171,10 @@ class _TransactionList extends StatelessWidget {
       color: AppColors.primary,
       onRefresh: () async {},
       child: ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: EdgeInsets.symmetric(
+          horizontal: Responsive.spacing(context, units: 2),
+          vertical: Responsive.spacing(context, units: 1.5),
+        ),
         itemCount: grouped.length,
         itemBuilder: (context, index) {
           final dateKey = grouped.keys.elementAt(index);
@@ -180,11 +183,13 @@ class _TransactionList extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: EdgeInsets.symmetric(
+                  vertical: Responsive.spacing(context, units: 1.25),
+                ),
                 child: Text(
                   dateKey,
-                  style: const TextStyle(
-                    fontSize: 12,
+                  style: TextStyle(
+                    fontSize: Responsive.fontSize(context, 12),
                     fontWeight: FontWeight.w700,
                     color: AppColors.textTertiary,
                     letterSpacing: 0.5,
@@ -198,7 +203,7 @@ class _TransactionList extends StatelessWidget {
                       .asMap()
                       .entries
                       .map(
-                        (e) => _TransactionTile(
+                        (e) => _transactionTile(
                           transaction: e.value,
                           isLast: e.key == items.length - 1,
                         ),
@@ -213,27 +218,10 @@ class _TransactionList extends StatelessWidget {
     );
   }
 
-  String _dateKey(DateTime date) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final txDate = DateTime(date.year, date.month, date.day);
-    final diff = today.difference(txDate).inDays;
-
-    if (diff == 0) return 'TODAY';
-    if (diff == 1) return 'YESTERDAY';
-    if (diff < 7) return '${diff} DAYS AGO';
-    return '${date.day}/${date.month}/${date.year}';
-  }
-}
-
-class _TransactionTile extends StatelessWidget {
-  final WalletTransaction transaction;
-  final bool isLast;
-
-  const _TransactionTile({required this.transaction, required this.isLast});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _transactionTile({
+    required WalletTransaction transaction,
+    required bool isLast,
+  }) {
     final isPositive = transaction.isPositive;
     final amountColor = isPositive ? AppColors.success : AppColors.error;
     final iconBg = isPositive
@@ -242,9 +230,12 @@ class _TransactionTile extends StatelessWidget {
     final iconColor = isPositive ? AppColors.success : AppColors.error;
 
     return GestureDetector(
-      onTap: () => _showDetail(context),
+      onTap: () => _showDetail(context, transaction),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(
+          horizontal: Responsive.spacing(context, units: 2),
+          vertical: Responsive.spacing(context, units: 1.75),
+        ),
         decoration: BoxDecoration(
           border: isLast
               ? null
@@ -255,52 +246,54 @@ class _TransactionTile extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 42,
-              height: 42,
+              width: Responsive.iconSize(context, base: 42),
+              height: Responsive.iconSize(context, base: 42),
               decoration: BoxDecoration(
                 color: iconBg,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 10),
+                ),
               ),
               child: Icon(
                 _iconFor(transaction.type),
                 color: iconColor,
-                size: 20,
+                size: Responsive.iconSize(context, base: 20),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: Responsive.spacing(context, units: 1.5)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     transaction.displayTitle,
-                    style: const TextStyle(
-                      fontSize: 14,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 14),
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: Responsive.spacing(context, units: 0.25)),
                   if (transaction.displaySubtitle.isNotEmpty)
                     Text(
                       transaction.displaySubtitle,
-                      style: const TextStyle(
-                        fontSize: 12,
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 12),
                         color: AppColors.textTertiary,
                       ),
                     ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: Responsive.spacing(context, units: 0.25)),
                   Row(
                     children: [
                       Text(
                         _formatTime(transaction.timestamp),
-                        style: const TextStyle(
-                          fontSize: 11,
+                        style: TextStyle(
+                          fontSize: Responsive.fontSize(context, 11),
                           color: AppColors.textTertiary,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      _StatusBadge(status: transaction.status),
+                      SizedBox(width: Responsive.spacing(context, units: 1)),
+                      _statusBadge(status: transaction.status),
                     ],
                   ),
                 ],
@@ -312,7 +305,7 @@ class _TransactionTile extends StatelessWidget {
                 Text(
                   '${isPositive ? '+' : '-'}₱${transaction.amount.toStringAsFixed(2)}',
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: Responsive.fontSize(context, 15),
                     fontWeight: FontWeight.w700,
                     color: amountColor,
                   ),
@@ -325,11 +318,193 @@ class _TransactionTile extends StatelessWidget {
     );
   }
 
-  void _showDetail(BuildContext context) {
+  void _showDetail(BuildContext context, WalletTransaction transaction) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => _TransactionDetailSheet(transaction: transaction),
+      builder: (ctx) => _transactionDetailSheet(transaction: transaction),
+    );
+  }
+
+  Widget _statusBadge({required TransactionStatus status}) {
+    Color color;
+    String label;
+    switch (status) {
+      case TransactionStatus.completed:
+        color = AppColors.success;
+        label = 'Completed';
+        break;
+      case TransactionStatus.pending:
+        color = AppColors.amber;
+        label = 'Pending';
+        break;
+      case TransactionStatus.failed:
+        color = AppColors.error;
+        label = 'Failed';
+        break;
+      case TransactionStatus.cancelled:
+        color = AppColors.textTertiary;
+        label = 'Cancelled';
+        break;
+    }
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: Responsive.spacing(context, units: 0.75),
+        vertical: Responsive.spacing(context, units: 0.25),
+      ),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 6),
+        ),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: Responsive.fontSize(context, 10),
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  Widget _transactionDetailSheet({required WalletTransaction transaction}) {
+    final isPositive = transaction.isPositive;
+    final amountColor = isPositive ? AppColors.success : AppColors.error;
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 3)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.border,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 3)),
+          Container(
+            width: Responsive.iconSize(context, base: 64),
+            height: Responsive.iconSize(context, base: 64),
+            decoration: BoxDecoration(
+              color: isPositive
+                  ? AppColors.successSurface
+                  : AppColors.errorSurface,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              isPositive ? Icons.arrow_downward : Icons.arrow_upward,
+              color: amountColor,
+              size: Responsive.iconSize(context, base: 28),
+            ),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 2)),
+          Text(
+            transaction.displayTitle,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 18),
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 1)),
+          Text(
+            '${isPositive ? '+' : '-'}₱${transaction.amount.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 36),
+              fontWeight: FontWeight.w700,
+              color: amountColor,
+              letterSpacing: -1,
+            ),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 3)),
+          _detailRow(
+            'Transaction ID',
+            '${transaction.transactionId.substring(0, 16)}...',
+          ),
+          _detailRow('Date & Time', _formatDateTime(transaction.timestamp)),
+          _detailRow(
+            'Status',
+            transaction.status.name.toUpperCase(),
+            valueColor: transaction.status == TransactionStatus.completed
+                ? AppColors.success
+                : AppColors.amber,
+          ),
+          if (transaction.method != null)
+            _detailRow('Method', transaction.method!),
+          if (transaction.rideId != null)
+            _detailRow('Ride ID', transaction.rideId!),
+          if (transaction.commissionAmount != null)
+            _detailRow(
+              'Commission (${((transaction.commissionRate ?? 0) * 100).toStringAsFixed(0)}%)',
+              '-₱${transaction.commissionAmount!.toStringAsFixed(2)}',
+              valueColor: AppColors.error,
+            ),
+          SizedBox(height: Responsive.spacing(context, units: 3)),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  vertical: Responsive.spacing(context, units: 1.75),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    Responsive.radius(context, base: 12),
+                  ),
+                ),
+              ),
+              child: Text(
+                'Close',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: Responsive.fontSize(context, 15),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 1)),
+        ],
+      ),
+    );
+  }
+
+  Widget _detailRow(String label, String value, {Color? valueColor}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: Responsive.spacing(context, units: 1),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 13),
+              color: AppColors.textTertiary,
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 13),
+              fontWeight: FontWeight.w600,
+              color: valueColor ?? AppColors.textPrimary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -355,164 +530,6 @@ class _TransactionTile extends StatelessWidget {
     final m = date.minute.toString().padLeft(2, '0');
     return '$h:$m';
   }
-}
-
-class _StatusBadge extends StatelessWidget {
-  final TransactionStatus status;
-  const _StatusBadge({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    Color color;
-    String label;
-    switch (status) {
-      case TransactionStatus.completed:
-        color = AppColors.success;
-        label = 'Completed';
-        break;
-      case TransactionStatus.pending:
-        color = AppColors.amber;
-        label = 'Pending';
-        break;
-      case TransactionStatus.failed:
-        color = AppColors.error;
-        label = 'Failed';
-        break;
-      case TransactionStatus.cancelled:
-        color = AppColors.textTertiary;
-        label = 'Cancelled';
-        break;
-    }
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-          color: color,
-        ),
-      ),
-    );
-  }
-}
-
-class _TransactionDetailSheet extends StatelessWidget {
-  final WalletTransaction transaction;
-  const _TransactionDetailSheet({required this.transaction});
-
-  @override
-  Widget build(BuildContext context) {
-    final isPositive = transaction.isPositive;
-    final amountColor = isPositive ? AppColors.success : AppColors.error;
-
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: AppColors.border,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: isPositive
-                  ? AppColors.successSurface
-                  : AppColors.errorSurface,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              isPositive ? Icons.arrow_downward : Icons.arrow_upward,
-              color: amountColor,
-              size: 28,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            transaction.displayTitle,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '${isPositive ? '+' : '-'}₱${transaction.amount.toStringAsFixed(2)}',
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w700,
-              color: amountColor,
-              letterSpacing: -1,
-            ),
-          ),
-          const SizedBox(height: 24),
-          _DetailRow(
-            label: 'Transaction ID',
-            value: transaction.transactionId.substring(0, 16) + '...',
-          ),
-          _DetailRow(
-            label: 'Date & Time',
-            value: _formatDateTime(transaction.timestamp),
-          ),
-          _DetailRow(
-            label: 'Status',
-            value: transaction.status.name.toUpperCase(),
-            valueColor: transaction.status == TransactionStatus.completed
-                ? AppColors.success
-                : AppColors.amber,
-          ),
-          if (transaction.method != null)
-            _DetailRow(label: 'Method', value: transaction.method!),
-          if (transaction.rideId != null)
-            _DetailRow(label: 'Ride ID', value: transaction.rideId!),
-          if (transaction.commissionAmount != null)
-            _DetailRow(
-              label:
-                  'Commission (${((transaction.commissionRate ?? 0) * 100).toStringAsFixed(0)}%)',
-              value: '-₱${transaction.commissionAmount!.toStringAsFixed(2)}',
-              valueColor: AppColors.error,
-            ),
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text(
-                'Close',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-        ],
-      ),
-    );
-  }
 
   String _formatDateTime(DateTime date) {
     final months = [
@@ -533,36 +550,16 @@ class _TransactionDetailSheet extends StatelessWidget {
     final m = date.minute.toString().padLeft(2, '0');
     return '${months[date.month - 1]} ${date.day}, ${date.year} at $h:$m';
   }
-}
 
-class _DetailRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final Color? valueColor;
+  String _dateKey(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final txDate = DateTime(date.year, date.month, date.day);
+    final diff = today.difference(txDate).inDays;
 
-  const _DetailRow({required this.label, required this.value, this.valueColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 13, color: AppColors.textTertiary),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: valueColor ?? AppColors.textPrimary,
-            ),
-          ),
-        ],
-      ),
-    );
+    if (diff == 0) return 'TODAY';
+    if (diff == 1) return 'YESTERDAY';
+    if (diff < 7) return '$diff DAYS AGO';
+    return '${date.day}/${date.month}/${date.year}';
   }
 }

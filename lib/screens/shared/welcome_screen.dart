@@ -224,7 +224,7 @@ class _WideLayout extends StatelessWidget {
                   Text(
                     isDriver
                         ? 'Your earnings, your schedule'
-                        : 'Book habal-habal, motorela & bao-bao',
+                        : 'Book habal-habal & bao-bao',
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.7),
                       fontSize: Responsive.fontSize(context, 16),
@@ -607,7 +607,6 @@ class _PassengerServices extends StatelessWidget {
   Widget build(BuildContext context) {
     final services = [
       (icon: Icons.two_wheeler, label: 'Habal-habal', color: AppColors.amber),
-      (icon: Icons.two_wheeler, label: 'Motorela', color: AppColors.error),
       (icon: Icons.directions_car, label: 'Bao-bao', color: AppColors.success),
     ];
 

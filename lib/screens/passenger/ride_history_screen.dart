@@ -128,12 +128,28 @@ class RideHistoryScreen extends StatefulWidget {
 
 class _RideHistoryScreenState extends State<RideHistoryScreen> {
   _Ride? _selected;
+  String _filterStatus = 'all'; // 'all', 'completed', 'cancelled'
+  String _filterType = 'all'; // 'all', 'habal-habal', 'motorela', 'bao-bao'
 
   String _label(String t) => t == 'habal-habal'
       ? 'Habal-habal'
       : t == 'motorela'
       ? 'Motorela'
       : 'Bao-bao';
+
+  List<_Ride> _getFilteredRides() {
+    var filtered = _rides;
+
+    if (_filterStatus != 'all') {
+      filtered = filtered.where((r) => r.status == _filterStatus).toList();
+    }
+
+    if (_filterType != 'all') {
+      filtered = filtered.where((r) => r.vehicleType == _filterType).toList();
+    }
+
+    return filtered;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -158,6 +174,8 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
         ? 0.0
         : rated.fold<int>(0, (s, r) => s + r.rating!) / rated.length;
 
+    final filteredRides = _getFilteredRides();
+
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: Column(
@@ -174,13 +192,36 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
               bottom: false,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-                child: const Text(
-                  'Ride History',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
+                child: Row(
+                  children: [
+                    const Text(
+                      'Ride History',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '${filteredRides.length} rides',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -219,6 +260,53 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
                       .fadeIn(duration: 350.ms)
                       .slideY(begin: 0.1, end: 0),
                   const SizedBox(height: 20),
+                  // Filters
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _FilterChip(
+                          label: 'All',
+                          selected: _filterStatus == 'all',
+                          onTap: () => setState(() => _filterStatus = 'all'),
+                        ),
+                        const SizedBox(width: 8),
+                        _FilterChip(
+                          label: 'Completed',
+                          selected: _filterStatus == 'completed',
+                          onTap: () =>
+                              setState(() => _filterStatus = 'completed'),
+                        ),
+                        const SizedBox(width: 8),
+                        _FilterChip(
+                          label: 'Cancelled',
+                          selected: _filterStatus == 'cancelled',
+                          onTap: () =>
+                              setState(() => _filterStatus = 'cancelled'),
+                        ),
+                        const SizedBox(width: 16),
+                        _FilterChip(
+                          label: 'Habal-habal',
+                          selected: _filterType == 'habal-habal',
+                          onTap: () =>
+                              setState(() => _filterType = 'habal-habal'),
+                        ),
+                        const SizedBox(width: 8),
+                        _FilterChip(
+                          label: 'Motorela',
+                          selected: _filterType == 'motorela',
+                          onTap: () => setState(() => _filterType = 'motorela'),
+                        ),
+                        const SizedBox(width: 8),
+                        _FilterChip(
+                          label: 'Bao-bao',
+                          selected: _filterType == 'bao-bao',
+                          onTap: () => setState(() => _filterType = 'bao-bao'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   const Text(
                     'Recent Rides',
                     style: TextStyle(
@@ -228,176 +316,205 @@ class _RideHistoryScreenState extends State<RideHistoryScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  ..._rides.asMap().entries.map((e) {
-                    final ride = e.value;
-                    final done = ride.status == 'completed';
-                    return GestureDetector(
-                      onTap: () => setState(() => _selected = ride),
-                      child:
-                          Container(
-                                margin: const EdgeInsets.only(bottom: 10),
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(color: AppColors.border),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.03,
+                  if (filteredRides.isEmpty)
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.directions_car_outlined,
+                              size: 48,
+                              color: AppColors.textTertiary,
+                            ),
+                            const SizedBox(height: 12),
+                            const Text(
+                              'No rides found',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    ...filteredRides.asMap().entries.map((e) {
+                      final ride = e.value;
+                      final done = ride.status == 'completed';
+                      return GestureDetector(
+                        onTap: () => setState(() => _selected = ride),
+                        child:
+                            Container(
+                                  margin: const EdgeInsets.only(bottom: 10),
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(14),
+                                    border: Border.all(color: AppColors.border),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.03,
+                                        ),
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 2),
                                       ),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          width: 40,
-                                          height: 40,
-                                          decoration: BoxDecoration(
-                                            color: done
-                                                ? AppColors.successLight
-                                                : AppColors.errorLight,
-                                            borderRadius: BorderRadius.circular(
-                                              10,
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            width: 40,
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                              color: done
+                                                  ? AppColors.successLight
+                                                  : AppColors.errorLight,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Icon(
+                                              done
+                                                  ? Icons.check_circle_outline
+                                                  : Icons.cancel_outlined,
+                                              color: done
+                                                  ? AppColors.success
+                                                  : AppColors.error,
+                                              size: 20,
                                             ),
                                           ),
-                                          child: Icon(
-                                            done
-                                                ? Icons.check_circle_outline
-                                                : Icons.cancel_outlined,
-                                            color: done
-                                                ? AppColors.success
-                                                : AppColors.error,
-                                            size: 20,
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      ride.date,
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 13,
+                                                        color: AppColors
+                                                            .textPrimary,
+                                                      ),
+                                                    ),
+                                                    const Text(
+                                                      ' · ',
+                                                      style: TextStyle(
+                                                        color: AppColors
+                                                            .textTertiary,
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      ride.time,
+                                                      style: const TextStyle(
+                                                        fontSize: 12,
+                                                        color: AppColors
+                                                            .textTertiary,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  '${ride.pickup} → ${ride.dropoff}',
+                                                  style: const TextStyle(
+                                                    fontSize: 13,
+                                                    color:
+                                                        AppColors.textSecondary,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  '${_label(ride.vehicleType)} · ${ride.driverName}',
+                                                  style: const TextStyle(
+                                                    fontSize: 11,
+                                                    color:
+                                                        AppColors.textTertiary,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Column(
+                                          Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                CrossAxisAlignment.end,
                                             children: [
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    ride.date,
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 13,
-                                                      color:
-                                                          AppColors.textPrimary,
-                                                    ),
-                                                  ),
-                                                  const Text(
-                                                    ' · ',
-                                                    style: TextStyle(
-                                                      color: AppColors
-                                                          .textTertiary,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    ride.time,
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                      color: AppColors
-                                                          .textTertiary,
-                                                    ),
-                                                  ),
-                                                ],
+                                              Text(
+                                                '₱${ride.fare}',
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: AppColors.textPrimary,
+                                                ),
                                               ),
                                               const SizedBox(height: 4),
-                                              Text(
-                                                '${ride.pickup} → ${ride.dropoff}',
-                                                style: const TextStyle(
-                                                  fontSize: 13,
-                                                  color:
-                                                      AppColors.textSecondary,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
+                                              PhBadge(
+                                                label: done
+                                                    ? 'Completed'
+                                                    : 'Cancelled',
+                                                color: done
+                                                    ? AppColors.success
+                                                    : AppColors.error,
                                               ),
-                                              const SizedBox(height: 2),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      const PhDivider(),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.access_time_outlined,
+                                                size: 13,
+                                                color: AppColors.textTertiary,
+                                              ),
+                                              const SizedBox(width: 4),
                                               Text(
-                                                '${_label(ride.vehicleType)} · ${ride.driverName}',
+                                                '${ride.distance} · ${ride.duration}',
                                                 style: const TextStyle(
-                                                  fontSize: 11,
+                                                  fontSize: 12,
                                                   color: AppColors.textTertiary,
                                                 ),
                                               ),
                                             ],
                                           ),
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              '₱${ride.fare}',
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w700,
-                                                color: AppColors.textPrimary,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            PhBadge(
-                                              label: done
-                                                  ? 'Completed'
-                                                  : 'Cancelled',
-                                              color: done
-                                                  ? AppColors.success
-                                                  : AppColors.error,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    const PhDivider(),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.access_time_outlined,
-                                              size: 13,
-                                              color: AppColors.textTertiary,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              '${ride.distance} · ${ride.duration}',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                color: AppColors.textTertiary,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const Icon(
-                                          Icons.chevron_right,
-                                          color: AppColors.textTertiary,
-                                          size: 18,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              )
-                              .animate()
-                              .fadeIn(delay: (e.key * 60).ms, duration: 350.ms)
-                              .slideX(begin: -0.05, end: 0),
-                    );
-                  }),
+                                          const Icon(
+                                            Icons.chevron_right,
+                                            color: AppColors.textTertiary,
+                                            size: 18,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                )
+                                .animate()
+                                .fadeIn(
+                                  delay: (e.key * 60).ms,
+                                  duration: 350.ms,
+                                )
+                                .slideX(begin: -0.05, end: 0),
+                      );
+                    }),
                 ],
               ),
             ),
@@ -628,6 +745,44 @@ class _InfoPair extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _FilterChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _FilterChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: selected ? AppColors.primary : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: selected ? AppColors.primary : AppColors.border,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: selected ? Colors.white : AppColors.textSecondary,
+          ),
+        ),
+      ),
     );
   }
 }

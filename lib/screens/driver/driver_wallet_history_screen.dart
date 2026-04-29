@@ -6,6 +6,7 @@ import '../../models/wallet.dart';
 import '../../services/wallet_service.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/responsive.dart';
 
 class DriverWalletHistoryScreen extends StatefulWidget {
   const DriverWalletHistoryScreen({super.key});
@@ -76,14 +77,14 @@ class _DriverWalletHistoryScreenState extends State<DriverWalletHistoryScreen>
                 : TabBarView(
                     controller: _tabController,
                     children: [
-                      _DriverTransactionList(transactions: _filtered(null)),
-                      _DriverTransactionList(
+                      _driverTransactionList(transactions: _filtered(null)),
+                      _driverTransactionList(
                         transactions: _filtered(TransactionType.earnings),
                       ),
-                      _DriverTransactionList(
+                      _driverTransactionList(
                         transactions: _filtered(TransactionType.withdrawal),
                       ),
-                      _DriverTransactionList(
+                      _driverTransactionList(
                         transactions: _filtered(TransactionType.commission),
                       ),
                     ],
@@ -112,9 +113,12 @@ class _DriverWalletHistoryScreenState extends State<DriverWalletHistoryScreen>
         unselectedLabelColor: AppColors.driverTextMuted,
         indicatorColor: AppColors.driverAccent,
         indicatorWeight: 2,
-        labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: const TextStyle(
-          fontSize: 12,
+        labelStyle: TextStyle(
+          fontSize: Responsive.fontSize(context, 12),
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontSize: Responsive.fontSize(context, 12),
           fontWeight: FontWeight.w500,
         ),
         tabs: const [
@@ -126,15 +130,10 @@ class _DriverWalletHistoryScreenState extends State<DriverWalletHistoryScreen>
       ),
     );
   }
-}
 
-class _DriverTransactionList extends StatelessWidget {
-  final List<WalletTransaction> transactions;
-
-  const _DriverTransactionList({required this.transactions});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _driverTransactionList({
+    required List<WalletTransaction> transactions,
+  }) {
     if (transactions.isEmpty) {
       return Center(
         child: Column(
@@ -142,14 +141,14 @@ class _DriverTransactionList extends StatelessWidget {
           children: [
             Icon(
               Icons.receipt_long_outlined,
-              size: 56,
+              size: Responsive.iconSize(context, base: 56),
               color: AppColors.driverTextMuted,
             ),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Text(
               'No transactions found',
               style: TextStyle(
-                fontSize: 15,
+                fontSize: Responsive.fontSize(context, 15),
                 fontWeight: FontWeight.w600,
                 color: AppColors.driverTextMuted,
               ),
@@ -167,7 +166,10 @@ class _DriverTransactionList extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: EdgeInsets.symmetric(
+        horizontal: Responsive.spacing(context, units: 2),
+        vertical: Responsive.spacing(context, units: 1.5),
+      ),
       itemCount: grouped.length,
       itemBuilder: (context, index) {
         final dateKey = grouped.keys.elementAt(index);
@@ -182,14 +184,16 @@ class _DriverTransactionList extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+              padding: EdgeInsets.symmetric(
+                vertical: Responsive.spacing(context, units: 1.25),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     dateKey,
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 12),
                       fontWeight: FontWeight.w700,
                       color: AppColors.driverTextMuted,
                       letterSpacing: 0.5,
@@ -198,8 +202,8 @@ class _DriverTransactionList extends StatelessWidget {
                   if (dayTotal > 0)
                     Text(
                       '+₱${dayTotal.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontSize: 12,
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 12),
                         fontWeight: FontWeight.w700,
                         color: AppColors.success,
                       ),
@@ -210,7 +214,9 @@ class _DriverTransactionList extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 color: AppColors.driverSurface,
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 14),
+                ),
                 border: Border.all(color: AppColors.driverBorder),
               ),
               child: Column(
@@ -218,7 +224,7 @@ class _DriverTransactionList extends StatelessWidget {
                     .asMap()
                     .entries
                     .map(
-                      (e) => _DriverTxTile(
+                      (e) => _driverTxTile(
                         transaction: e.value,
                         isLast: e.key == items.length - 1,
                       ),
@@ -232,34 +238,20 @@ class _DriverTransactionList extends StatelessWidget {
     );
   }
 
-  String _dateKey(DateTime date) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final txDate = DateTime(date.year, date.month, date.day);
-    final diff = today.difference(txDate).inDays;
-
-    if (diff == 0) return 'TODAY';
-    if (diff == 1) return 'YESTERDAY';
-    if (diff < 7) return '$diff DAYS AGO';
-    return '${date.day}/${date.month}/${date.year}';
-  }
-}
-
-class _DriverTxTile extends StatelessWidget {
-  final WalletTransaction transaction;
-  final bool isLast;
-
-  const _DriverTxTile({required this.transaction, required this.isLast});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _driverTxTile({
+    required WalletTransaction transaction,
+    required bool isLast,
+  }) {
     final isPositive = transaction.isPositive;
     final amountColor = isPositive ? AppColors.success : AppColors.error;
 
     return GestureDetector(
-      onTap: () => _showDetail(context),
+      onTap: () => _showDetail(context, transaction),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(
+          horizontal: Responsive.spacing(context, units: 2),
+          vertical: Responsive.spacing(context, units: 1.75),
+        ),
         decoration: BoxDecoration(
           border: isLast
               ? null
@@ -270,58 +262,65 @@ class _DriverTxTile extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 42,
-              height: 42,
+              width: Responsive.iconSize(context, base: 42),
+              height: Responsive.iconSize(context, base: 42),
               decoration: BoxDecoration(
                 color: isPositive
                     ? AppColors.success.withValues(alpha: 0.15)
                     : AppColors.error.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 10),
+                ),
               ),
               child: Icon(
                 _iconFor(transaction.type),
                 color: isPositive ? AppColors.success : AppColors.error,
-                size: 20,
+                size: Responsive.iconSize(context, base: 20),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: Responsive.spacing(context, units: 1.5)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     transaction.displayTitle,
-                    style: const TextStyle(
-                      fontSize: 14,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 14),
                       fontWeight: FontWeight.w600,
                       color: AppColors.driverText,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: Responsive.spacing(context, units: 0.25)),
                   Row(
                     children: [
                       Text(
                         _formatTime(transaction.timestamp),
-                        style: const TextStyle(
-                          fontSize: 11,
+                        style: TextStyle(
+                          fontSize: Responsive.fontSize(context, 11),
                           color: AppColors.driverTextMuted,
                         ),
                       ),
                       if (transaction.status == TransactionStatus.pending) ...[
-                        const SizedBox(width: 8),
+                        SizedBox(width: Responsive.spacing(context, units: 1)),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Responsive.spacing(
+                              context,
+                              units: 0.75,
+                            ),
+                            vertical: Responsive.spacing(context, units: 0.25),
                           ),
                           decoration: BoxDecoration(
                             color: AppColors.amber.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(
+                              Responsive.radius(context, base: 6),
+                            ),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Pending',
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: Responsive.fontSize(context, 10),
                               fontWeight: FontWeight.w600,
                               color: AppColors.amber,
                             ),
@@ -333,8 +332,8 @@ class _DriverTxTile extends StatelessWidget {
                   if (transaction.commissionAmount != null)
                     Text(
                       'Commission: -₱${transaction.commissionAmount!.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontSize: 11,
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 11),
                         color: AppColors.driverTextMuted,
                       ),
                     ),
@@ -347,16 +346,16 @@ class _DriverTxTile extends StatelessWidget {
                 Text(
                   '${isPositive ? '+' : '-'}₱${transaction.amount.toStringAsFixed(2)}',
                   style: TextStyle(
-                    fontSize: 15,
+                    fontSize: Responsive.fontSize(context, 15),
                     fontWeight: FontWeight.w700,
                     color: amountColor,
                   ),
                 ),
                 if (transaction.rideId != null)
-                  const Icon(
+                  Icon(
                     Icons.chevron_right,
                     color: AppColors.driverTextMuted,
-                    size: 16,
+                    size: Responsive.iconSize(context, base: 16),
                   ),
               ],
             ),
@@ -366,11 +365,137 @@ class _DriverTxTile extends StatelessWidget {
     );
   }
 
-  void _showDetail(BuildContext context) {
+  void _showDetail(BuildContext context, WalletTransaction transaction) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => _DriverTxDetailSheet(transaction: transaction),
+      builder: (ctx) => _driverTxDetailSheet(transaction: transaction),
+    );
+  }
+
+  Widget _driverTxDetailSheet({required WalletTransaction transaction}) {
+    final isPositive = transaction.isPositive;
+    final amountColor = isPositive ? AppColors.success : AppColors.error;
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: AppColors.driverSurface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 3)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.driverBorder,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 3)),
+          Text(
+            transaction.displayTitle,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 18),
+              fontWeight: FontWeight.w700,
+              color: AppColors.driverText,
+            ),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 1)),
+          Text(
+            '${isPositive ? '+' : '-'}₱${transaction.amount.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 36),
+              fontWeight: FontWeight.w700,
+              color: amountColor,
+              letterSpacing: -1,
+            ),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 3)),
+          _row(
+            'Transaction ID',
+            '${transaction.transactionId.substring(0, 16)}...',
+          ),
+          _row('Date & Time', _formatDateTime(transaction.timestamp)),
+          _row(
+            'Status',
+            transaction.status.name.toUpperCase(),
+            valueColor: transaction.status == TransactionStatus.completed
+                ? AppColors.success
+                : AppColors.amber,
+          ),
+          if (transaction.rideId != null) _row('Ride ID', transaction.rideId!),
+          if (transaction.method != null) _row('Method', transaction.method!),
+          if (transaction.commissionAmount != null) ...[
+            _row(
+              'Gross Fare',
+              '₱${(transaction.amount + transaction.commissionAmount!).toStringAsFixed(2)}',
+            ),
+            _row(
+              'Commission (${((transaction.commissionRate ?? 0) * 100).toStringAsFixed(0)}%)',
+              '-₱${transaction.commissionAmount!.toStringAsFixed(2)}',
+              valueColor: AppColors.error,
+            ),
+          ],
+          SizedBox(height: Responsive.spacing(context, units: 3)),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.driverAccent,
+                foregroundColor: AppColors.driverBg,
+                padding: EdgeInsets.symmetric(
+                  vertical: Responsive.spacing(context, units: 1.75),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                    Responsive.radius(context, base: 12),
+                  ),
+                ),
+              ),
+              child: Text(
+                'Close',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: Responsive.fontSize(context, 16),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 1)),
+        ],
+      ),
+    );
+  }
+
+  Widget _row(String label, String value, {Color? valueColor}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: Responsive.spacing(context, units: 1),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 13),
+              color: AppColors.driverTextMuted,
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 13),
+              fontWeight: FontWeight.w600,
+              color: valueColor ?? AppColors.driverText,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -392,129 +517,6 @@ class _DriverTxTile extends StatelessWidget {
     final m = date.minute.toString().padLeft(2, '0');
     return '$h:$m';
   }
-}
-
-class _DriverTxDetailSheet extends StatelessWidget {
-  final WalletTransaction transaction;
-  const _DriverTxDetailSheet({required this.transaction});
-
-  @override
-  Widget build(BuildContext context) {
-    final isPositive = transaction.isPositive;
-    final amountColor = isPositive ? AppColors.success : AppColors.error;
-
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.driverSurface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: AppColors.driverBorder,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            transaction.displayTitle,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: AppColors.driverText,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '${isPositive ? '+' : '-'}₱${transaction.amount.toStringAsFixed(2)}',
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w700,
-              color: amountColor,
-              letterSpacing: -1,
-            ),
-          ),
-          const SizedBox(height: 24),
-          _Row(
-            'Transaction ID',
-            transaction.transactionId.substring(0, 16) + '...',
-          ),
-          _Row('Date & Time', _formatDateTime(transaction.timestamp)),
-          _Row(
-            'Status',
-            transaction.status.name.toUpperCase(),
-            valueColor: transaction.status == TransactionStatus.completed
-                ? AppColors.success
-                : AppColors.amber,
-          ),
-          if (transaction.rideId != null) _Row('Ride ID', transaction.rideId!),
-          if (transaction.method != null) _Row('Method', transaction.method!),
-          if (transaction.commissionAmount != null) ...[
-            _Row(
-              'Gross Fare',
-              '₱${(transaction.amount + transaction.commissionAmount!).toStringAsFixed(2)}',
-            ),
-            _Row(
-              'Commission (${((transaction.commissionRate ?? 0) * 100).toStringAsFixed(0)}%)',
-              '-₱${transaction.commissionAmount!.toStringAsFixed(2)}',
-              valueColor: AppColors.error,
-            ),
-          ],
-          const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.driverAccent,
-                foregroundColor: AppColors.driverBg,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text(
-                'Close',
-                style: TextStyle(fontWeight: FontWeight.w700),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-        ],
-      ),
-    );
-  }
-
-  Widget _Row(String label, String value, {Color? valueColor}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 13,
-              color: AppColors.driverTextMuted,
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: valueColor ?? AppColors.driverText,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   String _formatDateTime(DateTime date) {
     final months = [
@@ -534,5 +536,17 @@ class _DriverTxDetailSheet extends StatelessWidget {
     final h = date.hour.toString().padLeft(2, '0');
     final m = date.minute.toString().padLeft(2, '0');
     return '${months[date.month - 1]} ${date.day}, ${date.year} at $h:$m';
+  }
+
+  String _dateKey(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final txDate = DateTime(date.year, date.month, date.day);
+    final diff = today.difference(txDate).inDays;
+
+    if (diff == 0) return 'TODAY';
+    if (diff == 1) return 'YESTERDAY';
+    if (diff < 7) return '$diff DAYS AGO';
+    return '${date.day}/${date.month}/${date.year}';
   }
 }

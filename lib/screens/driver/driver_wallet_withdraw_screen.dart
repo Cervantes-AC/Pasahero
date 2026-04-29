@@ -7,6 +7,7 @@ import '../../models/wallet.dart';
 import '../../services/wallet_service.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/responsive.dart';
 
 class DriverWalletWithdrawScreen extends StatefulWidget {
   const DriverWalletWithdrawScreen({super.key});
@@ -105,7 +106,7 @@ class _DriverWalletWithdrawScreenState
       context: context,
       isDismissible: false,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => _WithdrawSuccessSheet(
+      builder: (ctx) => _withdrawSuccessSheet(
         amount: amount,
         method: _selectedMethod,
         onDone: () {
@@ -132,20 +133,22 @@ class _DriverWalletWithdrawScreenState
         slivers: [
           SliverToBoxAdapter(child: _buildHeader()),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: EdgeInsets.symmetric(
+              horizontal: Responsive.spacing(context, units: 2),
+            ),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                const SizedBox(height: 20),
+                SizedBox(height: Responsive.spacing(context, units: 2.5)),
                 _buildBalanceInfo(),
-                const SizedBox(height: 20),
+                SizedBox(height: Responsive.spacing(context, units: 2.5)),
                 _buildAmountSection(),
-                const SizedBox(height: 20),
+                SizedBox(height: Responsive.spacing(context, units: 2.5)),
                 _buildMethodSection(),
-                const SizedBox(height: 20),
+                SizedBox(height: Responsive.spacing(context, units: 2.5)),
                 _buildAccountSection(),
-                const SizedBox(height: 32),
+                SizedBox(height: Responsive.spacing(context, units: 4)),
                 _buildActionButtons(),
-                const SizedBox(height: 40),
+                SizedBox(height: Responsive.spacing(context, units: 5)),
               ]),
             ),
           ),
@@ -166,44 +169,48 @@ class _DriverWalletWithdrawScreenState
   Widget _buildBalanceInfo() {
     final balance = _wallet?.balance ?? 0.0;
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
       decoration: BoxDecoration(
         color: AppColors.driverSurface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 14),
+        ),
         border: Border.all(color: AppColors.driverBorder),
       ),
       child: Row(
         children: [
           Container(
-            width: 44,
-            height: 44,
+            width: Responsive.iconSize(context, base: 44),
+            height: Responsive.iconSize(context, base: 44),
             decoration: BoxDecoration(
               color: AppColors.driverAccent.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 10),
+              ),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.account_balance_wallet_outlined,
               color: AppColors.driverAccent,
-              size: 22,
+              size: Responsive.iconSize(context, base: 22),
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: Responsive.spacing(context, units: 1.5)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Available Balance',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: Responsive.fontSize(context, 12),
                     color: AppColors.driverTextMuted,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: Responsive.spacing(context, units: 0.25)),
                 Text(
                   '₱${balance.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    fontSize: 20,
+                  style: TextStyle(
+                    fontSize: Responsive.fontSize(context, 20),
                     fontWeight: FontWeight.w700,
                     color: AppColors.driverText,
                   ),
@@ -218,18 +225,23 @@ class _DriverWalletWithdrawScreenState
               );
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: EdgeInsets.symmetric(
+                horizontal: Responsive.spacing(context, units: 1.5),
+                vertical: Responsive.spacing(context, units: 0.75),
+              ),
               decoration: BoxDecoration(
                 color: AppColors.driverAccent.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 8),
+                ),
                 border: Border.all(
                   color: AppColors.driverAccent.withValues(alpha: 0.3),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'Max',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: Responsive.fontSize(context, 12),
                   fontWeight: FontWeight.w700,
                   color: AppColors.driverAccent,
                 ),
@@ -245,48 +257,50 @@ class _DriverWalletWithdrawScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Withdrawal Amount',
           style: TextStyle(
-            fontSize: 15,
+            fontSize: Responsive.fontSize(context, 15),
             fontWeight: FontWeight.w600,
             color: AppColors.driverText,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: Responsive.spacing(context, units: 1.5)),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
           decoration: BoxDecoration(
             color: AppColors.driverSurface,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(
+              Responsive.radius(context, base: 14),
+            ),
             border: Border.all(color: AppColors.driverBorder),
           ),
           child: Column(
             children: [
               Row(
                 children: [
-                  const Text(
+                  Text(
                     '₱',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: Responsive.fontSize(context, 24),
                       fontWeight: FontWeight.w700,
                       color: AppColors.driverText,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: Responsive.spacing(context, units: 1)),
                   Expanded(
                     child: TextField(
                       controller: _amountController,
                       keyboardType: TextInputType.number,
-                      style: const TextStyle(
-                        fontSize: 32,
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 32),
                         fontWeight: FontWeight.w700,
                         color: AppColors.driverText,
                       ),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: '0',
                         hintStyle: TextStyle(
-                          fontSize: 32,
+                          fontSize: Responsive.fontSize(context, 32),
                           fontWeight: FontWeight.w700,
                           color: AppColors.driverTextMuted,
                         ),
@@ -296,30 +310,32 @@ class _DriverWalletWithdrawScreenState
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: Responsive.spacing(context, units: 1.5)),
               const Divider(color: AppColors.driverBorder),
-              const SizedBox(height: 12),
+              SizedBox(height: Responsive.spacing(context, units: 1.5)),
               Wrap(
-                spacing: 8,
-                runSpacing: 8,
+                spacing: Responsive.spacing(context, units: 1),
+                runSpacing: Responsive.spacing(context, units: 1),
                 children: _quickAmounts.map((amount) {
                   return GestureDetector(
                     onTap: () =>
                         _amountController.text = amount.toStringAsFixed(0),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 8,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Responsive.spacing(context, units: 1.75),
+                        vertical: Responsive.spacing(context, units: 1),
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.driverBg,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(
+                          Responsive.radius(context, base: 10),
+                        ),
                         border: Border.all(color: AppColors.driverBorder),
                       ),
                       child: Text(
                         '₱${amount.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                          fontSize: 13,
+                        style: TextStyle(
+                          fontSize: Responsive.fontSize(context, 13),
                           fontWeight: FontWeight.w600,
                           color: AppColors.driverText,
                         ),
@@ -339,18 +355,18 @@ class _DriverWalletWithdrawScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Withdrawal Method',
           style: TextStyle(
-            fontSize: 15,
+            fontSize: Responsive.fontSize(context, 15),
             fontWeight: FontWeight.w600,
             color: AppColors.driverText,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: Responsive.spacing(context, units: 1.5)),
         Column(
           children: [
-            _MethodTile(
+            _methodTile(
               icon: Icons.account_balance_wallet_outlined,
               title: 'GCash',
               subtitle: 'Instant payout',
@@ -359,8 +375,8 @@ class _DriverWalletWithdrawScreenState
               onTap: () =>
                   setState(() => _selectedMethod = WithdrawMethod.gcash),
             ),
-            const SizedBox(height: 8),
-            _MethodTile(
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+            _methodTile(
               icon: Icons.credit_card_outlined,
               title: 'Maya',
               subtitle: 'Bank transfer',
@@ -369,8 +385,8 @@ class _DriverWalletWithdrawScreenState
               onTap: () =>
                   setState(() => _selectedMethod = WithdrawMethod.maya),
             ),
-            const SizedBox(height: 8),
-            _MethodTile(
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+            _methodTile(
               icon: Icons.support_agent_outlined,
               title: 'Admin Payout',
               subtitle: 'Manual processing (1-2 days)',
@@ -385,7 +401,7 @@ class _DriverWalletWithdrawScreenState
     );
   }
 
-  Widget _MethodTile({
+  Widget _methodTile({
     required IconData icon,
     required String title,
     required String subtitle,
@@ -396,12 +412,14 @@ class _DriverWalletWithdrawScreenState
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(Responsive.spacing(context, units: 1.75)),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.driverAccent.withValues(alpha: 0.08)
               : AppColors.driverSurface,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            Responsive.radius(context, base: 12),
+          ),
           border: Border.all(
             color: isSelected
                 ? AppColors.driverAccent.withValues(alpha: 0.5)
@@ -412,23 +430,25 @@ class _DriverWalletWithdrawScreenState
         child: Row(
           children: [
             Container(
-              width: 44,
-              height: 44,
+              width: Responsive.iconSize(context, base: 44),
+              height: Responsive.iconSize(context, base: 44),
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppColors.driverAccent.withValues(alpha: 0.15)
                     : AppColors.driverBg,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 10),
+                ),
               ),
               child: Icon(
                 icon,
                 color: isSelected
                     ? AppColors.driverAccent
                     : AppColors.driverTextMuted,
-                size: 22,
+                size: Responsive.iconSize(context, base: 22),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: Responsive.spacing(context, units: 1.5)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -436,17 +456,18 @@ class _DriverWalletWithdrawScreenState
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: Responsive.fontSize(context, 14),
                       fontWeight: FontWeight.w600,
                       color: isSelected
                           ? AppColors.driverAccent
                           : AppColors.driverText,
                     ),
                   ),
+                  SizedBox(height: Responsive.spacing(context, units: 0.25)),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 12),
                       color: AppColors.driverTextMuted,
                     ),
                   ),
@@ -454,10 +475,10 @@ class _DriverWalletWithdrawScreenState
               ),
             ),
             if (isSelected)
-              const Icon(
+              Icon(
                 Icons.check_circle,
                 color: AppColors.driverAccent,
-                size: 20,
+                size: Responsive.iconSize(context, base: 20),
               ),
           ],
         ),
@@ -468,27 +489,29 @@ class _DriverWalletWithdrawScreenState
   Widget _buildAccountSection() {
     if (_selectedMethod == WithdrawMethod.manual) {
       return Container(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(Responsive.spacing(context, units: 1.75)),
         decoration: BoxDecoration(
           color: AppColors.driverAccent.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            Responsive.radius(context, base: 12),
+          ),
           border: Border.all(
             color: AppColors.driverAccent.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.info_outline,
               color: AppColors.driverAccent,
-              size: 18,
+              size: Responsive.iconSize(context, base: 18),
             ),
-            const SizedBox(width: 10),
-            const Expanded(
+            SizedBox(width: Responsive.spacing(context, units: 1.25)),
+            Expanded(
               child: Text(
                 'Admin will contact you to process your withdrawal within 1-2 business days.',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: Responsive.fontSize(context, 12),
                   color: AppColors.driverTextMuted,
                 ),
               ),
@@ -503,30 +526,32 @@ class _DriverWalletWithdrawScreenState
       children: [
         Text(
           '${_selectedMethod == WithdrawMethod.gcash ? 'GCash' : 'Maya'} Account Details',
-          style: const TextStyle(
-            fontSize: 15,
+          style: TextStyle(
+            fontSize: Responsive.fontSize(context, 15),
             fontWeight: FontWeight.w600,
             color: AppColors.driverText,
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: Responsive.spacing(context, units: 1.5)),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
           decoration: BoxDecoration(
             color: AppColors.driverSurface,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(
+              Responsive.radius(context, base: 14),
+            ),
             border: Border.all(color: AppColors.driverBorder),
           ),
           child: Column(
             children: [
-              _DarkTextField(
+              _darkTextField(
                 label: 'Mobile Number',
                 hint: '09XX XXX XXXX',
                 controller: _accountController,
                 keyboardType: TextInputType.phone,
               ),
-              const SizedBox(height: 14),
-              _DarkTextField(
+              SizedBox(height: Responsive.spacing(context, units: 1.75)),
+              _darkTextField(
                 label: 'Account Name',
                 hint: 'Full name on account',
                 controller: _nameController,
@@ -538,12 +563,75 @@ class _DriverWalletWithdrawScreenState
     );
   }
 
+  Widget _darkTextField({
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    TextInputType? keyboardType,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: Responsive.fontSize(context, 12),
+            color: AppColors.driverTextMuted,
+          ),
+        ),
+        SizedBox(height: Responsive.spacing(context, units: 0.75)),
+        TextField(
+          controller: controller,
+          keyboardType: keyboardType,
+          style: TextStyle(
+            color: AppColors.driverText,
+            fontSize: Responsive.fontSize(context, 15),
+          ),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(
+              color: AppColors.driverTextMuted,
+              fontSize: Responsive.fontSize(context, 14),
+            ),
+            filled: true,
+            fillColor: AppColors.driverBg,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 10),
+              ),
+              borderSide: const BorderSide(color: AppColors.driverBorder),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 10),
+              ),
+              borderSide: const BorderSide(color: AppColors.driverBorder),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 10),
+              ),
+              borderSide: const BorderSide(
+                color: AppColors.driverAccent,
+                width: 1.5,
+              ),
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: Responsive.spacing(context, units: 1.75),
+              vertical: Responsive.spacing(context, units: 1.5),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildActionButtons() {
     return Column(
       children: [
         SizedBox(
           width: double.infinity,
-          height: 52,
+          height: Responsive.buttonHeight(context),
           child: ElevatedButton(
             onPressed: _processing ? null : _processWithdrawal,
             style: ElevatedButton.styleFrom(
@@ -553,7 +641,9 @@ class _DriverWalletWithdrawScreenState
                 alpha: 0.5,
               ),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 14),
+                ),
               ),
             ),
             child: _processing
@@ -565,170 +655,119 @@ class _DriverWalletWithdrawScreenState
                       color: AppColors.driverBg,
                     ),
                   )
-                : const Text(
+                : Text(
                     'Request Withdrawal',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 15),
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: Responsive.spacing(context, units: 1.5)),
         SizedBox(
           width: double.infinity,
-          height: 52,
+          height: Responsive.buttonHeight(context),
           child: OutlinedButton(
             onPressed: () => context.pop(),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.driverTextMuted,
               side: const BorderSide(color: AppColors.driverBorder),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 14),
+                ),
               ),
             ),
-            child: const Text(
+            child: Text(
               'Cancel',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _DarkTextField extends StatelessWidget {
-  final String label;
-  final String hint;
-  final TextEditingController controller;
-  final TextInputType? keyboardType;
-
-  const _DarkTextField({
-    required this.label,
-    required this.hint,
-    required this.controller,
-    this.keyboardType,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.driverTextMuted,
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextField(
-          controller: controller,
-          keyboardType: keyboardType,
-          style: const TextStyle(color: AppColors.driverText, fontSize: 15),
-          decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: const TextStyle(
-              color: AppColors.driverTextMuted,
-              fontSize: 14,
-            ),
-            filled: true,
-            fillColor: AppColors.driverBg,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.driverBorder),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.driverBorder),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(
-                color: AppColors.driverAccent,
-                width: 1.5,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: Responsive.fontSize(context, 15),
               ),
             ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: 12,
-            ),
           ),
         ),
       ],
     );
   }
-}
 
-class _WithdrawSuccessSheet extends StatelessWidget {
-  final double amount;
-  final WithdrawMethod method;
-  final VoidCallback onDone;
-
-  const _WithdrawSuccessSheet({
-    required this.amount,
-    required this.method,
-    required this.onDone,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _withdrawSuccessSheet({
+    required double amount,
+    required WithdrawMethod method,
+    required VoidCallback onDone,
+  }) {
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.driverSurface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      padding: const EdgeInsets.all(32),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 4)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 72,
-            height: 72,
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.driverBorder,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 2.5)),
+          Container(
+            width: Responsive.iconSize(context, base: 72),
+            height: Responsive.iconSize(context, base: 72),
             decoration: BoxDecoration(
               color: AppColors.success.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.check_circle_outline,
               color: AppColors.success,
-              size: 36,
+              size: Responsive.iconSize(context, base: 36),
             ),
           ),
-          const SizedBox(height: 20),
-          const Text(
+          SizedBox(height: Responsive.spacing(context, units: 2.5)),
+          Text(
             'Withdrawal Requested!',
             style: TextStyle(
-              fontSize: 20,
+              fontSize: Responsive.fontSize(context, 20),
               fontWeight: FontWeight.w700,
               color: AppColors.driverText,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: Responsive.spacing(context, units: 1)),
           Text(
             '₱${amount.toStringAsFixed(2)} will be sent to your ${method.name.toUpperCase()} account.',
-            style: const TextStyle(
-              fontSize: 14,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 14),
               color: AppColors.driverTextMuted,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: Responsive.spacing(context, units: 1)),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: EdgeInsets.symmetric(
+              horizontal: Responsive.spacing(context, units: 1.5),
+              vertical: Responsive.spacing(context, units: 0.75),
+            ),
             decoration: BoxDecoration(
               color: AppColors.amber.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 8),
+              ),
             ),
-            child: const Text(
+            child: Text(
               'Status: Pending Admin Approval',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: Responsive.fontSize(context, 12),
                 fontWeight: FontWeight.w600,
                 color: AppColors.amber,
               ),
             ),
           ),
-          const SizedBox(height: 28),
+          SizedBox(height: Responsive.spacing(context, units: 3.5)),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -736,18 +775,25 @@ class _WithdrawSuccessSheet extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.driverAccent,
                 foregroundColor: AppColors.driverBg,
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: EdgeInsets.symmetric(
+                  vertical: Responsive.spacing(context, units: 1.75),
+                ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(
+                    Responsive.radius(context, base: 12),
+                  ),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'Back to Wallet',
-                style: TextStyle(fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: Responsive.fontSize(context, 15),
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: Responsive.spacing(context, units: 1)),
         ],
       ),
     );

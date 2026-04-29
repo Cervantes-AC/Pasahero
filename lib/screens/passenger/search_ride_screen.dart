@@ -94,7 +94,12 @@ class _SearchRideScreenState extends State<SearchRideScreen>
             ),
             child: SafeArea(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(hp, 16, hp, 20),
+                padding: EdgeInsets.fromLTRB(
+                  hp,
+                  Responsive.spacing(context, units: 2),
+                  hp,
+                  Responsive.spacing(context, units: 2.5),
+                ),
                 child: Column(
                   children: [
                     Row(
@@ -105,11 +110,13 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                           color: Colors.white.withValues(alpha: 0.15),
                           iconColor: Colors.white,
                         ),
-                        const SizedBox(width: 14),
+                        SizedBox(
+                          width: Responsive.spacing(context, units: 1.75),
+                        ),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Responsive.spacing(context, units: 1.5),
+                            vertical: Responsive.spacing(context, units: 0.75),
                           ),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.15),
@@ -118,12 +125,18 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(_rideIcon, color: Colors.white, size: 16),
-                              const SizedBox(width: 6),
+                              Icon(
+                                _rideIcon,
+                                color: Colors.white,
+                                size: Responsive.iconSize(context, base: 16),
+                              ),
+                              SizedBox(
+                                width: Responsive.spacing(context, units: 0.75),
+                              ),
                               Text(
                                 _rideLabel,
-                                style: const TextStyle(
-                                  fontSize: 14,
+                                style: TextStyle(
+                                  fontSize: Responsive.fontSize(context, 14),
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
@@ -133,9 +146,9 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                         ),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Responsive.spacing(context, units: 1),
+                            vertical: Responsive.spacing(context, units: 0.5),
                           ),
                           decoration: BoxDecoration(
                             color: AppColors.success.withValues(alpha: 0.2),
@@ -145,18 +158,20 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
-                                width: 6,
-                                height: 6,
+                                width: Responsive.iconSize(context, base: 6),
+                                height: Responsive.iconSize(context, base: 6),
                                 decoration: const BoxDecoration(
                                   color: AppColors.success,
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              const SizedBox(width: 4),
-                              const Text(
+                              SizedBox(
+                                width: Responsive.spacing(context, units: 0.5),
+                              ),
+                              Text(
                                 '12 online',
                                 style: TextStyle(
-                                  fontSize: 11,
+                                  fontSize: Responsive.fontSize(context, 11),
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
                                 ),
@@ -187,8 +202,8 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                 Center(
                   child:
                       Container(
-                            width: 48,
-                            height: 48,
+                            width: Responsive.iconSize(context, base: 48),
+                            height: Responsive.iconSize(context, base: 48),
                             decoration: BoxDecoration(
                               color: AppColors.primary,
                               shape: BoxShape.circle,
@@ -202,10 +217,10 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                                 ),
                               ],
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.navigation,
                               color: Colors.white,
-                              size: 24,
+                              size: Responsive.iconSize(context, base: 24),
                             ),
                           )
                           .animate(onPlay: (c) => c.repeat())
@@ -247,7 +262,9 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                     Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(
+                              Responsive.radius(context, base: 16),
+                            ),
                             border: Border.all(color: AppColors.border),
                             boxShadow: [
                               BoxShadow(
@@ -257,7 +274,9 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                               ),
                             ],
                           ),
-                          padding: const EdgeInsets.all(16),
+                          padding: EdgeInsets.all(
+                            Responsive.spacing(context, units: 2),
+                          ),
                           child: Column(
                             children: [
                               _LocationField(
@@ -268,17 +287,29 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                                 label: 'Pickup',
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 10,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: Responsive.spacing(
+                                    context,
+                                    units: 1.25,
+                                  ),
                                 ),
                                 child: Row(
                                   children: [
                                     const Expanded(child: Divider()),
                                     Container(
-                                      width: 28,
-                                      height: 28,
-                                      margin: const EdgeInsets.symmetric(
-                                        horizontal: 10,
+                                      width: Responsive.iconSize(
+                                        context,
+                                        base: 28,
+                                      ),
+                                      height: Responsive.iconSize(
+                                        context,
+                                        base: 28,
+                                      ),
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: Responsive.spacing(
+                                          context,
+                                          units: 1.25,
+                                        ),
                                       ),
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
@@ -287,9 +318,12 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                                           width: 2,
                                         ),
                                       ),
-                                      child: const Center(
+                                      child: Center(
                                         child: CircleAvatar(
-                                          radius: 4,
+                                          radius: Responsive.iconSize(
+                                            context,
+                                            base: 4,
+                                          ),
                                           backgroundColor: AppColors.amber,
                                         ),
                                       ),
@@ -306,10 +340,15 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                                 label: 'Drop-off',
                                 onChanged: (_) => setState(() {}),
                               ),
-                              const SizedBox(height: 14),
+                              SizedBox(
+                                height: Responsive.spacing(
+                                  context,
+                                  units: 1.75,
+                                ),
+                              ),
                               SizedBox(
                                 width: double.infinity,
-                                height: 48,
+                                height: Responsive.buttonHeight(context),
                                 child: ElevatedButton(
                                   onPressed: _destCtrl.text.isNotEmpty
                                       ? _search
@@ -318,13 +357,19 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                                     backgroundColor: AppColors.primary,
                                     foregroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(
+                                        Responsive.radius(context, base: 12),
+                                      ),
                                     ),
                                   ),
-                                  child: const Text(
+                                  child: Text(
                                     'Search Drivers',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
+                                      fontSize: Responsive.fontSize(
+                                        context,
+                                        16,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -336,17 +381,17 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                         .fadeIn(duration: 350.ms)
                         .slideY(begin: 0.2, end: 0),
 
-                    const SizedBox(height: 20),
+                    SizedBox(height: Responsive.spacing(context, units: 2.5)),
 
-                    const Text(
+                    Text(
                       'Saved Locations',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: Responsive.fontSize(context, 13),
                         fontWeight: FontWeight.w600,
                         color: AppColors.textTertiary,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: Responsive.spacing(context, units: 1.25)),
                     Row(
                       children: [
                         _SavedChip(
@@ -357,7 +402,9 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                             () => _destCtrl.text = '123 Mabolo St, Cebu City',
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        SizedBox(
+                          width: Responsive.spacing(context, units: 1.25),
+                        ),
                         _SavedChip(
                           icon: Icons.work_outline,
                           label: 'Work',
@@ -366,7 +413,9 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                             () => _destCtrl.text = 'IT Park, Lahug, Cebu City',
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        SizedBox(
+                          width: Responsive.spacing(context, units: 1.25),
+                        ),
                         _SavedChip(
                           icon: Icons.star_outline,
                           label: 'Favorite',
@@ -379,44 +428,59 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                       ],
                     ),
 
-                    const SizedBox(height: 20),
+                    SizedBox(height: Responsive.spacing(context, units: 2.5)),
 
-                    const Text(
+                    Text(
                       'Recent Destinations',
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: Responsive.fontSize(context, 13),
                         fontWeight: FontWeight.w600,
                         color: AppColors.textTertiary,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    SizedBox(height: Responsive.spacing(context, units: 1.25)),
                     ...['SM City Cebu', 'Ayala Center Cebu', 'IT Park'].map(
                       (place) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
+                        padding: EdgeInsets.only(
+                          bottom: Responsive.spacing(context, units: 1),
+                        ),
                         child: GestureDetector(
                           onTap: () => setState(() => _destCtrl.text = place),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 13,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: Responsive.spacing(
+                                context,
+                                units: 1.75,
+                              ),
+                              vertical: Responsive.spacing(
+                                context,
+                                units: 1.625,
+                              ),
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(
+                                Responsive.radius(context, base: 12),
+                              ),
                               border: Border.all(color: AppColors.border),
                             ),
                             child: Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.history,
                                   color: AppColors.textTertiary,
-                                  size: 16,
+                                  size: Responsive.iconSize(context, base: 16),
                                 ),
-                                const SizedBox(width: 12),
+                                SizedBox(
+                                  width: Responsive.spacing(
+                                    context,
+                                    units: 1.5,
+                                  ),
+                                ),
                                 Text(
                                   place,
-                                  style: const TextStyle(
-                                    fontSize: 14,
+                                  style: TextStyle(
+                                    fontSize: Responsive.fontSize(context, 14),
                                     color: AppColors.textPrimary,
                                   ),
                                 ),
@@ -460,43 +524,53 @@ class _LocationField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 11,
+          style: TextStyle(
+            fontSize: Responsive.fontSize(context, 11),
             color: AppColors.textTertiary,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: Responsive.spacing(context, units: 0.75)),
         TextField(
           controller: controller,
           onChanged: onChanged,
           decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: iconColor, size: 18),
+            prefixIcon: Icon(
+              icon,
+              color: iconColor,
+              size: Responsive.iconSize(context, base: 18),
+            ),
             hintText: hint,
-            hintStyle: const TextStyle(
+            hintStyle: TextStyle(
               color: AppColors.textTertiary,
-              fontSize: 14,
+              fontSize: Responsive.fontSize(context, 14),
             ),
             filled: true,
             fillColor: AppColors.surfaceVariant,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 10),
+              ),
               borderSide: const BorderSide(color: AppColors.border),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 10),
+              ),
               borderSide: const BorderSide(color: AppColors.border),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 10),
+              ),
               borderSide: const BorderSide(
                 color: AppColors.primary,
                 width: 1.5,
               ),
             ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 12,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: Responsive.spacing(context, units: 1.5),
+              vertical: Responsive.spacing(context, units: 1.5),
             ),
           ),
         ),
@@ -524,28 +598,36 @@ class _SavedChip extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: EdgeInsets.symmetric(
+            vertical: Responsive.spacing(context, units: 1.75),
+          ),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(
+              Responsive.radius(context, base: 12),
+            ),
             border: Border.all(color: AppColors.border),
           ),
           child: Column(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: Responsive.iconSize(context, base: 40),
+                height: Responsive.iconSize(context, base: 40),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, color: color, size: 18),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: Responsive.iconSize(context, base: 18),
+                ),
               ),
-              const SizedBox(height: 6),
+              SizedBox(height: Responsive.spacing(context, units: 0.75)),
               Text(
                 label,
-                style: const TextStyle(
-                  fontSize: 11,
+                style: TextStyle(
+                  fontSize: Responsive.fontSize(context, 11),
                   fontWeight: FontWeight.w500,
                   color: AppColors.textSecondary,
                 ),
@@ -565,11 +647,13 @@ class _MapBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 40,
-      height: 40,
+      width: Responsive.iconSize(context, base: 40),
+      height: Responsive.iconSize(context, base: 40),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 10),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -582,8 +666,8 @@ class _MapBtn extends StatelessWidget {
       child: Center(
         child: Text(
           label,
-          style: const TextStyle(
-            fontSize: 18,
+          style: TextStyle(
+            fontSize: Responsive.fontSize(context, 18),
             fontWeight: FontWeight.w500,
             color: AppColors.textSecondary,
           ),

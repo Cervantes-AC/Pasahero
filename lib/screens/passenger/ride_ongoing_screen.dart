@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/contact_sheet.dart';
 import '../../widgets/toast.dart';
+import '../../utils/responsive.dart';
 
 class RideOngoingScreen extends StatefulWidget {
   const RideOngoingScreen({super.key});
@@ -65,6 +66,79 @@ class _RideOngoingScreenState extends State<RideOngoingScreen>
     });
   }
 
+  void _showSOSNotification(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.emergency, color: AppColors.error, size: 28),
+            SizedBox(width: 12),
+            Text('SOS Alert'),
+          ],
+        ),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Emergency assistance requested',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            SizedBox(height: 12),
+            Text(
+              'Your SOS request has been sent to the nearest LGU (Local Government Unit). Emergency responders have been notified of your location.',
+              style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Icon(Icons.location_on, color: AppColors.error, size: 20),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Location: Cebu City, Philippines',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textTertiary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.access_time, color: AppColors.error, size: 20),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'ETA: 5-10 minutes',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textTertiary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+    showToast(context, 'SOS alert sent to nearest LGU');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,12 +174,15 @@ class _RideOngoingScreenState extends State<RideOngoingScreen>
                       child: Column(
                         children: [
                           Container(
-                            width: 40,
-                            height: 40,
+                            width: Responsive.iconSize(context, base: 40),
+                            height: Responsive.iconSize(context, base: 40),
                             decoration: BoxDecoration(
                               color: AppColors.red,
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 3),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: Responsive.radius(context, base: 3),
+                              ),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withValues(alpha: 0.2),
@@ -113,22 +190,29 @@ class _RideOngoingScreenState extends State<RideOngoingScreen>
                                 ),
                               ],
                             ),
-                            child: const Center(
+                            child: Center(
                               child: CircleAvatar(
-                                radius: 6,
+                                radius: Responsive.iconSize(context, base: 6),
                                 backgroundColor: Colors.white,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(
+                            height: Responsive.spacing(context, units: 0.5),
+                          ),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 3,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: Responsive.spacing(context, units: 1),
+                              vertical: Responsive.spacing(
+                                context,
+                                units: 0.375,
+                              ),
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(6),
+                              borderRadius: BorderRadius.circular(
+                                Responsive.radius(context, base: 6),
+                              ),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withValues(alpha: 0.1),
@@ -136,10 +220,10 @@ class _RideOngoingScreenState extends State<RideOngoingScreen>
                                 ),
                               ],
                             ),
-                            child: const Text(
+                            child: Text(
                               'SM City Cebu',
                               style: TextStyle(
-                                fontSize: 10,
+                                fontSize: Responsive.fontSize(context, 10),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -152,22 +236,29 @@ class _RideOngoingScreenState extends State<RideOngoingScreen>
                     AnimatedBuilder(
                       animation: _vehicleController,
                       builder: (context, child) {
+                        final vehicleSize = Responsive.iconSize(
+                          context,
+                          base: 56,
+                        );
                         return Positioned(
                           top:
                               MediaQuery.of(context).size.height *
                                   _topAnim.value -
-                              28,
+                              vehicleSize / 2,
                           left:
                               MediaQuery.of(context).size.width *
                                   _leftAnim.value -
-                              28,
+                              vehicleSize / 2,
                           child: Container(
-                            width: 56,
-                            height: 56,
+                            width: vehicleSize,
+                            height: vehicleSize,
                             decoration: BoxDecoration(
                               color: AppColors.yellow,
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 3),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: Responsive.radius(context, base: 3),
+                              ),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withValues(alpha: 0.2),
@@ -175,10 +266,10 @@ class _RideOngoingScreenState extends State<RideOngoingScreen>
                                 ),
                               ],
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.navigation,
                               color: AppColors.primary,
-                              size: 28,
+                              size: Responsive.iconSize(context, base: 28),
                             ),
                           ),
                         );
@@ -187,18 +278,22 @@ class _RideOngoingScreenState extends State<RideOngoingScreen>
 
                     // Status banner
                     Positioned(
-                      top: MediaQuery.of(context).padding.top + 16,
+                      top:
+                          MediaQuery.of(context).padding.top +
+                          Responsive.spacing(context, units: 2),
                       left: 0,
                       right: 0,
                       child: Center(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 10,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Responsive.spacing(context, units: 2.5),
+                            vertical: Responsive.spacing(context, units: 1.25),
                           ),
                           decoration: BoxDecoration(
                             color: AppColors.green,
-                            borderRadius: BorderRadius.circular(24),
+                            borderRadius: BorderRadius.circular(
+                              Responsive.radius(context, base: 24),
+                            ),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withValues(alpha: 0.15),
@@ -210,8 +305,14 @@ class _RideOngoingScreenState extends State<RideOngoingScreen>
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Container(
-                                    width: 8,
-                                    height: 8,
+                                    width: Responsive.spacing(
+                                      context,
+                                      units: 1,
+                                    ),
+                                    height: Responsive.spacing(
+                                      context,
+                                      units: 1,
+                                    ),
                                     decoration: const BoxDecoration(
                                       color: Colors.white,
                                       shape: BoxShape.circle,
@@ -221,12 +322,15 @@ class _RideOngoingScreenState extends State<RideOngoingScreen>
                                   .fadeOut(duration: 800.ms)
                                   .then()
                                   .fadeIn(duration: 800.ms),
-                              const SizedBox(width: 8),
-                              const Text(
+                              SizedBox(
+                                width: Responsive.spacing(context, units: 1),
+                              ),
+                              Text(
                                 'Ride Ongoing',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
+                                  fontSize: Responsive.fontSize(context, 14),
                                 ),
                               ),
                             ],
@@ -242,6 +346,7 @@ class _RideOngoingScreenState extends State<RideOngoingScreen>
               _TripInfoCard(
                 onShareLocation: () => setState(() => _showShareDialog = true),
                 onCompleteRide: _handleCompleteRide,
+                onSOS: () => _showSOSNotification(context),
               ),
             ],
           ),
@@ -263,30 +368,37 @@ class _RideOngoingScreenState extends State<RideOngoingScreen>
 class _TripInfoCard extends StatelessWidget {
   final VoidCallback onShareLocation;
   final VoidCallback onCompleteRide;
+  final VoidCallback onSOS;
 
   const _TripInfoCard({
     required this.onShareLocation,
     required this.onCompleteRide,
+    required this.onSOS,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(24),
-          topRight: Radius.circular(24),
+          topLeft: Radius.circular(Responsive.radius(context, base: 24)),
+          topRight: Radius.circular(Responsive.radius(context, base: 24)),
         ),
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
             blurRadius: 16,
-            offset: Offset(0, -4),
+            offset: const Offset(0, -4),
           ),
         ],
       ),
-      padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+      padding: EdgeInsets.fromLTRB(
+        Responsive.spacing(context, units: 3),
+        Responsive.spacing(context, units: 2.5),
+        Responsive.spacing(context, units: 3),
+        Responsive.spacing(context, units: 3),
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -294,50 +406,64 @@ class _TripInfoCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 64,
-                height: 64,
+                width: Responsive.iconSize(context, base: 64),
+                height: Responsive.iconSize(context, base: 64),
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [AppColors.primary, AppColors.primaryDark],
                   ),
                   shape: BoxShape.circle,
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
                     'PS',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: Responsive.fontSize(context, 20),
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: Responsive.spacing(context, units: 2)),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Pedro Santos',
                       style: TextStyle(
-                        fontSize: 17,
+                        fontSize: Responsive.fontSize(context, 17),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Row(
-                      children: const [
-                        Icon(Icons.star, size: 14, color: AppColors.yellow),
-                        SizedBox(width: 4),
-                        Text('4.9', style: TextStyle(fontSize: 13)),
+                      children: [
+                        Icon(
+                          Icons.star,
+                          size: Responsive.iconSize(context, base: 14),
+                          color: AppColors.yellow,
+                        ),
+                        SizedBox(
+                          width: Responsive.spacing(context, units: 0.5),
+                        ),
+                        Text(
+                          '4.9',
+                          style: TextStyle(
+                            fontSize: Responsive.fontSize(context, 13),
+                          ),
+                        ),
                         Text(
                           ' • ',
-                          style: TextStyle(color: AppColors.mutedForeground),
+                          style: TextStyle(
+                            color: AppColors.mutedForeground,
+                            fontSize: Responsive.fontSize(context, 13),
+                          ),
                         ),
                         Text(
                           'ABC 1234',
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: Responsive.fontSize(context, 13),
                             color: AppColors.mutedForeground,
                           ),
                         ),
@@ -356,7 +482,7 @@ class _TripInfoCard extends StatelessWidget {
                       phone: '+63 912 345 6789',
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: Responsive.spacing(context, units: 1)),
                   _IconBtn(
                     icon: Icons.message,
                     onTap: () => showContactSheet(
@@ -365,18 +491,26 @@ class _TripInfoCard extends StatelessWidget {
                       phone: '+63 912 345 6789',
                     ),
                   ),
+                  SizedBox(width: Responsive.spacing(context, units: 1)),
+                  _IconBtn(
+                    icon: Icons.emergency,
+                    color: AppColors.error,
+                    onTap: onSOS,
+                  ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: Responsive.spacing(context, units: 2)),
 
           // Route
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
             decoration: BoxDecoration(
               color: AppColors.muted,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 12),
+              ),
             ),
             child: Column(
               children: [
@@ -386,10 +520,12 @@ class _TripInfoCard extends StatelessWidget {
                   address: 'Cebu City, Philippines',
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 11),
+                  padding: EdgeInsets.only(
+                    left: Responsive.spacing(context, units: 1.375),
+                  ),
                   child: Container(
-                    height: 16,
-                    width: 2,
+                    height: Responsive.spacing(context, units: 2),
+                    width: Responsive.spacing(context, units: 0.25),
                     color: AppColors.border,
                   ),
                 ),
@@ -401,60 +537,73 @@ class _TripInfoCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: Responsive.spacing(context, units: 2)),
 
           // ETA & distance
           Row(
-            children: const [
+            children: [
               Expanded(
                 child: _StatBox(label: 'Estimated time', value: '8 mins'),
               ),
-              SizedBox(width: 12),
+              SizedBox(width: Responsive.spacing(context, units: 1.5)),
               Expanded(
                 child: _StatBox(label: 'Distance', value: '3.2 km'),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: Responsive.spacing(context, units: 2)),
 
           // Share location
           SizedBox(
             width: double.infinity,
-            height: 56,
+            height: Responsive.buttonHeight(context),
             child: ElevatedButton.icon(
               onPressed: onShareLocation,
-              icon: const Icon(Icons.share, size: 20),
-              label: const Text(
+              icon: Icon(
+                Icons.share,
+                size: Responsive.iconSize(context, base: 20),
+              ),
+              label: Text(
                 'Share Location with Friends/Family',
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: Responsive.fontSize(context, 14),
+                ),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.yellow,
                 foregroundColor: AppColors.primary,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(
+                    Responsive.radius(context, base: 12),
+                  ),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: Responsive.spacing(context, units: 1.25)),
 
           // Complete ride (demo)
           SizedBox(
             width: double.infinity,
-            height: 48,
+            height: Responsive.buttonHeight(context),
             child: ElevatedButton(
               onPressed: onCompleteRide,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.green,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(
+                    Responsive.radius(context, base: 12),
+                  ),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'Complete Ride (Demo)',
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: Responsive.fontSize(context, 14),
+                ),
               ),
             ),
           ),
@@ -483,53 +632,62 @@ class _ShareLocationDialog extends StatelessWidget {
       color: Colors.black54,
       child: Center(
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
+          margin: EdgeInsets.symmetric(
+            horizontal: Responsive.spacing(context, units: 3),
+          ),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(
+              Responsive.radius(context, base: 20),
+            ),
           ),
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.all(Responsive.spacing(context, units: 3)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Share Live Location',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: Responsive.fontSize(context, 18),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              const SizedBox(height: 8),
-              const Text(
+              SizedBox(height: Responsive.spacing(context, units: 1)),
+              Text(
                 'Share your real-time location with friends or family for safety',
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: Responsive.fontSize(context, 13),
                   color: AppColors.mutedForeground,
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: Responsive.spacing(context, units: 2)),
               TextField(
                 controller: controller,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                   hintText: 'Enter phone number (09XX XXX XXXX)',
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(
+                      Responsive.radius(context, base: 12),
+                    ),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: Responsive.spacing(context, units: 2),
+                    vertical: Responsive.spacing(context, units: 1.75),
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              const Text(
+              SizedBox(height: Responsive.spacing(context, units: 2)),
+              Text(
                 'Recent Contacts',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: Responsive.fontSize(context, 12),
                   fontWeight: FontWeight.w600,
                   color: AppColors.mutedForeground,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: Responsive.spacing(context, units: 1)),
               ...recentContacts.map((contact) {
                 final phone =
                     RegExp(r'\((.*?)\)').firstMatch(contact)?.group(1) ?? '';
@@ -537,42 +695,63 @@ class _ShareLocationDialog extends StatelessWidget {
                   onTap: () => controller.text = phone,
                   child: Container(
                     width: double.infinity,
-                    margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                    margin: EdgeInsets.only(
+                      bottom: Responsive.spacing(context, units: 1),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Responsive.spacing(context, units: 2),
+                      vertical: Responsive.spacing(context, units: 1.5),
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.muted,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        Responsive.radius(context, base: 12),
+                      ),
                     ),
-                    child: Text(contact, style: const TextStyle(fontSize: 13)),
+                    child: Text(
+                      contact,
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 13),
+                      ),
+                    ),
                   ),
                 );
               }),
-              const SizedBox(height: 16),
+              SizedBox(height: Responsive.spacing(context, units: 2)),
               SizedBox(
                 width: double.infinity,
-                height: 48,
+                height: Responsive.buttonHeight(context),
                 child: ElevatedButton(
                   onPressed: onShare,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        Responsive.radius(context, base: 12),
+                      ),
                     ),
                   ),
-                  child: const Text('Share Location'),
+                  child: Text(
+                    'Share Location',
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 14),
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: Responsive.spacing(context, units: 1)),
               SizedBox(
                 width: double.infinity,
-                height: 40,
+                height: Responsive.buttonHeight(context) * 0.75,
                 child: TextButton(
                   onPressed: onClose,
-                  child: const Text('Cancel'),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 14),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -599,29 +778,32 @@ class _RouteRow extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 24,
-          height: 24,
+          width: Responsive.iconSize(context, base: 24),
+          height: Responsive.iconSize(context, base: 24),
           decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
-          child: const Center(
-            child: CircleAvatar(radius: 4, backgroundColor: Colors.white),
+          child: Center(
+            child: CircleAvatar(
+              radius: Responsive.iconSize(context, base: 4),
+              backgroundColor: Colors.white,
+            ),
           ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: Responsive.spacing(context, units: 1.5)),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 label,
-                style: const TextStyle(
-                  fontSize: 11,
+                style: TextStyle(
+                  fontSize: Responsive.fontSize(context, 11),
                   color: AppColors.mutedForeground,
                 ),
               ),
               Text(
                 address,
-                style: const TextStyle(
-                  fontSize: 13,
+                style: TextStyle(
+                  fontSize: Responsive.fontSize(context, 13),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -641,26 +823,28 @@ class _StatBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 1.5)),
       decoration: BoxDecoration(
         color: AppColors.muted,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 12),
+        ),
       ),
       child: Column(
         children: [
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 22,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 22),
               fontWeight: FontWeight.bold,
               color: AppColors.primary,
             ),
           ),
-          const SizedBox(height: 2),
+          SizedBox(height: Responsive.spacing(context, units: 0.25)),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 11,
+            style: TextStyle(
+              fontSize: Responsive.fontSize(context, 11),
               color: AppColors.mutedForeground,
             ),
           ),
@@ -673,20 +857,26 @@ class _StatBox extends StatelessWidget {
 class _IconBtn extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
-  const _IconBtn({required this.icon, required this.onTap});
+  final Color? color;
+  const _IconBtn({required this.icon, required this.onTap, this.color});
 
   @override
   Widget build(BuildContext context) {
+    final btnColor = color ?? AppColors.primary;
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 44,
-        height: 44,
+        width: Responsive.iconSize(context, base: 44),
+        height: Responsive.iconSize(context, base: 44),
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.1),
+          color: btnColor.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, color: AppColors.primary, size: 20),
+        child: Icon(
+          icon,
+          color: btnColor,
+          size: Responsive.iconSize(context, base: 20),
+        ),
       ),
     );
   }

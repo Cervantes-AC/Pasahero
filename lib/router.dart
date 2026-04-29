@@ -13,6 +13,7 @@ import 'screens/passenger/ride_complete_screen.dart';
 import 'screens/passenger/ride_history_screen.dart';
 import 'screens/passenger/saved_locations_screen.dart';
 import 'screens/passenger/profile_screen.dart';
+import 'screens/passenger/edit_profile_screen.dart';
 import 'screens/passenger/wallet_screen.dart';
 import 'screens/passenger/wallet_cash_in_screen.dart';
 import 'screens/passenger/wallet_history_screen.dart';
@@ -90,6 +91,10 @@ final appRouter = GoRouter(
           builder: (ctx, s) => const SavedLocationsScreen(),
         ),
         GoRoute(path: '/profile', builder: (ctx, s) => const ProfileScreen()),
+        GoRoute(
+          path: '/edit-profile',
+          builder: (ctx, s) => const EditProfileScreen(),
+        ),
       ],
     ),
 

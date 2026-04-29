@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import '../../data/app_state.dart';
 import '../../theme/app_colors.dart';
 import '../../utils/responsive.dart';
-import '../../widgets/ph_widgets.dart';
+import '../../widgets/toast.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,6 +29,53 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       duration: const Duration(seconds: 3),
       vsync: this,
     )..repeat();
+    _addMockDriverMessage();
+  }
+
+  void _addMockDriverMessage() {
+    // Add a mock driver message notification
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        AppState.instance.notifications.insert(
+          0,
+          AppNotification(
+            id: 'msg_${DateTime.now().millisecondsSinceEpoch}',
+            title: 'Message from Pedro Santos',
+            body: 'Hi! I\'m on my way. I\'ll be there in 5 minutes.',
+            type: 'ride',
+            timestamp: DateTime.now(),
+          ),
+        );
+        setState(() {});
+      }
+    });
+  }
+
+  void _logout() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Logout'),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.go('/login');
+              showToast(context, 'Logged out successfully');
+            },
+            child: const Text(
+              'Logout',
+              style: TextStyle(color: AppColors.error),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -43,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       backgroundColor: AppColors.surface,
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(child: _HomeHeader()),
+          SliverToBoxAdapter(child: _HomeHeader(onLogout: _logout)),
           SliverPadding(
             padding: EdgeInsets.fromLTRB(
               Responsive.hPad(context),
@@ -54,18 +102,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 Transform.translate(
-                  offset: const Offset(0, -28),
+                  offset: Offset(0, -Responsive.spacing(context, units: 2.5)),
                   child: _SearchBar()
                       .animate()
                       .fadeIn(duration: 350.ms)
                       .slideY(begin: 0.2, end: 0),
                 ),
                 Transform.translate(
-                  offset: const Offset(0, -12),
+                  offset: Offset(0, -Responsive.spacing(context, units: 1.5)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 8),
+                      SizedBox(height: Responsive.spacing(context, units: 1)),
 
                       // Quick Actions Row
                       _QuickActionsRow(
@@ -74,28 +122,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             setState(() => _selectedQuickAction = index),
                       ).animate().fadeIn(delay: 100.ms, duration: 350.ms),
 
-                      const SizedBox(height: 20),
+                      SizedBox(height: Responsive.spacing(context, units: 2.5)),
 
                       // Weather & Traffic Card
                       _WeatherTrafficCard(
                         weatherController: _weatherController,
                       ).animate().fadeIn(delay: 150.ms, duration: 350.ms),
 
-                      const SizedBox(height: 20),
+                      SizedBox(height: Responsive.spacing(context, units: 2.5)),
 
-                      const Text(
+                      Text(
                         'Choose your ride',
                         style: TextStyle(
-                          fontSize: 17,
+                          fontSize: Responsive.fontSize(context, 17),
                           fontWeight: FontWeight.w700,
                           color: AppColors.textPrimary,
                           letterSpacing: -0.3,
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: Responsive.spacing(context, units: 1.5)),
                       // On tablet/desktop show 2-col grid
                       Responsive.isWide(context) ? _RideGrid() : _RideList(),
-                      const SizedBox(height: 24),
+                      SizedBox(height: Responsive.spacing(context, units: 3)),
 
                       // Recent Activity
                       _RecentActivityCard().animate().fadeIn(
@@ -103,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         duration: 350.ms,
                       ),
 
-                      const SizedBox(height: 20),
+                      SizedBox(height: Responsive.spacing(context, units: 2.5)),
 
                       _PromoBanner().animate().fadeIn(
                         delay: 240.ms,
@@ -124,6 +172,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 // ── Header ────────────────────────────────────────────────────────────────────
 
 class _HomeHeader extends StatelessWidget {
+  final VoidCallback onLogout;
+
+  const _HomeHeader({required this.onLogout});
+
   @override
   Widget build(BuildContext context) {
     final hp = Responsive.hPad(context);
@@ -131,6 +183,8 @@ class _HomeHeader extends StatelessWidget {
     String greeting = 'Good morning';
     if (hour >= 12 && hour < 17) greeting = 'Good afternoon';
     if (hour >= 17) greeting = 'Good evening';
+
+    final unreadCount = AppState.instance.unreadNotificationCount;
 
     return Container(
       decoration: const BoxDecoration(
@@ -147,7 +201,12 @@ class _HomeHeader extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: EdgeInsets.fromLTRB(hp, 16, hp, 52),
+          padding: EdgeInsets.fromLTRB(
+            hp,
+            Responsive.spacing(context, units: 2),
+            hp,
+            Responsive.spacing(context, units: 2),
+          ),
           child: Column(
             children: [
               Row(
@@ -155,8 +214,8 @@ class _HomeHeader extends StatelessWidget {
                   Stack(
                     children: [
                       Container(
-                        width: 44,
-                        height: 44,
+                        width: Responsive.iconSize(context, base: 44),
+                        height: Responsive.iconSize(context, base: 44),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
@@ -170,13 +229,13 @@ class _HomeHeader extends StatelessWidget {
                             width: 1.5,
                           ),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
                             'JD',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
-                              fontSize: 14,
+                              fontSize: Responsive.fontSize(context, 14),
                             ),
                           ),
                         ),
@@ -185,8 +244,8 @@ class _HomeHeader extends StatelessWidget {
                         bottom: 0,
                         right: 0,
                         child: Container(
-                          width: 14,
-                          height: 14,
+                          width: Responsive.iconSize(context, base: 14),
+                          height: Responsive.iconSize(context, base: 14),
                           decoration: BoxDecoration(
                             color: AppColors.success,
                             shape: BoxShape.circle,
@@ -196,7 +255,7 @@ class _HomeHeader extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: Responsive.spacing(context, units: 1.5)),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,14 +263,14 @@ class _HomeHeader extends StatelessWidget {
                         Text(
                           '$greeting,',
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: Responsive.fontSize(context, 12),
                             color: Colors.white.withValues(alpha: 0.7),
                           ),
                         ),
-                        const Text(
+                        Text(
                           'Juan Dela Cruz',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: Responsive.fontSize(context, 16),
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
                           ),
@@ -219,59 +278,88 @@ class _HomeHeader extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Stack(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.12),
-                          shape: BoxShape.circle,
+                  GestureDetector(
+                    onTap: () => context.go('/notifications'),
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: Responsive.iconSize(context, base: 40),
+                          height: Responsive.iconSize(context, base: 40),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.notifications_outlined,
+                            color: Colors.white,
+                            size: Responsive.iconSize(context, base: 20),
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.notifications_outlined,
-                          color: Colors.white,
-                          size: 20,
-                        ),
+                        if (unreadCount > 0)
+                          Positioned(
+                            top: Responsive.spacing(context, units: 0.5),
+                            right: Responsive.spacing(context, units: 0.5),
+                            child:
+                                Container(
+                                      width: Responsive.iconSize(
+                                        context,
+                                        base: 10,
+                                      ),
+                                      height: Responsive.iconSize(
+                                        context,
+                                        base: 10,
+                                      ),
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.error,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    )
+                                    .animate(onPlay: (c) => c.repeat())
+                                    .scale(
+                                      begin: const Offset(1, 1),
+                                      end: const Offset(1.3, 1.3),
+                                      duration: 1000.ms,
+                                    )
+                                    .then()
+                                    .scale(
+                                      begin: const Offset(1.3, 1.3),
+                                      end: const Offset(1, 1),
+                                      duration: 1000.ms,
+                                    ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: Responsive.spacing(context, units: 1)),
+                  GestureDetector(
+                    onTap: onLogout,
+                    child: Container(
+                      width: Responsive.iconSize(context, base: 40),
+                      height: Responsive.iconSize(context, base: 40),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        shape: BoxShape.circle,
                       ),
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child:
-                            Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: const BoxDecoration(
-                                    color: AppColors.amber,
-                                    shape: BoxShape.circle,
-                                  ),
-                                )
-                                .animate(onPlay: (c) => c.repeat())
-                                .scale(
-                                  begin: const Offset(1, 1),
-                                  end: const Offset(1.3, 1.3),
-                                  duration: 1000.ms,
-                                )
-                                .then()
-                                .scale(
-                                  begin: const Offset(1.3, 1.3),
-                                  end: const Offset(1, 1),
-                                  duration: 1000.ms,
-                                ),
+                      child: Icon(
+                        Icons.logout_outlined,
+                        color: Colors.white,
+                        size: Responsive.iconSize(context, base: 20),
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: Responsive.spacing(context, units: 1.5)),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 10,
+                padding: EdgeInsets.symmetric(
+                  horizontal: Responsive.spacing(context, units: 1.75),
+                  vertical: Responsive.spacing(context, units: 1.25),
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(
+                    Responsive.radius(context, base: 12),
+                  ),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.2),
                   ),
@@ -279,20 +367,20 @@ class _HomeHeader extends StatelessWidget {
                 child: Row(
                   children: [
                     Container(
-                      width: 8,
-                      height: 8,
+                      width: Responsive.iconSize(context, base: 8),
+                      height: Responsive.iconSize(context, base: 8),
                       decoration: const BoxDecoration(
                         color: AppColors.success,
                         shape: BoxShape.circle,
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    const Expanded(
+                    SizedBox(width: Responsive.spacing(context, units: 1)),
+                    Expanded(
                       child: Text(
                         'Cebu City, Philippines',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 13,
+                          fontSize: Responsive.fontSize(context, 13),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -300,7 +388,7 @@ class _HomeHeader extends StatelessWidget {
                     Icon(
                       Icons.my_location_rounded,
                       color: Colors.white.withValues(alpha: 0.6),
-                      size: 16,
+                      size: Responsive.iconSize(context, base: 16),
                     ),
                   ],
                 ),
@@ -321,10 +409,15 @@ class _SearchBar extends StatelessWidget {
     return GestureDetector(
       onTap: () => context.go('/search'),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: EdgeInsets.symmetric(
+          horizontal: Responsive.spacing(context, units: 2),
+          vertical: Responsive.spacing(context, units: 1.75),
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(
+            Responsive.radius(context, base: 14),
+          ),
           border: Border.all(color: AppColors.border),
           boxShadow: [
             BoxShadow(
@@ -337,37 +430,47 @@ class _SearchBar extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 36,
-              height: 36,
+              width: Responsive.iconSize(context, base: 36),
+              height: Responsive.iconSize(context, base: 36),
               decoration: BoxDecoration(
                 color: AppColors.primarySurface,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 10),
+                ),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.search,
                 color: AppColors.primary,
-                size: 18,
+                size: Responsive.iconSize(context, base: 18),
               ),
             ),
-            const SizedBox(width: 12),
-            const Expanded(
+            SizedBox(width: Responsive.spacing(context, units: 1.5)),
+            Expanded(
               child: Text(
                 'Where do you want to go?',
-                style: TextStyle(color: AppColors.textTertiary, fontSize: 14),
+                style: TextStyle(
+                  color: AppColors.textTertiary,
+                  fontSize: Responsive.fontSize(context, 14),
+                ),
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: EdgeInsets.symmetric(
+                horizontal: Responsive.spacing(context, units: 1.5),
+                vertical: Responsive.spacing(context, units: 0.75),
+              ),
               decoration: BoxDecoration(
                 color: AppColors.primary,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 8),
+                ),
               ),
-              child: const Text(
+              child: Text(
                 'Go',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
-                  fontSize: 13,
+                  fontSize: Responsive.fontSize(context, 13),
                 ),
               ),
             ),
@@ -487,10 +590,12 @@ class _RideCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: EdgeInsets.all(Responsive.spacing(context, units: 1.75)),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(
+            Responsive.radius(context, base: 14),
+          ),
           border: Border.all(color: AppColors.border),
           boxShadow: [
             BoxShadow(
@@ -503,15 +608,21 @@ class _RideCard extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 52,
-              height: 52,
+              width: Responsive.iconSize(context, base: 52),
+              height: Responsive.iconSize(context, base: 52),
               decoration: BoxDecoration(
                 color: iconBg,
-                borderRadius: BorderRadius.circular(13),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 13),
+                ),
               ),
-              child: Icon(icon, color: iconColor, size: 26),
+              child: Icon(
+                icon,
+                color: iconColor,
+                size: Responsive.iconSize(context, base: 26),
+              ),
             ),
-            const SizedBox(width: 14),
+            SizedBox(width: Responsive.spacing(context, units: 1.75)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -520,17 +631,17 @@ class _RideCard extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
-                          fontSize: 15,
+                        style: TextStyle(
+                          fontSize: Responsive.fontSize(context, 15),
                           fontWeight: FontWeight.w700,
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: Responsive.spacing(context, units: 1)),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 7,
-                          vertical: 2,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Responsive.spacing(context, units: 0.875),
+                          vertical: Responsive.spacing(context, units: 0.25),
                         ),
                         decoration: BoxDecoration(
                           color: badgeColor.withValues(alpha: 0.1),
@@ -539,7 +650,7 @@ class _RideCard extends StatelessWidget {
                         child: Text(
                           badge,
                           style: TextStyle(
-                            fontSize: 10,
+                            fontSize: Responsive.fontSize(context, 10),
                             fontWeight: FontWeight.w700,
                             color: badgeColor,
                           ),
@@ -547,19 +658,19 @@ class _RideCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 2),
+                  SizedBox(height: Responsive.spacing(context, units: 0.25)),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 12),
                       color: AppColors.textTertiary,
                     ),
                   ),
-                  const SizedBox(height: 3),
+                  SizedBox(height: Responsive.spacing(context, units: 0.375)),
                   Text(
                     price,
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 12),
                       color: AppColors.success,
                       fontWeight: FontWeight.w600,
                     ),
@@ -567,10 +678,10 @@ class _RideCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.chevron_right,
               color: AppColors.textTertiary,
-              size: 20,
+              size: Responsive.iconSize(context, base: 20),
             ),
           ],
         ),
@@ -585,14 +696,16 @@ class _PromoBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [AppColors.primary, Color(0xFF1347C0)],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 16),
+        ),
       ),
       child: Row(
         children: [
@@ -601,49 +714,53 @@ class _PromoBanner extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Responsive.spacing(context, units: 1),
+                    vertical: Responsive.spacing(context, units: 0.375),
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.amber.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(
+                      Responsive.radius(context, base: 6),
+                    ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'LIMITED OFFER',
                     style: TextStyle(
                       color: AppColors.amber,
-                      fontSize: 10,
+                      fontSize: Responsive.fontSize(context, 10),
                       fontWeight: FontWeight.w800,
                       letterSpacing: 0.5,
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                SizedBox(height: Responsive.spacing(context, units: 1)),
+                Text(
                   '₱10 off your\nnext 3 rides!',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: Responsive.fontSize(context, 16),
                     fontWeight: FontWeight.w700,
                     height: 1.3,
                   ),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: Responsive.spacing(context, units: 1.25)),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Responsive.spacing(context, units: 1.5),
+                    vertical: Responsive.spacing(context, units: 0.75),
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.amber,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(
+                      Responsive.radius(context, base: 8),
+                    ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Claim Now',
                     style: TextStyle(
                       color: AppColors.driverBg,
-                      fontSize: 12,
+                      fontSize: Responsive.fontSize(context, 12),
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -651,10 +768,10 @@ class _PromoBanner extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(
+          Icon(
             Icons.local_offer_outlined,
             color: Colors.white24,
-            size: 64,
+            size: Responsive.iconSize(context, base: 64),
           ),
         ],
       ),
@@ -710,14 +827,20 @@ class _QuickActionsRow extends StatelessWidget {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               margin: EdgeInsets.only(
-                right: index < actions.length - 1 ? 8 : 0,
+                right: index < actions.length - 1
+                    ? Responsive.spacing(context, units: 1)
+                    : 0,
               ),
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: EdgeInsets.symmetric(
+                vertical: Responsive.spacing(context, units: 1.5),
+              ),
               decoration: BoxDecoration(
                 color: isSelected
                     ? action.color.withValues(alpha: 0.1)
                     : Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 12),
+                ),
                 border: Border.all(
                   color: isSelected
                       ? action.color.withValues(alpha: 0.3)
@@ -738,13 +861,13 @@ class _QuickActionsRow extends StatelessWidget {
                   Icon(
                     action.icon,
                     color: isSelected ? action.color : AppColors.textTertiary,
-                    size: 20,
+                    size: Responsive.iconSize(context, base: 20),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: Responsive.spacing(context, units: 0.5)),
                   Text(
                     action.label,
                     style: TextStyle(
-                      fontSize: 10,
+                      fontSize: Responsive.fontSize(context, 10),
                       fontWeight: FontWeight.w500,
                       color: isSelected ? action.color : AppColors.textTertiary,
                     ),
@@ -891,10 +1014,12 @@ class _RecentActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 16),
+        ),
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
@@ -910,20 +1035,20 @@ class _RecentActivityCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Recent Activity',
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: Responsive.fontSize(context, 15),
                   fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary,
                 ),
               ),
               GestureDetector(
                 onTap: () => context.go('/ride-history'),
-                child: const Text(
+                child: Text(
                   'View All',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: Responsive.fontSize(context, 12),
                     fontWeight: FontWeight.w600,
                     color: AppColors.primary,
                   ),
@@ -931,7 +1056,7 @@ class _RecentActivityCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: Responsive.spacing(context, units: 1.5)),
           _ActivityItem(
             icon: Icons.check_circle_outline,
             iconColor: AppColors.success,
@@ -939,7 +1064,7 @@ class _RecentActivityCard extends StatelessWidget {
             subtitle: 'Yesterday, 2:30 PM • ₱45',
             trailing: '4.9 ⭐',
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: Responsive.spacing(context, units: 1)),
           _ActivityItem(
             icon: Icons.schedule_outlined,
             iconColor: AppColors.amber,
@@ -973,31 +1098,37 @@ class _ActivityItem extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 36,
-          height: 36,
+          width: Responsive.iconSize(context, base: 36),
+          height: Responsive.iconSize(context, base: 36),
           decoration: BoxDecoration(
             color: iconColor.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(
+              Responsive.radius(context, base: 10),
+            ),
           ),
-          child: Icon(icon, color: iconColor, size: 18),
+          child: Icon(
+            icon,
+            color: iconColor,
+            size: Responsive.iconSize(context, base: 18),
+          ),
         ),
-        const SizedBox(width: 12),
+        SizedBox(width: Responsive.spacing(context, units: 1.5)),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 13,
+                style: TextStyle(
+                  fontSize: Responsive.fontSize(context, 13),
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
                 ),
               ),
               Text(
                 subtitle,
-                style: const TextStyle(
-                  fontSize: 11,
+                style: TextStyle(
+                  fontSize: Responsive.fontSize(context, 11),
                   color: AppColors.textTertiary,
                 ),
               ),
@@ -1006,8 +1137,8 @@ class _ActivityItem extends StatelessWidget {
         ),
         Text(
           trailing,
-          style: const TextStyle(
-            fontSize: 11,
+          style: TextStyle(
+            fontSize: Responsive.fontSize(context, 11),
             fontWeight: FontWeight.w600,
             color: AppColors.textSecondary,
           ),

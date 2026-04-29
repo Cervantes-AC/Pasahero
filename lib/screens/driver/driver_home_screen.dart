@@ -5,6 +5,7 @@ import '../../theme/app_colors.dart';
 import '../../data/app_state.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../widgets/toast.dart';
+import '../../utils/responsive.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key});
@@ -76,14 +77,19 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
           children: [
             // ── Header ──────────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              padding: EdgeInsets.fromLTRB(
+                Responsive.spacing(context, units: 2.5),
+                Responsive.spacing(context, units: 2),
+                Responsive.spacing(context, units: 2.5),
+                0,
+              ),
               child: Row(
                 children: [
                   Stack(
                     children: [
                       Container(
-                        width: 56,
-                        height: 56,
+                        width: Responsive.iconSize(context, base: 56),
+                        height: Responsive.iconSize(context, base: 56),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [AppColors.driverAccent, Color(0xFFFFB300)],
@@ -105,13 +111,13 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                             ),
                           ],
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
                             'PS',
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w900,
-                              fontSize: 18,
+                              fontSize: Responsive.fontSize(context, 18),
                             ),
                           ),
                         ),
@@ -121,8 +127,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                           bottom: 2,
                           right: 2,
                           child: Container(
-                            width: 16,
-                            height: 16,
+                            width: Responsive.iconSize(context, base: 16),
+                            height: Responsive.iconSize(context, base: 16),
                             decoration: BoxDecoration(
                               color: AppColors.success,
                               shape: BoxShape.circle,
@@ -135,64 +141,87 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                         ),
                     ],
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: Responsive.spacing(context, units: 2)),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Pedro Santos',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w900,
-                            fontSize: 18,
+                            fontSize: Responsive.fontSize(context, 18),
                             letterSpacing: -0.5,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(
+                          height: Responsive.spacing(context, units: 0.5),
+                        ),
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 2,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: Responsive.spacing(
+                                  context,
+                                  units: 1,
+                                ),
+                                vertical: Responsive.spacing(
+                                  context,
+                                  units: 0.25,
+                                ),
                               ),
                               decoration: BoxDecoration(
                                 color: AppColors.driverAccent.withValues(
                                   alpha: 0.1,
                                 ),
-                                borderRadius: BorderRadius.circular(6),
+                                borderRadius: BorderRadius.circular(
+                                  Responsive.radius(context, base: 6),
+                                ),
                                 border: Border.all(
                                   color: AppColors.driverAccent.withValues(
                                     alpha: 0.3,
                                   ),
                                 ),
                               ),
-                              child: const Row(
+                              child: Row(
                                 children: [
                                   Icon(
                                     Icons.star_rounded,
                                     color: AppColors.driverAccent,
-                                    size: 14,
+                                    size: Responsive.iconSize(
+                                      context,
+                                      base: 14,
+                                    ),
                                   ),
-                                  SizedBox(width: 4),
+                                  SizedBox(
+                                    width: Responsive.spacing(
+                                      context,
+                                      units: 0.5,
+                                    ),
+                                  ),
                                   Text(
                                     '4.9',
                                     style: TextStyle(
                                       color: AppColors.driverAccent,
-                                      fontSize: 12,
+                                      fontSize: Responsive.fontSize(
+                                        context,
+                                        12,
+                                      ),
                                       fontWeight: FontWeight.w800,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(
+                              width: Responsive.spacing(context, units: 1),
+                            ),
                             Text(
                               'Habal-habal',
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.5),
-                                fontSize: 12,
+                                fontSize: Responsive.fontSize(context, 12),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -206,26 +235,31 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                     onTap: () => context.go('/driver-profile'),
                     color: Colors.white.withValues(alpha: 0.08),
                     iconColor: Colors.white,
-                    size: 48,
+                    size: Responsive.iconSize(context, base: 48),
                     bordered: true,
                   ),
                 ],
               ),
             ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1, end: 0),
 
-            const SizedBox(height: 20),
+            SizedBox(height: Responsive.spacing(context, units: 2.5)),
 
             // ── Online Toggle ────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(
+                horizontal: Responsive.spacing(context, units: 2.5),
+              ),
               child: PhCard(
                 onTap: _toggle,
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(Responsive.spacing(context, units: 3)),
                 color: _online
                     ? AppColors.success.withValues(alpha: 0.1)
                     : AppColors.driverSurface,
                 bordered: true,
-                borderRadius: 24,
+                borderRadius: Responsive.radius(
+                  context,
+                  base: 24,
+                ).round().toDouble(),
                 child: Row(
                   children: [
                     Stack(
@@ -234,9 +268,15 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                         if (_online)
                           AnimatedBuilder(
                             animation: _pulse,
-                            builder: (_, __) => Container(
-                              width: 64 + 32 * _pulse.value,
-                              height: 64 + 32 * _pulse.value,
+                            builder: (context, child) => Container(
+                              width:
+                                  Responsive.iconSize(context, base: 64) +
+                                  Responsive.iconSize(context, base: 32) *
+                                      _pulse.value,
+                              height:
+                                  Responsive.iconSize(context, base: 64) +
+                                  Responsive.iconSize(context, base: 32) *
+                                      _pulse.value,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: AppColors.success.withValues(
@@ -246,8 +286,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                             ),
                           ),
                         Container(
-                          width: 64,
-                          height: 64,
+                          width: Responsive.iconSize(context, base: 64),
+                          height: Responsive.iconSize(context, base: 64),
                           decoration: BoxDecoration(
                             gradient: _online
                                 ? const LinearGradient(
@@ -278,12 +318,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                             color: _online
                                 ? Colors.white
                                 : AppColors.driverTextMuted,
-                            size: 32,
+                            size: Responsive.iconSize(context, base: 32),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(width: 24),
+                    SizedBox(width: Responsive.spacing(context, units: 3)),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -292,12 +332,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                             _online ? 'You are ONLINE' : 'You are OFFLINE',
                             style: TextStyle(
                               color: _online ? AppColors.success : Colors.white,
-                              fontSize: 18,
+                              fontSize: Responsive.fontSize(context, 18),
                               fontWeight: FontWeight.w900,
                               letterSpacing: 0.5,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(
+                            height: Responsive.spacing(context, units: 0.5),
+                          ),
                           Text(
                             _online
                                 ? 'Waiting for ride requests...'
@@ -306,7 +348,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                               color: _online
                                   ? AppColors.success.withValues(alpha: 0.7)
                                   : AppColors.driverTextMuted,
-                              fontSize: 14,
+                              fontSize: Responsive.fontSize(context, 14),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -328,34 +370,41 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
               ),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: Responsive.spacing(context, units: 2.5)),
 
             // ── Stats ────────────────────────────────────────────────────────
             Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: Responsive.spacing(context, units: 2.5),
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
+                          Text(
                             "TODAY'S PERFORMANCE",
                             style: TextStyle(
                               color: AppColors.driverTextMuted,
-                              fontSize: 11,
+                              fontSize: Responsive.fontSize(context, 11),
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.2,
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 3,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: Responsive.spacing(context, units: 1),
+                              vertical: Responsive.spacing(
+                                context,
+                                units: 0.375,
+                              ),
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.success.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(
+                                Responsive.radius(context, base: 12),
+                              ),
                               border: Border.all(
                                 color: AppColors.success.withValues(alpha: 0.3),
                               ),
@@ -363,17 +412,22 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.trending_up_rounded,
                                   color: AppColors.success,
-                                  size: 12,
+                                  size: Responsive.iconSize(context, base: 12),
                                 ),
-                                const SizedBox(width: 4),
-                                const Text(
+                                SizedBox(
+                                  width: Responsive.spacing(
+                                    context,
+                                    units: 0.5,
+                                  ),
+                                ),
+                                Text(
                                   '+12%',
                                   style: TextStyle(
                                     color: AppColors.success,
-                                    fontSize: 10,
+                                    fontSize: Responsive.fontSize(context, 10),
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -382,10 +436,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: Responsive.spacing(context, units: 1.5)),
                       // Earnings card
                       Container(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.all(
+                          Responsive.spacing(context, units: 2.5),
+                        ),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topLeft,
@@ -395,7 +451,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                               AppColors.driverAccent.withValues(alpha: 0.08),
                             ],
                           ),
-                          borderRadius: BorderRadius.circular(18),
+                          borderRadius: BorderRadius.circular(
+                            Responsive.radius(context, base: 18),
+                          ),
                           border: Border.all(
                             color: AppColors.driverAccent.withValues(
                               alpha: 0.4,
@@ -418,8 +476,11 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                             Row(
                               children: [
                                 Container(
-                                  width: 44,
-                                  height: 44,
+                                  width: Responsive.iconSize(context, base: 44),
+                                  height: Responsive.iconSize(
+                                    context,
+                                    base: 44,
+                                  ),
                                   decoration: BoxDecoration(
                                     gradient: const LinearGradient(
                                       colors: [
@@ -427,7 +488,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                         AppColors.driverAccentDark,
                                       ],
                                     ),
-                                    borderRadius: BorderRadius.circular(12),
+                                    borderRadius: BorderRadius.circular(
+                                      Responsive.radius(context, base: 12),
+                                    ),
                                     boxShadow: [
                                       BoxShadow(
                                         color: AppColors.driverAccent
@@ -436,99 +499,140 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                                       ),
                                     ],
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.monetization_on_rounded,
                                     color: AppColors.driverBg,
-                                    size: 22,
+                                    size: Responsive.iconSize(
+                                      context,
+                                      base: 22,
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(width: 12),
-                                const Expanded(
+                                SizedBox(
+                                  width: Responsive.spacing(
+                                    context,
+                                    units: 1.5,
+                                  ),
+                                ),
+                                Expanded(
                                   child: Text(
                                     'Total Earnings',
                                     style: TextStyle(
                                       color: AppColors.driverTextMuted,
-                                      fontSize: 14,
+                                      fontSize: Responsive.fontSize(
+                                        context,
+                                        14,
+                                      ),
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 5,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: Responsive.spacing(
+                                      context,
+                                      units: 1.25,
+                                    ),
+                                    vertical: Responsive.spacing(
+                                      context,
+                                      units: 0.625,
+                                    ),
                                   ),
                                   decoration: BoxDecoration(
                                     color: AppColors.success.withValues(
                                       alpha: 0.15,
                                     ),
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(
+                                      Responsive.radius(context, base: 20),
+                                    ),
                                     border: Border.all(
                                       color: AppColors.success.withValues(
                                         alpha: 0.3,
                                       ),
                                     ),
                                   ),
-                                  child: const Text(
+                                  child: Text(
                                     'vs yesterday',
                                     style: TextStyle(
                                       color: AppColors.success,
-                                      fontSize: 10,
+                                      fontSize: Responsive.fontSize(
+                                        context,
+                                        10,
+                                      ),
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(
+                              height: Responsive.spacing(context, units: 2),
+                            ),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
                                   '₱${earnings.toStringAsFixed(2)}',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: AppColors.driverAccent,
-                                    fontSize: 32,
+                                    fontSize: Responsive.fontSize(context, 32),
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: -1,
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                const Padding(
-                                  padding: EdgeInsets.only(bottom: 4),
+                                SizedBox(
+                                  width: Responsive.spacing(context, units: 1),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: Responsive.spacing(
+                                      context,
+                                      units: 0.5,
+                                    ),
+                                  ),
                                   child: Text(
                                     'PHP',
                                     style: TextStyle(
                                       color: AppColors.driverAccent,
-                                      fontSize: 14,
+                                      fontSize: Responsive.fontSize(
+                                        context,
+                                        14,
+                                      ),
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
+                            SizedBox(
+                              height: Responsive.spacing(context, units: 1),
+                            ),
                             Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.route_rounded,
                                   color: AppColors.driverTextMuted,
-                                  size: 14,
+                                  size: Responsive.iconSize(context, base: 14),
                                 ),
-                                const SizedBox(width: 6),
+                                SizedBox(
+                                  width: Responsive.spacing(
+                                    context,
+                                    units: 0.75,
+                                  ),
+                                ),
                                 Text(
                                   '$trips trips completed today',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: AppColors.driverTextMuted,
-                                    fontSize: 13,
+                                    fontSize: Responsive.fontSize(context, 13),
                                   ),
                                 ),
                                 const Spacer(),
                                 Text(
                                   '${(earnings / (trips > 0 ? trips : 1)).toStringAsFixed(0)} avg/trip',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: AppColors.driverTextMuted,
-                                    fontSize: 12,
+                                    fontSize: Responsive.fontSize(context, 12),
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -537,7 +641,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                           ],
                         ),
                       ),
-                      const SizedBox(height: 14),
+                      SizedBox(
+                        height: Responsive.spacing(context, units: 1.75),
+                      ),
                       // Mini stat cards
                       Row(
                         children: [
@@ -550,7 +656,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                               sub: 'Excellent',
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(
+                            width: Responsive.spacing(context, units: 1.5),
+                          ),
                           Expanded(
                             child: _MiniStat(
                               icon: Icons.schedule_rounded,
@@ -560,7 +668,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                               sub: 'Today',
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(
+                            width: Responsive.spacing(context, units: 1.5),
+                          ),
                           Expanded(
                             child: _MiniStat(
                               icon: Icons.local_fire_department_rounded,
@@ -579,24 +689,26 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                 .fadeIn(delay: 160.ms, duration: 400.ms)
                 .slideY(begin: 0.1, end: 0),
 
-            const SizedBox(height: 20),
+            SizedBox(height: Responsive.spacing(context, units: 2.5)),
 
             // ── Quick Actions ────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(
+                horizontal: Responsive.spacing(context, units: 2.5),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'QUICK ACTIONS',
                     style: TextStyle(
                       color: AppColors.driverTextMuted,
-                      fontSize: 11,
+                      fontSize: Responsive.fontSize(context, 11),
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: Responsive.spacing(context, units: 1.5)),
                   Row(
                     children: [
                       _ActionBtn(
@@ -606,7 +718,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                         color: AppColors.primary,
                         onTap: () => context.go('/driver-history'),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: Responsive.spacing(context, units: 1.5)),
                       _ActionBtn(
                         icon: Icons.star_rounded,
                         label: 'Ratings',
@@ -616,7 +728,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: Responsive.spacing(context, units: 1.5)),
                   Row(
                     children: [
                       _ActionBtn(
@@ -626,7 +738,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                         color: AppColors.success,
                         onTap: () => context.go('/driver-earnings'),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: Responsive.spacing(context, units: 1.5)),
                       _ActionBtn(
                         icon: Icons.account_balance_wallet_rounded,
                         label: 'PasaWallet',
@@ -636,7 +748,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: Responsive.spacing(context, units: 1.5)),
                   Row(
                     children: [
                       _ActionBtn(
@@ -646,7 +758,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                         color: AppColors.primary,
                         onTap: () => context.go('/driver-profile'),
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: Responsive.spacing(context, units: 1.5)),
                       _ActionBtn(
                         icon: Icons.account_balance_outlined,
                         label: 'Withdraw',
@@ -664,7 +776,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 
             // ── Recent Trips ─────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+              padding: EdgeInsets.fromLTRB(
+                Responsive.spacing(context, units: 2.5),
+                0,
+                Responsive.spacing(context, units: 2.5),
+                Responsive.spacing(context, units: 3),
+              ),
               child: Column(
                 children: [
                   PhSectionHeader(
@@ -673,14 +790,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                     onAction: () => context.go('/driver-history'),
                     dark: true,
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: Responsive.spacing(context, units: 1.25)),
                   _TripRow(
                     pickup: 'SM City Cebu',
                     dropoff: 'Ayala Center',
                     fare: 65,
                     time: '2:30 PM',
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: Responsive.spacing(context, units: 1)),
                   _TripRow(
                     pickup: 'IT Park',
                     dropoff: 'Guadalupe',
@@ -707,17 +824,22 @@ class _Chip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: EdgeInsets.symmetric(
+        horizontal: Responsive.spacing(context, units: 0.75),
+        vertical: Responsive.spacing(context, units: 0.25),
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 8),
+        ),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Text(
         label,
         style: TextStyle(
           color: color,
-          fontSize: 11,
+          fontSize: Responsive.fontSize(context, 11),
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -740,7 +862,7 @@ class _MiniStat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 1.75)),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -748,36 +870,44 @@ class _MiniStat extends StatelessWidget {
             iconColor.withValues(alpha: 0.05),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 16),
+        ),
         border: Border.all(color: iconColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 30,
-            height: 30,
+            width: Responsive.iconSize(context, base: 30),
+            height: Responsive.iconSize(context, base: 30),
             decoration: BoxDecoration(
               color: iconColor.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 8),
+              ),
             ),
-            child: Icon(icon, color: iconColor, size: 15),
+            child: Icon(
+              icon,
+              color: iconColor,
+              size: Responsive.iconSize(context, base: 15),
+            ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: Responsive.spacing(context, units: 1.25)),
           Text(
             value,
             style: TextStyle(
               color: iconColor,
-              fontSize: 18,
+              fontSize: Responsive.fontSize(context, 18),
               fontWeight: FontWeight.w800,
               letterSpacing: -0.5,
             ),
           ),
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.driverTextMuted,
-              fontSize: 10,
+              fontSize: Responsive.fontSize(context, 10),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -785,7 +915,7 @@ class _MiniStat extends StatelessWidget {
             sub,
             style: TextStyle(
               color: iconColor.withValues(alpha: 0.7),
-              fontSize: 9,
+              fontSize: Responsive.fontSize(context, 9),
             ),
           ),
         ],
@@ -813,7 +943,7 @@ class _ActionBtn extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -821,36 +951,44 @@ class _ActionBtn extends StatelessWidget {
                 color.withValues(alpha: 0.06),
               ],
             ),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(
+              Responsive.radius(context, base: 16),
+            ),
             border: Border.all(color: color.withValues(alpha: 0.3)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 36,
-                height: 36,
+                width: Responsive.iconSize(context, base: 36),
+                height: Responsive.iconSize(context, base: 36),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(
+                    Responsive.radius(context, base: 10),
+                  ),
                 ),
-                child: Icon(icon, color: color, size: 18),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: Responsive.iconSize(context, base: 18),
+                ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: Responsive.spacing(context, units: 1.5)),
               Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 13,
+                  fontSize: Responsive.fontSize(context, 13),
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 2),
+              SizedBox(height: Responsive.spacing(context, units: 0.25)),
               Text(
                 sub,
                 style: TextStyle(
                   color: color.withValues(alpha: 0.8),
-                  fontSize: 11,
+                  fontSize: Responsive.fontSize(context, 11),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -875,48 +1013,55 @@ class _TripRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: EdgeInsets.symmetric(
+        horizontal: Responsive.spacing(context, units: 1.75),
+        vertical: Responsive.spacing(context, units: 1.5),
+      ),
       decoration: BoxDecoration(
         color: AppColors.driverSurface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 14),
+        ),
         border: Border.all(color: AppColors.driverBorder),
       ),
       child: Row(
         children: [
           Container(
-            width: 38,
-            height: 38,
+            width: Responsive.iconSize(context, base: 38),
+            height: Responsive.iconSize(context, base: 38),
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [AppColors.success, Color(0xFF15803D)],
               ),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 10),
+              ),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.check_rounded,
               color: Colors.white,
-              size: 18,
+              size: Responsive.iconSize(context, base: 18),
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: Responsive.spacing(context, units: 1.5)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '$pickup → $dropoff',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
-                    fontSize: 13,
+                    fontSize: Responsive.fontSize(context, 13),
                     fontWeight: FontWeight.w600,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   time,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.driverTextMuted,
-                    fontSize: 11,
+                    fontSize: Responsive.fontSize(context, 11),
                   ),
                 ),
               ],
@@ -924,10 +1069,10 @@ class _TripRow extends StatelessWidget {
           ),
           Text(
             '₱$fare',
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.driverAccent,
               fontWeight: FontWeight.w800,
-              fontSize: 16,
+              fontSize: Responsive.fontSize(context, 16),
             ),
           ),
         ],
