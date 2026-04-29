@@ -554,9 +554,24 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                 ),
                               ),
                               ...[
-                                ('SM City Cebu', 'Ayala Center', 65, '2:30 PM'),
-                                ('IT Park', 'Guadalupe', 48, '11:15 AM'),
-                                ('Capitol Site', 'Mabolo', 55, '9:00 AM'),
+                                (
+                                  'Robinsons Place',
+                                  'Paseo de Santa Rosa',
+                                  65,
+                                  '2:30 PM',
+                                ),
+                                (
+                                  'Puregold',
+                                  'Downtown Valencia',
+                                  48,
+                                  '11:15 AM',
+                                ),
+                                (
+                                  'Valencia City Center',
+                                  'Mabolo',
+                                  55,
+                                  '9:00 AM',
+                                ),
                               ].asMap().entries.map((e) {
                                 final t = e.value;
                                 return Padding(

@@ -131,7 +131,7 @@ const List<_StepData> _kSteps = [
     label: 'Book',
     pTitle: 'Searching Drivers',
     pDesc:
-        'Juan picks Habal-habal, sets pickup at SM City Cebu, types "Ayala Center Cebu" as destination, and taps Search Drivers.',
+        'Juan picks Habal-habal, sets pickup at Robinsons Place, types "Paseo de Santa Rosa" as destination, and taps Search Drivers.',
     dTitle: 'Driver Online',
     dDesc:
         "Pedro goes online. A green pulse shows he's now visible. Nearby passengers appear on his map.",
@@ -148,7 +148,7 @@ const List<_StepData> _kSteps = [
         "Juan sees Pedro's card — ₱65 fare, ★4.9, 3 mins away, ABC 1234. He taps \"Order Ride\" to send the request.",
     dTitle: 'Incoming Request!',
     dDesc:
-        'Pedro gets a 30-second countdown alert showing ₱65 fare, pickup at SM City, drop-off at Ayala. Accept or decline.',
+        'Pedro gets a 30-second countdown alert showing ₱65 fare, pickup at Robinsons Place, drop-off at Paseo. Accept or decline.',
     pIcon: Icons.send_rounded,
     dIcon: Icons.notifications_active_rounded,
     pColor: _AppColors.amber,
@@ -162,7 +162,7 @@ const List<_StepData> _kSteps = [
         "Pedro accepted. Juan sees a live map with Pedro's bike moving toward his location. ETA updates in real time.",
     dTitle: 'Ride Accepted',
     dDesc:
-        'Pedro taps Accept. Navigation starts — heading to SM City Cebu. Passenger details and route are shown.',
+        'Pedro taps Accept. Navigation starts — heading to Robinsons Place. Passenger details and route are shown.',
     pIcon: Icons.check_circle_rounded,
     dIcon: Icons.navigation_rounded,
     pColor: _AppColors.success,
@@ -187,10 +187,10 @@ const List<_StepData> _kSteps = [
     label: 'Arrived',
     pTitle: 'Driver Arrived!',
     pDesc:
-        'Pedro is at SM City Cebu. Juan gets a notification and heads to the pickup point to board.',
+        'Pedro is at Robinsons Place. Juan gets a notification and heads to the pickup point to board.',
     dTitle: 'At Pickup Point',
     dDesc:
-        'Pedro taps "Passenger Picked Up" to confirm boarding and start navigation to Ayala Center.',
+        'Pedro taps "Passenger Picked Up" to confirm boarding and start navigation to Paseo de Santa Rosa.',
     pIcon: Icons.person_pin_rounded,
     dIcon: Icons.flag_rounded,
     pColor: _AppColors.success,
@@ -201,10 +201,10 @@ const List<_StepData> _kSteps = [
     label: 'Trip',
     pTitle: 'Trip in Progress',
     pDesc:
-        'Juan is riding. ETA 8 mins, 3.2 km to Ayala. He shares his live location with family for safety.',
+        'Juan is riding. ETA 8 mins, 3.2 km to Paseo. He shares his live location with family for safety.',
     dTitle: 'Trip in Progress',
     dDesc:
-        'Pedro navigates to Ayala Center. Fare ₱65 confirmed. Trip timer running. Passenger is on board.',
+        'Pedro navigates to Paseo de Santa Rosa. Fare ₱65 confirmed. Trip timer running. Passenger is on board.',
     pIcon: Icons.directions_rounded,
     dIcon: Icons.route_rounded,
     pColor: _AppColors.primary,
@@ -1513,7 +1513,7 @@ class _PMockHome extends StatelessWidget {
                   Expanded(
                     child: Text(
                       searching
-                          ? 'Ayala Center Cebu'
+                          ? 'Paseo de Santa Rosa'
                           : 'Where do you want to go?',
                       style: TextStyle(
                         color: searching
@@ -2405,7 +2405,7 @@ class _PMockComplete extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'SM City → Ayala Center',
+                  'Robinsons Place → Paseo de Santa Rosa',
                   style: TextStyle(color: Colors.white60, fontSize: 7),
                 ),
               ],
@@ -3561,8 +3561,8 @@ class _DMockRequest extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 const _DMiniRoute(
-                  pickup: 'SM City Cebu',
-                  dropoff: 'Ayala Center Cebu',
+                  pickup: 'Robinsons Place',
+                  dropoff: 'Paseo de Santa Rosa',
                 ),
               ],
             ),
@@ -3742,8 +3742,8 @@ class _DMockNav extends StatelessWidget {
             child: Column(
               children: [
                 const _DMiniRoute(
-                  pickup: 'SM City Cebu',
-                  dropoff: 'Ayala Center Cebu',
+                  pickup: 'Robinsons Place',
+                  dropoff: 'Paseo de Santa Rosa',
                 ),
                 const SizedBox(height: 6),
                 AnimatedContainer(
@@ -3910,7 +3910,7 @@ class _DMockTrip extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '→ Ayala Center Cebu',
+                        '→ Paseo de Santa Rosa',
                         style: TextStyle(color: Colors.white38, fontSize: 7),
                       ),
                     ],
@@ -4114,7 +4114,7 @@ class _DMockEarnings extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'SM City → Ayala Center',
+                        'Robinsons Place → Paseo de Santa Rosa',
                         style: TextStyle(color: Colors.white38, fontSize: 7),
                       ),
                     ],

@@ -23,8 +23,8 @@ class _DriverRatingsScreenState extends State<DriverRatingsScreen> {
       rating: 5,
       comment: 'Very professional and courteous driver. Arrived on time!',
       date: DateTime.now().subtract(const Duration(hours: 2)),
-      pickup: 'SM City Cebu',
-      dropoff: 'Ayala Center',
+      pickup: 'Robinsons Place',
+      dropoff: 'Paseo de Santa Rosa',
     ),
     _Rating(
       passengerName: 'Juan Reyes',
@@ -32,8 +32,8 @@ class _DriverRatingsScreenState extends State<DriverRatingsScreen> {
       rating: 5,
       comment: 'Excellent service. Clean vehicle and safe driving.',
       date: DateTime.now().subtract(const Duration(hours: 5)),
-      pickup: 'IT Park',
-      dropoff: 'Guadalupe',
+      pickup: 'Puregold',
+      dropoff: 'Downtown Valencia',
     ),
     _Rating(
       passengerName: 'Ana Cruz',
@@ -41,8 +41,8 @@ class _DriverRatingsScreenState extends State<DriverRatingsScreen> {
       rating: 4,
       comment: 'Good driver, took a slightly longer route but still okay.',
       date: DateTime.now().subtract(const Duration(days: 1)),
-      pickup: 'Banilad',
-      dropoff: 'North Bus Terminal',
+      pickup: 'Valencia City Center',
+      dropoff: 'Public Market',
     ),
     _Rating(
       passengerName: 'Carlos Mendoza',
@@ -50,8 +50,8 @@ class _DriverRatingsScreenState extends State<DriverRatingsScreen> {
       rating: 5,
       comment: 'Best ride experience. Friendly and helpful.',
       date: DateTime.now().subtract(const Duration(days: 1, hours: 3)),
-      pickup: 'Cebu Business Park',
-      dropoff: 'Mabolo',
+      pickup: 'Mabolo',
+      dropoff: 'Robinsons Place',
     ),
     _Rating(
       passengerName: 'Rosa Fernandez',
@@ -59,8 +59,8 @@ class _DriverRatingsScreenState extends State<DriverRatingsScreen> {
       rating: 4,
       comment: 'Nice ride. Driver was a bit quiet but professional.',
       date: DateTime.now().subtract(const Duration(days: 2)),
-      pickup: 'Lahug',
-      dropoff: 'Talamban',
+      pickup: 'Paseo de Santa Rosa',
+      dropoff: 'Puregold',
     ),
     _Rating(
       passengerName: 'Miguel Torres',
@@ -68,8 +68,8 @@ class _DriverRatingsScreenState extends State<DriverRatingsScreen> {
       rating: 5,
       comment: 'Perfect! Exactly on time and very safe.',
       date: DateTime.now().subtract(const Duration(days: 2, hours: 4)),
-      pickup: 'Fuente Osmeña',
-      dropoff: 'Colon Street',
+      pickup: 'Downtown Valencia',
+      dropoff: 'Valencia City Center',
     ),
     _Rating(
       passengerName: 'Lisa Wong',
@@ -77,8 +77,8 @@ class _DriverRatingsScreenState extends State<DriverRatingsScreen> {
       rating: 3,
       comment: 'Okay ride. Could have been smoother.',
       date: DateTime.now().subtract(const Duration(days: 3)),
-      pickup: 'Mandaue City',
-      dropoff: 'Cebu City',
+      pickup: 'Mabolo',
+      dropoff: 'Valencia City',
     ),
   ];
 

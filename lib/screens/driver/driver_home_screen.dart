@@ -862,8 +862,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                     ),
                     SizedBox(height: Responsive.spacing(context, units: 1)),
                     _TripRow(
-                      pickup: 'IT Park',
-                      dropoff: 'Guadalupe',
+                      pickup: 'Puregold',
+                      dropoff: 'Downtown Valencia',
                       fare: 48,
                       time: '11:15 AM',
                     ),

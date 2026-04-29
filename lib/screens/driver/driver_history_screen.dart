@@ -18,23 +18,23 @@ class _DriverHistoryScreenState extends State<DriverHistoryScreen> {
   Widget build(BuildContext context) {
     final trips = [
       (
-        pickup: 'SM City Cebu',
-        dropoff: 'Ayala Center Cebu',
+        pickup: 'Robinsons Place',
+        dropoff: 'Paseo de Santa Rosa',
         fare: 65,
         time: '2:30 PM',
         date: 'Today',
         rating: 5,
       ),
       (
-        pickup: 'IT Park, Lahug',
-        dropoff: 'Guadalupe',
+        pickup: 'Puregold',
+        dropoff: 'Downtown Valencia',
         fare: 48,
         time: '11:15 AM',
         date: 'Today',
         rating: 5,
       ),
       (
-        pickup: 'Capitol Site',
+        pickup: 'Valencia City Center',
         dropoff: 'Mabolo',
         fare: 55,
         time: '9:00 AM',
@@ -42,8 +42,8 @@ class _DriverHistoryScreenState extends State<DriverHistoryScreen> {
         rating: 4,
       ),
       (
-        pickup: 'Colon Street',
-        dropoff: 'Carbon Market',
+        pickup: 'Public Market',
+        dropoff: 'Paseo de Santa Rosa',
         fare: 35,
         time: '3:20 PM',
         date: 'Yesterday',

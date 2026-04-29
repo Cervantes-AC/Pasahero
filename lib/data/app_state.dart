@@ -315,8 +315,8 @@ class AppState {
     scheduledRides = [
       ScheduledRide(
         id: 'sr1',
-        pickup: '123 Mabolo, Cebu City',
-        dropoff: 'IT Park, Lahug',
+        pickup: '123 Mabolo, Valencia City',
+        dropoff: 'Robinsons Place',
         rideType: 'habal-habal',
         scheduledAt: DateTime.now().add(const Duration(hours: 2)),
         status: 'upcoming',
@@ -409,8 +409,8 @@ class RideRequest {
 const mockRideRequest = RideRequest(
   id: 'req_001',
   passengerName: 'Ana Reyes',
-  pickup: 'SM City Cebu, North Reclamation Area',
-  dropoff: 'Ayala Center Cebu, Cebu Business Park',
+  pickup: 'Robinsons Place, Valencia City',
+  dropoff: 'Paseo de Santa Rosa, Valencia City',
   fare: 65.0,
   distance: 4.2,
   eta: '3 mins',
