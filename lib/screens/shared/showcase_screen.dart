@@ -1,11 +1,11 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // DATA MODEL
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 enum _Phase {
   idle,
@@ -53,7 +53,7 @@ const List<_StepData> _kSteps = [
         'Juan opens Pasahero. He sees Habal-habal, Motorela, and Bao-bao options. Wallet balance and saved locations are ready.',
     dTitle: 'Driver Offline',
     dDesc:
-        'Pedro is offline. His dashboard shows today\'s earnings ₱847.50 and 12 trips. He taps the toggle to go online.',
+        'Pedro is offline. His dashboard shows today\'s earnings ?847.50 and 12 trips. He taps the toggle to go online.',
     pIcon: Icons.home_rounded,
     dIcon: Icons.wifi_off_rounded,
     pColor: AppColors.primary,
@@ -78,10 +78,10 @@ const List<_StepData> _kSteps = [
     label: 'Request',
     pTitle: 'Request Sent',
     pDesc:
-        'Juan sees Pedro\'s card — ₱65 fare, ★4.9, 3 mins away, ABC 1234. He taps "Order Ride" to send the request.',
+        'Juan sees Pedro\'s card � ?65 fare, ?4.9, 3 mins away, ABC 1234. He taps "Order Ride" to send the request.',
     dTitle: 'Incoming Request!',
     dDesc:
-        'Pedro gets a 30-second countdown alert showing ₱65 fare, pickup at SM City, drop-off at Ayala. Accept or decline.',
+        'Pedro gets a 30-second countdown alert showing ?65 fare, pickup at SM City, drop-off at Ayala. Accept or decline.',
     pIcon: Icons.send_rounded,
     dIcon: Icons.notifications_active_rounded,
     pColor: AppColors.amber,
@@ -95,7 +95,7 @@ const List<_StepData> _kSteps = [
         'Pedro accepted. Juan sees a live map with Pedro\'s bike moving toward his location. ETA updates in real time.',
     dTitle: 'Ride Accepted',
     dDesc:
-        'Pedro taps Accept. Navigation starts — heading to SM City Cebu. Passenger details and route are shown.',
+        'Pedro taps Accept. Navigation starts � heading to SM City Cebu. Passenger details and route are shown.',
     pIcon: Icons.check_circle_rounded,
     dIcon: Icons.navigation_rounded,
     pColor: AppColors.success,
@@ -137,7 +137,7 @@ const List<_StepData> _kSteps = [
         'Juan is riding. ETA 8 mins, 3.2 km to Ayala. He shares his live location with his family for safety.',
     dTitle: 'Trip in Progress',
     dDesc:
-        'Pedro navigates to Ayala Center. Fare ₱65 confirmed. Trip timer running. Passenger is on board.',
+        'Pedro navigates to Ayala Center. Fare ?65 confirmed. Trip timer running. Passenger is on board.',
     pIcon: Icons.directions_rounded,
     dIcon: Icons.route_rounded,
     pColor: AppColors.primary,
@@ -148,10 +148,10 @@ const List<_StepData> _kSteps = [
     label: 'Done',
     pTitle: 'Trip Complete!',
     pDesc:
-        'Juan rates Pedro ★5, adds ₱10 tip, pays ₱75 via GCash. Receipt saved automatically to ride history.',
+        'Juan rates Pedro ?5, adds ?10 tip, pays ?75 via GCash. Receipt saved automatically to ride history.',
     dTitle: 'Earnings Updated',
     dDesc:
-        'Pedro\'s dashboard: +₱65 added. Daily total ₱912.50. 13 trips. Rating stays at ★4.9. Ready for next ride.',
+        'Pedro\'s dashboard: +?65 added. Daily total ?912.50. 13 trips. Rating stays at ?4.9. Ready for next ride.',
     pIcon: Icons.star_rounded,
     dIcon: Icons.monetization_on_rounded,
     pColor: AppColors.amber,
@@ -159,9 +159,9 @@ const List<_StepData> _kSteps = [
   ),
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // SHOWCASE SCREEN
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 class ShowcaseScreen extends StatefulWidget {
   const ShowcaseScreen({super.key});
@@ -230,23 +230,23 @@ class _ShowcaseScreenState extends State<ShowcaseScreen>
           },
           child: Column(
             children: [
-              // ── Header ─────────────────────────────────────────────────────
+              // -- Header -----------------------------------------------------
               _Header(
                 onClose: () => context.go('/'),
                 autoPlay: _autoPlay,
                 onToggleAuto: _toggleAuto,
               ),
 
-              // ── Step pills ─────────────────────────────────────────────────
+              // -- Step pills -------------------------------------------------
               _StepPills(steps: _kSteps, current: _step, onTap: _goTo),
 
               const SizedBox(height: 6),
 
-              // ── Phase label ────────────────────────────────────────────────
+              // -- Phase label ------------------------------------------------
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 250),
                 child: Text(
-                  'STEP ${_step + 1} OF ${_kSteps.length}  ·  ${s.label.toUpperCase()}',
+                  'STEP ${_step + 1} OF ${_kSteps.length}  �  ${s.label.toUpperCase()}',
                   key: ValueKey(_step),
                   style: const TextStyle(
                     color: Colors.white38,
@@ -259,7 +259,7 @@ class _ShowcaseScreenState extends State<ShowcaseScreen>
 
               const SizedBox(height: 8),
 
-              // ── Split view ─────────────────────────────────────────────────
+              // -- Split view -------------------------------------------------
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -298,7 +298,7 @@ class _ShowcaseScreenState extends State<ShowcaseScreen>
 
               const SizedBox(height: 10),
 
-              // ── Controls ───────────────────────────────────────────────────
+              // -- Controls ---------------------------------------------------
               if (isLast)
                 _LaunchRow(
                   onPassenger: () => context.go('/home'),
@@ -322,9 +322,9 @@ class _ShowcaseScreenState extends State<ShowcaseScreen>
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // HEADER
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 class _Header extends StatelessWidget {
   final VoidCallback onClose;
@@ -359,7 +359,7 @@ class _Header extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Passenger ↔ Driver · Swipe to navigate',
+                  'Passenger ? Driver � Swipe to navigate',
                   style: TextStyle(color: Colors.white38, fontSize: 10),
                 ),
               ],
@@ -408,9 +408,9 @@ class _Header extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // STEP PILLS
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 class _StepPills extends StatelessWidget {
   final List<_StepData> steps;
@@ -476,9 +476,9 @@ class _StepPills extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // CENTER CONNECTOR
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 class _Connector extends StatelessWidget {
   final _Phase phase;
@@ -531,9 +531,9 @@ class _Connector extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // SIDE PANEL
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 class _SidePanel extends StatelessWidget {
   final bool isPassenger;
@@ -575,7 +575,7 @@ class _SidePanel extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // ── Panel header ────────────────────────────────────────────────
+          // -- Panel header ------------------------------------------------
           Container(
             padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
             decoration: BoxDecoration(
@@ -661,7 +661,7 @@ class _SidePanel extends StatelessWidget {
             ),
           ),
 
-          // ── Mock screen ─────────────────────────────────────────────────
+          // -- Mock screen -------------------------------------------------
           Expanded(
             child: ClipRRect(
               borderRadius: const BorderRadius.only(
@@ -785,9 +785,9 @@ class _SidePanel extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // PASSENGER MOCK SCREENS
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 class _PMockHome extends StatelessWidget {
   final AnimationController pulse;
@@ -862,7 +862,7 @@ class _PMockHome extends StatelessWidget {
                           ),
                           SizedBox(width: 2),
                           Text(
-                            '₱250',
+                            '?250',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 6,
@@ -951,27 +951,27 @@ class _PMockHome extends StatelessWidget {
                   children: [
                     _MiniRideRow(
                       label: 'Habal-habal',
-                      sublabel: 'Motorcycle · 1 seat',
+                      sublabel: 'Motorcycle � 1 seat',
                       color: AppColors.primary,
                       icon: Icons.two_wheeler,
-                      price: '₱25',
+                      price: '?25',
                       highlighted: searching,
                     ),
                     const SizedBox(height: 4),
                     _MiniRideRow(
                       label: 'Motorela',
-                      sublabel: 'Tricycle · 3 seats',
+                      sublabel: 'Tricycle � 3 seats',
                       color: AppColors.error,
                       icon: Icons.electric_rickshaw,
-                      price: '₱35',
+                      price: '?35',
                     ),
                     const SizedBox(height: 4),
                     _MiniRideRow(
                       label: 'Bao-bao',
-                      sublabel: 'Van · 6 seats',
+                      sublabel: 'Van � 6 seats',
                       color: AppColors.amber,
                       icon: Icons.airport_shuttle,
-                      price: '₱50',
+                      price: '?50',
                     ),
                   ],
                 ),
@@ -1186,7 +1186,7 @@ class _PMockDriverCard extends StatelessWidget {
                                 color: AppColors.amber,
                               ),
                               const Text(
-                                ' 4.9 · ABC 1234 · 0.8 km',
+                                ' 4.9 � ABC 1234 � 0.8 km',
                                 style: TextStyle(
                                   fontSize: 6,
                                   color: AppColors.textTertiary,
@@ -1201,7 +1201,7 @@ class _PMockDriverCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         const Text(
-                          '₱65',
+                          '?65',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w800,
@@ -1378,7 +1378,7 @@ class _PMockTracking extends StatelessWidget {
                           ],
                         ),
                         child: Text(
-                          arrived ? '🎉 Driver Arrived!' : 'Driver On the Way',
+                          arrived ? '?? Driver Arrived!' : 'Driver On the Way',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 7,
@@ -1424,8 +1424,8 @@ class _PMockTracking extends StatelessWidget {
                       ),
                       Text(
                         arrived
-                            ? 'At your location · ABC 1234'
-                            : '3 mins away · ABC 1234',
+                            ? 'At your location � ABC 1234'
+                            : '3 mins away � ABC 1234',
                         style: TextStyle(
                           fontSize: 7,
                           color: arrived
@@ -1576,7 +1576,7 @@ class _PMockOngoing extends StatelessWidget {
                       ),
                     ),
                     const Text(
-                      ' · 3.2 km',
+                      ' � 3.2 km',
                       style: TextStyle(
                         fontSize: 7,
                         color: AppColors.textTertiary,
@@ -1602,7 +1602,7 @@ class _PMockOngoing extends StatelessWidget {
                   ),
                   child: const Center(
                     child: Text(
-                      '📍 Share Live Location with Family',
+                      '?? Share Live Location with Family',
                       style: TextStyle(
                         color: AppColors.amber,
                         fontSize: 6.5,
@@ -1654,7 +1654,7 @@ class _PMockComplete extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'SM City → Ayala Center',
+                  'SM City ? Ayala Center',
                   style: TextStyle(color: Colors.white60, fontSize: 6),
                 ),
               ],
@@ -1697,10 +1697,10 @@ class _PMockComplete extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        _FareRow(label: 'Base fare', value: '₱65.00'),
-                        _FareRow(label: 'Tip', value: '₱10.00'),
+                        _FareRow(label: 'Base fare', value: '?65.00'),
+                        _FareRow(label: 'Tip', value: '?10.00'),
                         const Divider(height: 6, thickness: 0.5),
-                        _FareRow(label: 'Total', value: '₱75.00', bold: true),
+                        _FareRow(label: 'Total', value: '?75.00', bold: true),
                       ],
                     ),
                   ),
@@ -1714,7 +1714,7 @@ class _PMockComplete extends StatelessWidget {
                     ),
                     child: const Center(
                       child: Text(
-                        '✓  Pay via GCash',
+                        '?  Pay via GCash',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 8,
@@ -1777,9 +1777,9 @@ class _FareRow extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // DRIVER MOCK SCREENS
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 class _DMockOffline extends StatelessWidget {
   @override
@@ -1817,7 +1817,7 @@ class _DMockOffline extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '★4.9 · Habal-habal · ABC 1234',
+                      '?4.9 � Habal-habal � ABC 1234',
                       style: TextStyle(color: Colors.white38, fontSize: 6),
                     ),
                   ],
@@ -1918,7 +1918,7 @@ class _DMockOffline extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  '₱847.50',
+                  '?847.50',
                   style: TextStyle(
                     color: AppColors.driverAccent,
                     fontSize: 16,
@@ -1932,7 +1932,7 @@ class _DMockOffline extends StatelessWidget {
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    _DStatChip(label: 'Rating', value: '★4.9'),
+                    _DStatChip(label: 'Rating', value: '?4.9'),
                     const SizedBox(width: 4),
                     _DStatChip(label: 'Online', value: '4h 20m'),
                     const SizedBox(width: 4),
@@ -2244,7 +2244,7 @@ class _DMockRequest extends StatelessWidget {
                                 color: AppColors.amber,
                               ),
                               Text(
-                                ' 4.8 · 0.8 km away',
+                                ' 4.8 � 0.8 km away',
                                 style: TextStyle(
                                   color: Colors.white54,
                                   fontSize: 6,
@@ -2256,7 +2256,7 @@ class _DMockRequest extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '₱65',
+                      '?65',
                       style: TextStyle(
                         color: AppColors.driverAccent,
                         fontSize: 14,
@@ -2306,7 +2306,7 @@ class _DMockRequest extends StatelessWidget {
                   ),
                   child: const Center(
                     child: Text(
-                      '✓  Accept Ride',
+                      '?  Accept Ride',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 7,
@@ -2388,7 +2388,7 @@ class _DMockNav extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
-                          arrived ? '📍 At Pickup Point' : 'Heading to Pickup',
+                          arrived ? '?? At Pickup Point' : 'Heading to Pickup',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 7,
@@ -2421,7 +2421,7 @@ class _DMockNav extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      arrived ? '✓  Passenger Picked Up' : 'Navigating...',
+                      arrived ? '?  Passenger Picked Up' : 'Navigating...',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 7,
@@ -2561,7 +2561,7 @@ class _DMockTrip extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '→ Ayala Center Cebu',
+                        '? Ayala Center Cebu',
                         style: TextStyle(color: Colors.white38, fontSize: 6),
                       ),
                     ],
@@ -2571,7 +2571,7 @@ class _DMockTrip extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '₱65',
+                      '?65',
                       style: TextStyle(
                         color: AppColors.driverAccent,
                         fontSize: 13,
@@ -2630,7 +2630,7 @@ class _DMockEarnings extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  '₱912.50',
+                  '?912.50',
                   style: TextStyle(
                     color: AppColors.driverAccent,
                     fontSize: 18,
@@ -2638,7 +2638,7 @@ class _DMockEarnings extends StatelessWidget {
                   ),
                 ),
                 const Text(
-                  '13 trips completed  ·  ★4.9',
+                  '13 trips completed  �  ?4.9',
                   style: TextStyle(color: Colors.white38, fontSize: 6),
                 ),
               ],
@@ -2703,14 +2703,14 @@ class _DMockEarnings extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'SM City → Ayala Center',
+                        'SM City ? Ayala Center',
                         style: TextStyle(color: Colors.white38, fontSize: 6),
                       ),
                     ],
                   ),
                 ),
                 Text(
-                  '+₱65',
+                  '+?65',
                   style: TextStyle(
                     color: AppColors.driverAccent,
                     fontSize: 9,
@@ -2726,9 +2726,9 @@ class _DMockEarnings extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // SHARED MINI WIDGETS
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 class _DMiniRoute extends StatelessWidget {
   final String pickup;
@@ -2831,9 +2831,9 @@ class _CircleBtn extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // MAP PAINTERS
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 class _MapPainter extends CustomPainter {
   @override
@@ -2919,9 +2919,9 @@ class _RoutePainter extends CustomPainter {
   bool shouldRepaint(_) => false;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 // NAVIGATION CONTROLS
-// ─────────────────────────────────────────────────────────────────────────────
+// -----------------------------------------------------------------------------
 
 class _NavRow extends StatelessWidget {
   final int step;
@@ -3153,1089 +3153,3 @@ class _LaunchRow extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// DRIVER MOCK SCREENS
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _DMockOffline extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF0F172A),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            color: const Color(0xFF1E293B),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 10,
-                  backgroundColor: AppColors.driverAccent,
-                  child: Text(
-                    'PS',
-                    style: TextStyle(
-                      color: AppColors.driverBg,
-                      fontSize: 6,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Pedro Santos',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 8,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Text(
-                        'OFFLINE',
-                        style: TextStyle(
-                          color: AppColors.driverTextMuted,
-                          fontSize: 6,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.12),
-                    ),
-                  ),
-                  child: const Text(
-                    'Go Online',
-                    style: TextStyle(
-                      color: AppColors.driverTextMuted,
-                      fontSize: 6,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: [
-                  _DStatCard(
-                    label: "Today's Earnings",
-                    value: '₱847.50',
-                    icon: Icons.monetization_on_outlined,
-                    color: AppColors.driverAccent,
-                  ),
-                  const SizedBox(height: 6),
-                  _DStatCard(
-                    label: 'Trips Today',
-                    value: '12',
-                    icon: Icons.route_rounded,
-                    color: AppColors.primary,
-                  ),
-                  const SizedBox(height: 6),
-                  _DStatCard(
-                    label: 'Rating',
-                    value: '★ 4.9',
-                    icon: Icons.star_rounded,
-                    color: AppColors.amber,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DMockOnline extends StatelessWidget {
-  final AnimationController pulse;
-  const _DMockOnline({required this.pulse});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF0F172A),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            color: const Color(0xFF1E293B),
-            child: Row(
-              children: [
-                AnimatedBuilder(
-                  animation: pulse,
-                  builder: (_, __) => Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: AppColors.success,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.success.withValues(
-                            alpha: 0.5 * pulse.value,
-                          ),
-                          blurRadius: 6,
-                          spreadRadius: 1,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                const Expanded(
-                  child: Text(
-                    'ONLINE · Waiting for rides',
-                    style: TextStyle(
-                      color: AppColors.success,
-                      fontSize: 7,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              color: const Color(0xFFE8F0F8),
-              child: Stack(
-                children: [
-                  CustomPaint(painter: _MapPainter(), size: Size.infinite),
-                  // Nearby passenger dots
-                  Positioned(
-                    top: 30,
-                    left: 40,
-                    child: _PassengerDot(pulse: pulse),
-                  ),
-                  Positioned(
-                    top: 55,
-                    right: 35,
-                    child: _PassengerDot(pulse: pulse),
-                  ),
-                  Positioned(
-                    bottom: 40,
-                    left: 55,
-                    child: _PassengerDot(pulse: pulse),
-                  ),
-                  // Driver marker
-                  const Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: Center(
-                      child: Icon(
-                        Icons.two_wheeler,
-                        color: AppColors.driverAccent,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DMockRequest extends StatelessWidget {
-  final AnimationController pulse;
-  const _DMockRequest({required this.pulse});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF0F172A),
-      child: Column(
-        children: [
-          // Alert header
-          AnimatedBuilder(
-            animation: pulse,
-            builder: (_, __) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              color: AppColors.amber.withValues(
-                alpha: 0.15 + 0.1 * pulse.value,
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.notifications_active_rounded,
-                    color: AppColors.amber,
-                    size: 14,
-                  ),
-                  const SizedBox(width: 6),
-                  const Expanded(
-                    child: Text(
-                      'Incoming Ride Request!',
-                      style: TextStyle(
-                        color: AppColors.amber,
-                        fontSize: 8,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 5,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.amber.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Text(
-                      '30s',
-                      style: TextStyle(
-                        color: AppColors.amber,
-                        fontSize: 7,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _DInfoRow(
-                    icon: Icons.place,
-                    label: 'Pickup',
-                    value: 'SM City Cebu',
-                    color: AppColors.primary,
-                  ),
-                  const SizedBox(height: 5),
-                  _DInfoRow(
-                    icon: Icons.flag_rounded,
-                    label: 'Drop-off',
-                    value: 'Ayala Center Cebu',
-                    color: AppColors.error,
-                  ),
-                  const SizedBox(height: 5),
-                  _DInfoRow(
-                    icon: Icons.monetization_on_outlined,
-                    label: 'Fare',
-                    value: '₱65',
-                    color: AppColors.driverAccent,
-                  ),
-                  const Spacer(),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: 24,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.driverBorder),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'Decline',
-                              style: TextStyle(
-                                color: AppColors.driverTextMuted,
-                                fontSize: 7,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: AppColors.driverAccent,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'Accept',
-                              style: TextStyle(
-                                color: AppColors.driverBg,
-                                fontSize: 8,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DMockNav extends StatelessWidget {
-  final AnimationController pulse;
-  final bool arrived;
-  const _DMockNav({required this.pulse, required this.arrived});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF0F172A),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-            color: arrived
-                ? AppColors.success.withValues(alpha: 0.15)
-                : AppColors.primary.withValues(alpha: 0.15),
-            child: Row(
-              children: [
-                Icon(
-                  arrived ? Icons.flag_rounded : Icons.navigation_rounded,
-                  color: arrived ? AppColors.success : AppColors.primaryLight,
-                  size: 12,
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  arrived ? 'Arrived at Pickup' : 'Heading to Pickup',
-                  style: TextStyle(
-                    color: arrived ? AppColors.success : AppColors.primaryLight,
-                    fontSize: 7,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              color: const Color(0xFFE8F0F8),
-              child: Stack(
-                children: [
-                  CustomPaint(painter: _MapPainter(), size: Size.infinite),
-                  CustomPaint(painter: _RoutePainter(), size: Size.infinite),
-                  AnimatedBuilder(
-                    animation: pulse,
-                    builder: (_, __) => Positioned(
-                      top: arrived ? 18 : 18 + 22 * (1 - pulse.value),
-                      left: arrived ? 28 : 28 + 12 * (1 - pulse.value),
-                      child: Container(
-                        width: 18,
-                        height: 18,
-                        decoration: BoxDecoration(
-                          color: AppColors.driverAccent,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 1.5),
-                        ),
-                        child: const Icon(
-                          Icons.two_wheeler,
-                          color: AppColors.driverBg,
-                          size: 9,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            color: const Color(0xFF1E293B),
-            padding: const EdgeInsets.all(7),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 9,
-                  backgroundColor: AppColors.primary,
-                  child: Text(
-                    'JD',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 5,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 6),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Juan Dela Cruz',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 7,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      Text(
-                        'SM City Cebu',
-                        style: TextStyle(
-                          color: AppColors.driverTextMuted,
-                          fontSize: 6,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                _TinyBtn(icon: Icons.phone, color: AppColors.driverAccent),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DMockTrip extends StatelessWidget {
-  final AnimationController pulse;
-  const _DMockTrip({required this.pulse});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF0F172A),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-            color: AppColors.success.withValues(alpha: 0.12),
-            child: Row(
-              children: [
-                AnimatedBuilder(
-                  animation: pulse,
-                  builder: (_, __) => Container(
-                    width: 6,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      color: AppColors.success.withValues(
-                        alpha: 0.5 + 0.5 * pulse.value,
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 5),
-                const Text(
-                  'Trip in Progress · ₱65',
-                  style: TextStyle(
-                    color: AppColors.success,
-                    fontSize: 7,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              color: const Color(0xFFE8F0F8),
-              child: Stack(
-                children: [
-                  CustomPaint(painter: _MapPainter(), size: Size.infinite),
-                  CustomPaint(painter: _RoutePainter(), size: Size.infinite),
-                  AnimatedBuilder(
-                    animation: pulse,
-                    builder: (_, __) => Positioned(
-                      top: 15 + 30 * pulse.value,
-                      left: 15 + 20 * pulse.value,
-                      child: Container(
-                        width: 18,
-                        height: 18,
-                        decoration: BoxDecoration(
-                          color: AppColors.driverAccent,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 1.5),
-                        ),
-                        child: const Icon(
-                          Icons.navigation,
-                          color: AppColors.driverBg,
-                          size: 9,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Positioned(
-                    bottom: 18,
-                    right: 20,
-                    child: Icon(
-                      Icons.location_pin,
-                      color: AppColors.error,
-                      size: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            color: const Color(0xFF1E293B),
-            padding: const EdgeInsets.all(7),
-            child: const Row(
-              children: [
-                Text(
-                  '8 mins',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.driverAccent,
-                  ),
-                ),
-                Text(
-                  ' · 3.2 km',
-                  style: TextStyle(
-                    fontSize: 7,
-                    color: AppColors.driverTextMuted,
-                  ),
-                ),
-                Spacer(),
-                Text(
-                  'Ayala Center',
-                  style: TextStyle(fontSize: 7, color: Colors.white60),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DMockEarnings extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF0F172A),
-      child: Column(
-        children: [
-          Container(
-            height: 55,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [AppColors.driverAccent, Color(0xFFB45309)],
-              ),
-            ),
-            child: const Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '+₱65',
-                  style: TextStyle(
-                    color: AppColors.driverBg,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                Text(
-                  'Trip Complete!',
-                  style: TextStyle(
-                    color: AppColors.driverBg,
-                    fontSize: 7,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: [
-                  _DStatCard(
-                    label: "Today's Total",
-                    value: '₱912.50',
-                    icon: Icons.monetization_on_outlined,
-                    color: AppColors.driverAccent,
-                  ),
-                  const SizedBox(height: 6),
-                  _DStatCard(
-                    label: 'Trips Today',
-                    value: '13',
-                    icon: Icons.route_rounded,
-                    color: AppColors.primary,
-                  ),
-                  const SizedBox(height: 6),
-                  _DStatCard(
-                    label: 'Rating',
-                    value: '★ 4.9',
-                    icon: Icons.star_rounded,
-                    color: AppColors.amber,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// SHARED UTILITY WIDGETS
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _TinyBtn extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  const _TinyBtn({required this.icon, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 22,
-      height: 22,
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        shape: BoxShape.circle,
-        border: Border.all(color: color.withValues(alpha: 0.3)),
-      ),
-      child: Icon(icon, color: color, size: 11),
-    );
-  }
-}
-
-class _DStatCard extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
-  const _DStatCard({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.04),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 12),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: AppColors.driverTextMuted,
-                fontSize: 7,
-              ),
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              color: color,
-              fontSize: 9,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DInfoRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-  const _DInfoRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, color: color, size: 10),
-        const SizedBox(width: 5),
-        Text(
-          '$label: ',
-          style: const TextStyle(color: AppColors.driverTextMuted, fontSize: 7),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 7,
-              fontWeight: FontWeight.w600,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PassengerDot extends StatelessWidget {
-  final AnimationController pulse;
-  const _PassengerDot({required this.pulse});
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: pulse,
-      builder: (_, __) => Container(
-        width: 10,
-        height: 10,
-        decoration: BoxDecoration(
-          color: AppColors.primary,
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white, width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.4 * pulse.value),
-              blurRadius: 6,
-              spreadRadius: 1,
-            ),
-          ],
-        ),
-        child: const Icon(Icons.person, color: Colors.white, size: 6),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// MAP PAINTERS
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _MapPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final road = Paint()..color = Colors.white.withValues(alpha: 0.85);
-    canvas.drawRect(Rect.fromLTWH(0, size.height * 0.35, size.width, 5), road);
-    canvas.drawRect(Rect.fromLTWH(0, size.height * 0.68, size.width, 7), road);
-    canvas.drawRect(Rect.fromLTWH(size.width * 0.42, 0, 5, size.height), road);
-    canvas.drawRect(Rect.fromLTWH(size.width * 0.72, 0, 7, size.height), road);
-  }
-
-  @override
-  bool shouldRepaint(_) => false;
-}
-
-class _RoutePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = AppColors.primary.withValues(alpha: 0.6)
-      ..strokeWidth = 2.5
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-    final path = Path()
-      ..moveTo(size.width * 0.35, size.height * 0.25)
-      ..quadraticBezierTo(
-        size.width * 0.42,
-        size.height * 0.35,
-        size.width * 0.42,
-        size.height * 0.55,
-      )
-      ..quadraticBezierTo(
-        size.width * 0.42,
-        size.height * 0.68,
-        size.width * 0.65,
-        size.height * 0.75,
-      );
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(_) => false;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// NAVIGATION CONTROLS
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _CircleBtn extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-  const _CircleBtn({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.08),
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-        ),
-        child: Icon(icon, color: Colors.white70, size: 16),
-      ),
-    );
-  }
-}
-
-class _NavRow extends StatelessWidget {
-  final int step;
-  final int total;
-  final VoidCallback? onPrev;
-  final VoidCallback onNext;
-  const _NavRow({
-    required this.step,
-    required this.total,
-    required this.onPrev,
-    required this.onNext,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: onPrev,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: onPrev != null
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.white.withValues(alpha: 0.03),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: onPrev != null
-                      ? Colors.white.withValues(alpha: 0.15)
-                      : Colors.white.withValues(alpha: 0.05),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.arrow_back_rounded,
-                    color: onPrev != null ? Colors.white70 : Colors.white24,
-                    size: 14,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Prev',
-                    style: TextStyle(
-                      color: onPrev != null ? Colors.white70 : Colors.white24,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const Spacer(),
-          Text(
-            '${step + 1} / $total',
-            style: const TextStyle(color: Colors.white38, fontSize: 11),
-          ),
-          const Spacer(),
-          GestureDetector(
-            onTap: onNext,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: AppColors.primary.withValues(alpha: 0.4),
-                ),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Next',
-                    style: TextStyle(
-                      color: AppColors.primaryLight,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(width: 4),
-                  Icon(
-                    Icons.arrow_forward_rounded,
-                    color: AppColors.primaryLight,
-                    size: 14,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LaunchRow extends StatelessWidget {
-  final VoidCallback onPassenger;
-  final VoidCallback onDriver;
-  final VoidCallback onRestart;
-  const _LaunchRow({
-    required this.onPassenger,
-    required this.onDriver,
-    required this.onRestart,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: onPassenger,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 11),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.45),
-                      ),
-                    ),
-                    child: const Column(
-                      children: [
-                        Icon(
-                          Icons.person_rounded,
-                          color: AppColors.primaryLight,
-                          size: 18,
-                        ),
-                        SizedBox(height: 3),
-                        Text(
-                          'Passenger App',
-                          style: TextStyle(
-                            color: AppColors.primaryLight,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: GestureDetector(
-                  onTap: onDriver,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 11),
-                    decoration: BoxDecoration(
-                      color: AppColors.driverAccent.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: AppColors.driverAccent.withValues(alpha: 0.4),
-                      ),
-                    ),
-                    child: const Column(
-                      children: [
-                        Icon(
-                          Icons.two_wheeler,
-                          color: AppColors.driverAccent,
-                          size: 18,
-                        ),
-                        SizedBox(height: 3),
-                        Text(
-                          'Driver App',
-                          style: TextStyle(
-                            color: AppColors.driverAccent,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          GestureDetector(
-            onTap: onRestart,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 9),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.05),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.replay_rounded, color: Colors.white38, size: 13),
-                  SizedBox(width: 5),
-                  Text(
-                    'Watch Again',
-                    style: TextStyle(
-                      color: Colors.white38,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

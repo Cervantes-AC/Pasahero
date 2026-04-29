@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../data/app_state.dart';
+import '../../widgets/contact_sheet.dart';
 import '../../widgets/toast.dart';
 
 enum _TripPhase { toPickup, inProgress }
@@ -286,9 +287,25 @@ class _DriverActiveTripScreenState extends State<DriverActiveTripScreen>
                     ),
                     Row(
                       children: [
-                        _ContactBtn(icon: Icons.phone, onTap: () {}),
+                        _ContactBtn(
+                          icon: Icons.phone,
+                          onTap: () => showContactSheet(
+                            context,
+                            name: req.passengerName,
+                            phone: '+63 917 123 4567',
+                            isDark: true,
+                          ),
+                        ),
                         const SizedBox(width: 8),
-                        _ContactBtn(icon: Icons.message, onTap: () {}),
+                        _ContactBtn(
+                          icon: Icons.message,
+                          onTap: () => showContactSheet(
+                            context,
+                            name: req.passengerName,
+                            phone: '+63 917 123 4567',
+                            isDark: true,
+                          ),
+                        ),
                       ],
                     ),
                   ],

@@ -105,7 +105,7 @@ class _ContactSheet extends StatelessWidget {
                   color: AppColors.success,
                   isDark: isDark,
                   onTap: () {
-                    Navigator.pop(ctx);
+                    Navigator.pop(context);
                     // In production: url_launcher → tel:$phone
                     showToast(context, 'Calling $name... (mock)');
                   },
@@ -119,7 +119,7 @@ class _ContactSheet extends StatelessWidget {
                   color: AppColors.primary,
                   isDark: isDark,
                   onTap: () {
-                    Navigator.pop(ctx);
+                    Navigator.pop(context);
                     _showMessageSheet(context, name, isDark);
                   },
                 ),
@@ -130,7 +130,7 @@ class _ContactSheet extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: TextButton(
-              onPressed: () => Navigator.pop(ctx),
+              onPressed: () => Navigator.pop(context),
               child: Text('Cancel', style: TextStyle(color: mutedColor)),
             ),
           ),
@@ -149,8 +149,10 @@ class _ContactSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+      builder: (msgCtx) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(msgCtx).viewInsets.bottom,
+        ),
         child: Container(
           decoration: BoxDecoration(
             color: bg,
@@ -271,7 +273,7 @@ class _ContactSheet extends StatelessWidget {
                 height: 48,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    Navigator.pop(ctx);
+                    Navigator.pop(msgCtx);
                     // In production: send via Firebase or SMS
                     showToast(context, 'Message sent to $name (mock)');
                   },

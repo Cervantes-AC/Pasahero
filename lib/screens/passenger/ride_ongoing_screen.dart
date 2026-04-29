@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
+import '../../widgets/contact_sheet.dart';
 import '../../widgets/toast.dart';
 
 class RideOngoingScreen extends StatefulWidget {
@@ -347,9 +348,23 @@ class _TripInfoCard extends StatelessWidget {
               ),
               Row(
                 children: [
-                  _IconBtn(icon: Icons.phone, onTap: () {}),
+                  _IconBtn(
+                    icon: Icons.phone,
+                    onTap: () => showContactSheet(
+                      context,
+                      name: 'Pedro Santos',
+                      phone: '+63 912 345 6789',
+                    ),
+                  ),
                   const SizedBox(width: 8),
-                  _IconBtn(icon: Icons.message, onTap: () {}),
+                  _IconBtn(
+                    icon: Icons.message,
+                    onTap: () => showContactSheet(
+                      context,
+                      name: 'Pedro Santos',
+                      phone: '+63 912 345 6789',
+                    ),
+                  ),
                 ],
               ),
             ],
