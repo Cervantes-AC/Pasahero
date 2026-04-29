@@ -12,15 +12,34 @@ class DriverLoginScreen extends StatefulWidget {
   State<DriverLoginScreen> createState() => _DriverLoginScreenState();
 }
 
-class _DriverLoginScreenState extends State<DriverLoginScreen> {
+class _DriverLoginScreenState extends State<DriverLoginScreen>
+    with TickerProviderStateMixin {
   final _phoneCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
   bool _showPass = false;
+  late AnimationController _floatingController;
+  late AnimationController _glowController;
+
+  @override
+  void initState() {
+    super.initState();
+    _floatingController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat(reverse: true);
+
+    _glowController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+  }
 
   @override
   void dispose() {
     _phoneCtrl.dispose();
     _passCtrl.dispose();
+    _floatingController.dispose();
+    _glowController.dispose();
     super.dispose();
   }
 
@@ -40,8 +59,49 @@ class _DriverLoginScreenState extends State<DriverLoginScreen> {
     final isWide = Responsive.isWide(context);
 
     return Scaffold(
-      backgroundColor: AppColors.driverBg,
-      body: isWide ? _wideLayout(context) : _mobileLayout(context),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.driverBg,
+              AppColors.driverSurface,
+              AppColors.driverBg,
+            ],
+          ),
+        ),
+        child: Stack(
+          children: [
+            // Animated background elements
+            ...List.generate(
+              6,
+              (i) => AnimatedBuilder(
+                animation: _floatingController,
+                builder: (_, __) => Positioned(
+                  top: 100 + i * 120 + 30 * _floatingController.value,
+                  left:
+                      (i % 2 == 0
+                          ? 50
+                          : MediaQuery.of(context).size.width - 100) +
+                      20 * _floatingController.value,
+                  child: Container(
+                    width: 60 + i * 10,
+                    height: 60 + i * 10,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.driverAccent.withValues(
+                        alpha: 0.03 + 0.02 * _floatingController.value,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            isWide ? _wideLayout(context) : _mobileLayout(context),
+          ],
+        ),
+      ),
     );
   }
 

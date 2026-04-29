@@ -1,5 +1,6 @@
 /// Shared in-memory state to simulate a backend.
 /// In a real app this would be replaced with a proper state management solution.
+library;
 
 enum UserRole { passenger, driver }
 

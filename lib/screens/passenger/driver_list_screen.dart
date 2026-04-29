@@ -1,10 +1,9 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../theme/app_colors.dart';
-import '../utils/responsive.dart';
-import '../data/mock_drivers.dart';
-import '../widgets/toast.dart';
+import '../../theme/app_colors.dart';
+import '../../data/mock_drivers.dart';
+import '../../widgets/toast.dart';
 
 class DriverListScreen extends StatefulWidget {
   final String rideType;
@@ -207,7 +206,10 @@ class _MapView extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(color: AppColors.primary, width: 3),
               boxShadow: [
-                BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 8),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 8,
+                ),
               ],
             ),
             child: const Center(
@@ -268,7 +270,10 @@ class _MapView extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
-                BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 8,
+                ),
               ],
             ),
             child: const Icon(Icons.navigation, color: AppColors.primary),

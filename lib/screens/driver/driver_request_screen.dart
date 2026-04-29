@@ -14,8 +14,10 @@ class DriverRequestScreen extends StatefulWidget {
 }
 
 class _DriverRequestScreenState extends State<DriverRequestScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _timerController;
+  late AnimationController _pulseController;
+  late AnimationController _shakeController;
   late Timer _countdownTimer;
   int _secondsLeft = 30;
   bool _responded = false;
@@ -28,9 +30,25 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
       duration: const Duration(seconds: 30),
     )..forward();
 
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat();
+
+    _shakeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (t) {
       if (!mounted) return;
       setState(() => _secondsLeft--);
+
+      // Add shake effect when time is running low
+      if (_secondsLeft <= 10 && _secondsLeft > 0) {
+        _shakeController.forward().then((_) => _shakeController.reset());
+      }
+
       if (_secondsLeft <= 0) {
         t.cancel();
         if (!_responded) _handleTimeout();
@@ -41,6 +59,8 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
   @override
   void dispose() {
     _timerController.dispose();
+    _pulseController.dispose();
+    _shakeController.dispose();
     _countdownTimer.cancel();
     super.dispose();
   }
@@ -79,7 +99,7 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
         child: SafeArea(
           child: Column(
             children: [
-              // Timer ring
+              // Enhanced timer ring with multiple effects
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
                 child: Column(
@@ -87,65 +107,173 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                     Stack(
                       alignment: Alignment.center,
                       children: [
-                        SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: AnimatedBuilder(
-                            animation: _timerController,
-                            builder: (_, __) => CircularProgressIndicator(
-                              value: 1 - _timerController.value,
-                              strokeWidth: 6,
-                              backgroundColor: Colors.white.withValues(
-                                alpha: 0.1,
-                              ),
-                              valueColor: AlwaysStoppedAnimation(
-                                _secondsLeft > 10
-                                    ? AppColors.driverAccent
-                                    : AppColors.red,
-                              ),
+                        // Outer glow effect
+                        AnimatedBuilder(
+                          animation: _pulseController,
+                          builder: (_, __) => Container(
+                            width: 140 + 20 * _pulseController.value,
+                            height: 140 + 20 * _pulseController.value,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color:
+                                  (_secondsLeft > 10
+                                          ? AppColors.driverAccent
+                                          : AppColors.error)
+                                      .withValues(
+                                        alpha:
+                                            0.1 * (1 - _pulseController.value),
+                                      ),
                             ),
                           ),
                         ),
-                        Column(
-                          children: [
-                            Text(
-                              '$_secondsLeft',
-                              style: TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.w800,
-                                color: _secondsLeft > 10
-                                    ? AppColors.driverAccent
-                                    : AppColors.red,
-                              ),
+                        // Main timer circle
+                        AnimatedBuilder(
+                          animation: _shakeController,
+                          builder: (_, child) => Transform.translate(
+                            offset: Offset(
+                              _secondsLeft <= 10
+                                  ? 2 *
+                                        _shakeController.value *
+                                        (1 - _shakeController.value)
+                                  : 0,
+                              0,
                             ),
-                            const Text(
-                              'secs',
-                              style: TextStyle(
-                                color: Colors.white54,
-                                fontSize: 11,
+                            child: child,
+                          ),
+                          child: Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                colors: _secondsLeft > 10
+                                    ? [
+                                        AppColors.driverAccent,
+                                        AppColors.driverAccentDark,
+                                      ]
+                                    : [
+                                        AppColors.error,
+                                        const Color(0xFFB91C1C),
+                                      ],
                               ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      (_secondsLeft > 10
+                                              ? AppColors.driverAccent
+                                              : AppColors.error)
+                                          .withValues(alpha: 0.4),
+                                  blurRadius: 20,
+                                  spreadRadius: 4,
+                                ),
+                              ],
                             ),
-                          ],
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                // Progress indicator
+                                SizedBox(
+                                  width: 100,
+                                  height: 100,
+                                  child: AnimatedBuilder(
+                                    animation: _timerController,
+                                    builder: (_, __) =>
+                                        CircularProgressIndicator(
+                                          value: 1 - _timerController.value,
+                                          strokeWidth: 4,
+                                          backgroundColor: Colors.white
+                                              .withValues(alpha: 0.3),
+                                          valueColor:
+                                              const AlwaysStoppedAnimation(
+                                                Colors.white,
+                                              ),
+                                        ),
+                                  ),
+                                ),
+                                // Timer text
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      '$_secondsLeft',
+                                      style: const TextStyle(
+                                        fontSize: 36,
+                                        fontWeight: FontWeight.w900,
+                                        color: Colors.white,
+                                        letterSpacing: -1,
+                                      ),
+                                    ),
+                                    const Text(
+                                      'seconds',
+                                      style: TextStyle(
+                                        color: Colors.white70,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'New Ride Request!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
+                    const SizedBox(height: 16),
+                    Text(
+                          'New Ride Request!',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
+                          ),
+                        )
+                        .animate(
+                          onPlay: (controller) =>
+                              controller.repeat(reverse: true),
+                        )
+                        .shimmer(
+                          duration: 2000.ms,
+                          color: AppColors.driverAccent.withValues(alpha: 0.3),
+                        ),
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Accept before the timer runs out',
-                      style: TextStyle(color: Colors.white54, fontSize: 13),
+                      decoration: BoxDecoration(
+                        color:
+                            (_secondsLeft > 10
+                                    ? AppColors.driverAccent
+                                    : AppColors.error)
+                                .withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color:
+                              (_secondsLeft > 10
+                                      ? AppColors.driverAccent
+                                      : AppColors.error)
+                                  .withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: Text(
+                        _secondsLeft > 10
+                            ? 'Accept before the timer runs out'
+                            : 'Hurry up! Time is running out!',
+                        style: TextStyle(
+                          color: _secondsLeft > 10
+                              ? AppColors.driverAccent
+                              : AppColors.error,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ).animate().scale(duration: 400.ms, curve: Curves.elasticOut),
+              ).animate().scale(duration: 500.ms, curve: Curves.elasticOut),
 
               const SizedBox(height: 24),
 

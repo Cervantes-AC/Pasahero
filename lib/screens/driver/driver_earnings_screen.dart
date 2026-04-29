@@ -5,8 +5,31 @@ import '../../theme/app_colors.dart';
 import '../../data/app_state.dart';
 import '../../widgets/ph_widgets.dart';
 
-class DriverEarningsScreen extends StatelessWidget {
+class DriverEarningsScreen extends StatefulWidget {
   const DriverEarningsScreen({super.key});
+
+  @override
+  State<DriverEarningsScreen> createState() => _DriverEarningsScreenState();
+}
+
+class _DriverEarningsScreenState extends State<DriverEarningsScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _shimmer;
+
+  @override
+  void initState() {
+    super.initState();
+    _shimmer = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _shimmer.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +55,7 @@ class DriverEarningsScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
+            // ── Header ──────────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Row(
@@ -43,12 +67,27 @@ class DriverEarningsScreen extends StatelessWidget {
                     iconColor: Colors.white,
                   ),
                   const SizedBox(width: 12),
-                  const Text(
-                    'Earnings',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Earnings',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        Text(
+                          'Your financial overview',
+                          style: TextStyle(
+                            color: AppColors.driverTextMuted,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -60,24 +99,34 @@ class DriverEarningsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    // Weekly total
+                    // ── Weekly total card ────────────────────────────────────
                     Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                AppColors.driverAccent.withValues(alpha: 0.22),
-                                AppColors.driverAccent.withValues(alpha: 0.06),
+                                AppColors.driverAccent.withValues(alpha: 0.25),
+                                AppColors.driverAccent.withValues(alpha: 0.08),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: AppColors.driverAccent.withValues(
-                                alpha: 0.35,
+                                alpha: 0.4,
                               ),
+                              width: 1.5,
                             ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.driverAccent.withValues(
+                                  alpha: 0.2,
+                                ),
+                                blurRadius: 24,
+                                spreadRadius: 4,
+                              ),
+                            ],
                           ),
                           child: Column(
                             children: [
@@ -89,81 +138,160 @@ class DriverEarningsScreen extends StatelessWidget {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Text(
-                                        'This Week',
-                                        style: TextStyle(
-                                          color: AppColors.driverTextMuted,
-                                          fontSize: 13,
-                                        ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            width: 32,
+                                            height: 32,
+                                            decoration: BoxDecoration(
+                                              gradient: const LinearGradient(
+                                                colors: [
+                                                  AppColors.driverAccent,
+                                                  AppColors.driverAccentDark,
+                                                ],
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: const Icon(
+                                              Icons.calendar_today_rounded,
+                                              color: AppColors.driverBg,
+                                              size: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const Text(
+                                            'This Week',
+                                            style: TextStyle(
+                                              color: AppColors.driverTextMuted,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        '₱${weekTotal.toStringAsFixed(2)}',
-                                        style: TextStyle(
-                                          color: AppColors.driverAccent,
-                                          fontSize: 30,
-                                          fontWeight: FontWeight.w800,
+                                      const SizedBox(height: 8),
+                                      AnimatedBuilder(
+                                        animation: _shimmer,
+                                        builder: (_, __) => ShaderMask(
+                                          shaderCallback: (bounds) =>
+                                              LinearGradient(
+                                                colors: [
+                                                  AppColors.driverAccent,
+                                                  AppColors.driverAccent
+                                                      .withValues(alpha: 0.8),
+                                                  AppColors.driverAccent,
+                                                ],
+                                                stops: [
+                                                  (_shimmer.value - 0.3).clamp(
+                                                    0.0,
+                                                    1.0,
+                                                  ),
+                                                  _shimmer.value.clamp(
+                                                    0.0,
+                                                    1.0,
+                                                  ),
+                                                  (_shimmer.value + 0.3).clamp(
+                                                    0.0,
+                                                    1.0,
+                                                  ),
+                                                ],
+                                              ).createShader(bounds),
+                                          child: Text(
+                                            '₱${weekTotal.toStringAsFixed(2)}',
+                                            style: const TextStyle(
+                                              color: AppColors.driverAccent,
+                                              fontSize: 36,
+                                              fontWeight: FontWeight.w900,
+                                              letterSpacing: -1.5,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 5,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.success.withValues(
-                                        alpha: 0.15,
-                                      ),
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                        color: AppColors.success.withValues(
-                                          alpha: 0.3,
+                                  Column(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 6,
                                         ),
-                                      ),
-                                    ),
-                                    child: const Row(
-                                      children: [
-                                        Icon(
-                                          Icons.trending_up_rounded,
-                                          color: AppColors.success,
-                                          size: 14,
-                                        ),
-                                        SizedBox(width: 4),
-                                        Text(
-                                          '+12%',
-                                          style: TextStyle(
-                                            color: AppColors.success,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 13,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              AppColors.success,
+                                              AppColors.success.withValues(
+                                                alpha: 0.8,
+                                              ),
+                                            ],
                                           ),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: AppColors.success
+                                                  .withValues(alpha: 0.3),
+                                              blurRadius: 8,
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
+                                        child: const Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.trending_up_rounded,
+                                              color: Colors.white,
+                                              size: 14,
+                                            ),
+                                            SizedBox(width: 4),
+                                            Text(
+                                              '+12%',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      const Text(
+                                        'vs last week',
+                                        style: TextStyle(
+                                          color: AppColors.driverTextMuted,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 20),
                               Row(
                                 children: [
                                   _WStat(
                                     label: 'Total Trips',
                                     value: '$weekTrips',
-                                    icon: Icons.two_wheeler,
+                                    icon: Icons.two_wheeler_rounded,
+                                    color: AppColors.primary,
                                   ),
-                                  const SizedBox(width: 10),
+                                  const SizedBox(width: 12),
                                   _WStat(
                                     label: 'Avg/Trip',
                                     value:
                                         '₱${(weekTotal / weekTrips).toStringAsFixed(0)}',
-                                    icon: Icons.monetization_on_outlined,
+                                    icon: Icons.monetization_on_rounded,
+                                    color: AppColors.success,
                                   ),
-                                  const SizedBox(width: 10),
+                                  const SizedBox(width: 12),
                                   _WStat(
                                     label: 'Best Day',
                                     value: '₱1,350',
-                                    icon: Icons.emoji_events_outlined,
+                                    icon: Icons.emoji_events_rounded,
+                                    color: AppColors.amber,
                                   ),
                                 ],
                               ),
@@ -171,12 +299,12 @@ class DriverEarningsScreen extends StatelessWidget {
                           ),
                         )
                         .animate()
-                        .fadeIn(delay: 80.ms, duration: 350.ms)
+                        .fadeIn(delay: 80.ms, duration: 400.ms)
                         .slideY(begin: 0.1, end: 0),
 
                     const SizedBox(height: 16),
 
-                    // Bar chart
+                    // ── Bar chart ────────────────────────────────────────────
                     PhDriverCard(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,7 +343,7 @@ class DriverEarningsScreen extends StatelessWidget {
                                                 ),
                                                 child: Text(
                                                   '₱${d.amount.toStringAsFixed(0)}',
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     color:
                                                         AppColors.driverAccent,
                                                     fontSize: 9,
@@ -280,7 +408,7 @@ class DriverEarningsScreen extends StatelessWidget {
 
                     const SizedBox(height: 16),
 
-                    // Today's trips
+                    // ── Today's trips ────────────────────────────────────────
                     PhDriverCard(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,26 +446,33 @@ class DriverEarningsScreen extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       Container(
-                                        width: 32,
-                                        height: 32,
+                                        width: 34,
+                                        height: 34,
                                         decoration: BoxDecoration(
-                                          color: AppColors.success.withValues(
-                                            alpha: 0.12,
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              AppColors.success,
+                                              AppColors.success.withValues(
+                                                alpha: 0.7,
+                                              ),
+                                            ],
                                           ),
-                                          shape: BoxShape.circle,
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
                                         ),
                                         child: Center(
                                           child: Text(
                                             '${e.key + 1}',
                                             style: const TextStyle(
-                                              color: AppColors.success,
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 12,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w800,
+                                              fontSize: 13,
                                             ),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 10),
+                                      const SizedBox(width: 12),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
@@ -365,7 +500,7 @@ class DriverEarningsScreen extends StatelessWidget {
                                       ),
                                       Text(
                                         '₱${t.$3}',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           color: AppColors.driverAccent,
                                           fontWeight: FontWeight.w700,
                                           fontSize: 15,
@@ -395,27 +530,47 @@ class DriverEarningsScreen extends StatelessWidget {
 class _WStat extends StatelessWidget {
   final String label, value;
   final IconData icon;
-  const _WStat({required this.label, required this.value, required this.icon});
+  final Color color;
+  const _WStat({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.07),
-          borderRadius: BorderRadius.circular(12),
+          gradient: LinearGradient(
+            colors: [
+              color.withValues(alpha: 0.15),
+              color.withValues(alpha: 0.05),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [
-            Icon(icon, color: AppColors.driverTextMuted, size: 15),
-            const SizedBox(height: 4),
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: color, size: 14),
+            ),
+            const SizedBox(height: 6),
             Text(
               value,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.w800,
+                fontSize: 14,
               ),
             ),
             Text(
@@ -424,6 +579,7 @@ class _WStat extends StatelessWidget {
                 color: AppColors.driverTextMuted,
                 fontSize: 10,
               ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),

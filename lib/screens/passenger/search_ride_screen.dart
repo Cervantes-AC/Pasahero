@@ -1,9 +1,9 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../theme/app_colors.dart';
-import '../utils/responsive.dart';
-import '../widgets/ph_widgets.dart';
+import '../../theme/app_colors.dart';
+import '../../utils/responsive.dart';
+import '../../widgets/ph_widgets.dart';
 
 class SearchRideScreen extends StatefulWidget {
   final String rideType;
@@ -13,14 +13,33 @@ class SearchRideScreen extends StatefulWidget {
   State<SearchRideScreen> createState() => _SearchRideScreenState();
 }
 
-class _SearchRideScreenState extends State<SearchRideScreen> {
+class _SearchRideScreenState extends State<SearchRideScreen>
+    with TickerProviderStateMixin {
   final _pickupCtrl = TextEditingController(text: 'Cebu City, Philippines');
   final _destCtrl = TextEditingController();
+  late AnimationController _mapController;
+  late AnimationController _pulseController;
+  bool _showSuggestions = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _mapController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat();
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat();
+  }
 
   @override
   void dispose() {
     _pickupCtrl.dispose();
     _destCtrl.dispose();
+    _mapController.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
@@ -36,12 +55,21 @@ class _SearchRideScreenState extends State<SearchRideScreen> {
     switch (widget.rideType) {
       case 'habal-habal':
         return 'Habal-habal';
-      case 'motorela':
-        return 'Motorela';
       case 'bao-bao':
         return 'Bao-bao';
       default:
         return widget.rideType;
+    }
+  }
+
+  IconData get _rideIcon {
+    switch (widget.rideType) {
+      case 'habal-habal':
+        return Icons.two_wheeler;
+      case 'bao-bao':
+        return Icons.directions_car_outlined;
+      default:
+        return Icons.two_wheeler;
     }
   }
 
@@ -53,34 +81,92 @@ class _SearchRideScreenState extends State<SearchRideScreen> {
       backgroundColor: AppColors.surface,
       body: Column(
         children: [
-          // Header
+          // Header with enhanced design
           Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [AppColors.primary, AppColors.primaryDark],
+                colors: [
+                  AppColors.primary,
+                  AppColors.primaryDark,
+                  AppColors.primary.withValues(alpha: 0.8),
+                ],
               ),
             ),
             child: SafeArea(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(hp, 16, hp, 20),
-                child: Row(
+                child: Column(
                   children: [
-                    PhIconButton(
-                      icon: Icons.arrow_back,
-                      onTap: () => context.go('/home'),
-                      color: Colors.white.withValues(alpha: 0.15),
-                      iconColor: Colors.white,
-                    ),
-                    const SizedBox(width: 14),
-                    Text(
-                      _rideLabel,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
+                    Row(
+                      children: [
+                        PhIconButton(
+                          icon: Icons.arrow_back,
+                          onTap: () => context.go('/home'),
+                          color: Colors.white.withValues(alpha: 0.15),
+                          iconColor: Colors.white,
+                        ),
+                        const SizedBox(width: 14),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(_rideIcon, color: Colors.white, size: 16),
+                              const SizedBox(width: 6),
+                              Text(
+                                _rideLabel,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.success.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.success,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              const Text(
+                                '12 online',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -476,24 +562,37 @@ class _SavedChip extends StatelessWidget {
 
 class _MapBtn extends StatelessWidget {
   final String label;
-  const _MapBtn({required this.label});
+  final bool isLocation;
+  const _MapBtn({required this.label, this.isLocation = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 36,
-      height: 36,
+      width: 40,
+      height: 40,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
+        border: Border.all(
+          color: isLocation ? AppColors.primary : AppColors.border,
+          width: isLocation ? 1.5 : 1,
+        ),
       ),
       child: Center(
         child: Text(
           label,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
+          style: TextStyle(
+            fontSize: isLocation ? 16 : 18,
+            fontWeight: FontWeight.w500,
+            color: isLocation ? AppColors.primary : AppColors.textSecondary,
+          ),
         ),
       ),
     );

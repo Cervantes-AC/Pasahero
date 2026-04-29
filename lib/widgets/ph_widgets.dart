@@ -1,5 +1,5 @@
 /// Shared production-ready widget library for Pasahero.
-library ph_widgets;
+library;
 
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';

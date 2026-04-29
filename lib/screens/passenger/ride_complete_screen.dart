@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../theme/app_colors.dart';
-import '../widgets/ph_widgets.dart';
-import '../widgets/toast.dart';
+import '../../theme/app_colors.dart';
+import '../../widgets/ph_widgets.dart';
+import '../../widgets/toast.dart';
 
 class RideCompleteScreen extends StatefulWidget {
   const RideCompleteScreen({super.key});
@@ -38,75 +38,92 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
-      body: Column(
-        children: [
-          // Success header
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [AppColors.success, Color(0xFF15803D)],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Success header
+            Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [AppColors.success, Color(0xFF15803D)],
+                ),
               ),
-            ),
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 28, 24, 40),
-                child: Column(
-                  children: [
-                    Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.12),
-                                blurRadius: 20,
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.check_circle_outline_rounded,
-                            size: 44,
-                            color: AppColors.success,
-                          ),
-                        )
-                        .animate()
-                        .scale(
-                          begin: const Offset(0.7, 0.7),
-                          end: const Offset(1, 1),
-                          duration: 400.ms,
-                          curve: Curves.easeOutBack,
-                        )
-                        .fadeIn(duration: 300.ms),
-                    const SizedBox(height: 14),
-                    const Text(
-                      'Trip Complete!',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 40),
+                  child: Column(
+                    children: [
+                      Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.15),
+                                  blurRadius: 24,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
+                            ),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  width: 80,
+                                  height: 80,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.success.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const Icon(
+                                  Icons.check_circle_rounded,
+                                  size: 50,
+                                  color: AppColors.success,
+                                ),
+                              ],
+                            ),
+                          )
+                          .animate()
+                          .scale(
+                            begin: const Offset(0.5, 0.5),
+                            end: const Offset(1, 1),
+                            duration: 500.ms,
+                            curve: Curves.elasticOut,
+                          )
+                          .fadeIn(duration: 400.ms),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Trip Complete!',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Thank you for riding with us',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white.withValues(alpha: 0.8),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Thank you for riding with us',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white.withValues(alpha: 0.85),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
 
-          Expanded(
-            child: SingleChildScrollView(
+            // Content section
+            Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -400,12 +417,12 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

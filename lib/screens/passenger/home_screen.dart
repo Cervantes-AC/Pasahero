@@ -1,12 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../theme/app_colors.dart';
-import '../data/app_state.dart';
-import '../utils/responsive.dart';
+import '../../theme/app_colors.dart';
+import '../../utils/responsive.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  late AnimationController _pulseController;
+  late AnimationController _weatherController;
+  int _selectedQuickAction = -1;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat();
+    _weatherController = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    _weatherController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +64,24 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _PaymentRow().animate().fadeIn(
-                        delay: 80.ms,
-                        duration: 350.ms,
-                      ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 8),
+
+                      // Quick Actions Row
+                      _QuickActionsRow(
+                        selectedIndex: _selectedQuickAction,
+                        onActionTap: (index) =>
+                            setState(() => _selectedQuickAction = index),
+                      ).animate().fadeIn(delay: 100.ms, duration: 350.ms),
+
+                      const SizedBox(height: 20),
+
+                      // Weather & Traffic Card
+                      _WeatherTrafficCard(
+                        weatherController: _weatherController,
+                      ).animate().fadeIn(delay: 150.ms, duration: 350.ms),
+
+                      const SizedBox(height: 20),
+
                       const Text(
                         'Choose your ride',
                         style: TextStyle(
@@ -54,6 +95,15 @@ class HomeScreen extends StatelessWidget {
                       // On tablet/desktop show 2-col grid
                       Responsive.isWide(context) ? _RideGrid() : _RideList(),
                       const SizedBox(height: 24),
+
+                      // Recent Activity
+                      _RecentActivityCard().animate().fadeIn(
+                        delay: 200.ms,
+                        duration: 350.ms,
+                      ),
+
+                      const SizedBox(height: 20),
+
                       _PromoBanner().animate().fadeIn(
                         delay: 240.ms,
                         duration: 350.ms,
@@ -76,6 +126,11 @@ class _HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hp = Responsive.hPad(context);
+    final hour = DateTime.now().hour;
+    String greeting = 'Good morning';
+    if (hour >= 12 && hour < 17) greeting = 'Good afternoon';
+    if (hour >= 17) greeting = 'Good evening';
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -96,31 +151,57 @@ class _HomeHeader extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'JD',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
+                  Stack(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.white.withValues(alpha: 0.2),
+                              Colors.white.withValues(alpha: 0.1),
+                            ],
+                          ),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.3),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'JD',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          width: 14,
+                          height: 14,
+                          decoration: BoxDecoration(
+                            color: AppColors.success,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Good morning,',
+                          '$greeting,',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.white.withValues(alpha: 0.7),
@@ -129,7 +210,7 @@ class _HomeHeader extends StatelessWidget {
                         const Text(
                           'Juan Dela Cruz',
                           style: TextStyle(
-                            fontSize: 15,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
                           ),
@@ -153,16 +234,29 @@ class _HomeHeader extends StatelessWidget {
                         ),
                       ),
                       Positioned(
-                        top: 9,
-                        right: 9,
-                        child: Container(
-                          width: 7,
-                          height: 7,
-                          decoration: const BoxDecoration(
-                            color: AppColors.amber,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
+                        top: 8,
+                        right: 8,
+                        child:
+                            Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.amber,
+                                    shape: BoxShape.circle,
+                                  ),
+                                )
+                                .animate(onPlay: (c) => c.repeat())
+                                .scale(
+                                  begin: const Offset(1, 1),
+                                  end: const Offset(1.3, 1.3),
+                                  duration: 1000.ms,
+                                )
+                                .then()
+                                .scale(
+                                  begin: const Offset(1.3, 1.3),
+                                  end: const Offset(1, 1),
+                                  duration: 1000.ms,
+                                ),
                       ),
                     ],
                   ),
@@ -176,7 +270,7 @@ class _HomeHeader extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.2),
                   ),
@@ -283,75 +377,6 @@ class _SearchBar extends StatelessWidget {
   }
 }
 
-// ── Payment row ───────────────────────────────────────────────────────────────
-
-class _PaymentRow extends StatefulWidget {
-  @override
-  State<_PaymentRow> createState() => _PaymentRowState();
-}
-
-class _PaymentRowState extends State<_PaymentRow> {
-  final _methods = ['GCash', 'Maya', 'Cash'];
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Icon(
-          Icons.payment_outlined,
-          color: AppColors.textTertiary,
-          size: 16,
-        ),
-        const SizedBox(width: 8),
-        const Text(
-          'Pay with',
-          style: TextStyle(fontSize: 13, color: AppColors.textTertiary),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: _methods.map((m) {
-                final selected = AppState.instance.selectedPayment == m;
-                return GestureDetector(
-                  onTap: () =>
-                      setState(() => AppState.instance.selectedPayment = m),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    margin: const EdgeInsets.only(right: 6),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: selected ? AppColors.primary : Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: selected ? AppColors.primary : AppColors.border,
-                      ),
-                    ),
-                    child: Text(
-                      m,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: selected
-                            ? Colors.white
-                            : AppColors.textSecondary,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 // ── Ride cards ────────────────────────────────────────────────────────────────
 
 const _rideTypes = [
@@ -365,17 +390,6 @@ const _rideTypes = [
     badge: 'Fastest',
     badgeColor: AppColors.success,
     route: '/search?type=habal-habal',
-  ),
-  (
-    icon: Icons.two_wheeler,
-    iconColor: AppColors.error,
-    iconBg: AppColors.errorSurface,
-    title: 'Motorela',
-    subtitle: 'Motorcycle with sidecar',
-    price: 'From ₱35',
-    badge: 'Shared',
-    badgeColor: AppColors.warning,
-    route: '/search?type=motorela',
   ),
   (
     icon: Icons.directions_car_outlined,
@@ -643,6 +657,361 @@ class _PromoBanner extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// ── Quick Actions Row ─────────────────────────────────────────────────────────
+
+class _QuickActionsRow extends StatelessWidget {
+  final int selectedIndex;
+  final Function(int) onActionTap;
+
+  const _QuickActionsRow({
+    required this.selectedIndex,
+    required this.onActionTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final actions = [
+      (
+        icon: Icons.schedule_outlined,
+        label: 'Schedule',
+        color: AppColors.primary,
+      ),
+      (
+        icon: Icons.favorite_outline,
+        label: 'Favorites',
+        color: AppColors.error,
+      ),
+      (
+        icon: Icons.group_outlined,
+        label: 'Share Ride',
+        color: AppColors.success,
+      ),
+      (
+        icon: Icons.local_offer_outlined,
+        label: 'Promos',
+        color: AppColors.amber,
+      ),
+    ];
+
+    return Row(
+      children: actions.asMap().entries.map((entry) {
+        final index = entry.key;
+        final action = entry.value;
+        final isSelected = selectedIndex == index;
+
+        return Expanded(
+          child: GestureDetector(
+            onTap: () => onActionTap(index),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              margin: EdgeInsets.only(
+                right: index < actions.length - 1 ? 8 : 0,
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? action.color.withValues(alpha: 0.1)
+                    : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isSelected
+                      ? action.color.withValues(alpha: 0.3)
+                      : AppColors.border,
+                ),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: action.color.withValues(alpha: 0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    action.icon,
+                    color: isSelected ? action.color : AppColors.textTertiary,
+                    size: 20,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    action.label,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: isSelected ? action.color : AppColors.textTertiary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+// ── Weather & Traffic Card ────────────────────────────────────────────────────
+
+class _WeatherTrafficCard extends StatelessWidget {
+  final AnimationController weatherController;
+
+  const _WeatherTrafficCard({required this.weatherController});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.success.withValues(alpha: 0.1),
+            AppColors.primary.withValues(alpha: 0.05),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.success.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    AnimatedBuilder(
+                      animation: weatherController,
+                      builder: (context, child) {
+                        return Transform.rotate(
+                          angle: weatherController.value * 2 * 3.14159,
+                          child: Icon(
+                            Icons.wb_sunny_outlined,
+                            color: AppColors.amber,
+                            size: 18,
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 6),
+                    const Text(
+                      '28°C',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.success.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        'Clear',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.success,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Perfect weather for riding!',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(width: 1, height: 40, color: AppColors.border),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.traffic_outlined,
+                      color: AppColors.success,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 6),
+                    const Text(
+                      'Light',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Smooth roads ahead',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Recent Activity Card ──────────────────────────────────────────────────────
+
+class _RecentActivityCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Recent Activity',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => context.go('/ride-history'),
+                child: const Text(
+                  'View All',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _ActivityItem(
+            icon: Icons.check_circle_outline,
+            iconColor: AppColors.success,
+            title: 'Trip to SM City Cebu',
+            subtitle: 'Yesterday, 2:30 PM • ₱45',
+            trailing: '4.9 ⭐',
+          ),
+          const SizedBox(height: 8),
+          _ActivityItem(
+            icon: Icons.schedule_outlined,
+            iconColor: AppColors.amber,
+            title: 'Scheduled ride to Airport',
+            subtitle: 'Tomorrow, 6:00 AM • ₱120',
+            trailing: 'Pending',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActivityItem extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String subtitle;
+  final String trailing;
+
+  const _ActivityItem({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.subtitle,
+    required this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: iconColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: iconColor, size: 18),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textTertiary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Text(
+          trailing,
+          style: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textSecondary,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,18 +1,19 @@
 import 'package:go_router/go_router.dart';
-import 'screens/welcome_screen.dart';
-import 'screens/showcase_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/register_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/search_ride_screen.dart';
-import 'screens/driver_list_screen.dart';
-import 'screens/driver_detail_screen.dart';
-import 'screens/ride_tracking_screen.dart';
-import 'screens/ride_ongoing_screen.dart';
-import 'screens/ride_complete_screen.dart';
-import 'screens/ride_history_screen.dart';
-import 'screens/saved_locations_screen.dart';
-import 'screens/profile_screen.dart';
+import 'screens/shared/welcome_screen.dart';
+import 'screens/shared/showcase_screen.dart';
+import 'screens/passenger/login_screen.dart';
+import 'screens/passenger/register_screen.dart';
+import 'screens/passenger/home_screen.dart';
+import 'screens/passenger/search_ride_screen.dart';
+import 'screens/passenger/driver_list_screen.dart';
+import 'screens/passenger/driver_detail_screen.dart';
+import 'screens/passenger/ride_tracking_screen.dart';
+import 'screens/passenger/ride_ongoing_screen.dart';
+import 'screens/passenger/ride_complete_screen.dart';
+import 'screens/passenger/ride_history_screen.dart';
+import 'screens/passenger/saved_locations_screen.dart';
+import 'screens/passenger/profile_screen.dart';
+import 'screens/shared/location_sharing_screen.dart';
 import 'screens/driver/driver_login_screen.dart';
 import 'screens/driver/driver_register_screen.dart';
 import 'screens/driver/driver_home_screen.dart';
@@ -21,6 +22,7 @@ import 'screens/driver/driver_active_trip_screen.dart';
 import 'screens/driver/driver_earnings_screen.dart';
 import 'screens/driver/driver_profile_screen.dart';
 import 'screens/driver/driver_history_screen.dart';
+import 'screens/driver/driver_ratings_screen.dart';
 import 'widgets/root_layout.dart';
 
 final appRouter = GoRouter(
@@ -59,6 +61,10 @@ final appRouter = GoRouter(
     GoRoute(path: '/tracking', builder: (_, _s) => const RideTrackingScreen()),
     GoRoute(path: '/ongoing', builder: (_, _s) => const RideOngoingScreen()),
     GoRoute(path: '/complete', builder: (_, _s) => const RideCompleteScreen()),
+    GoRoute(
+      path: '/location-sharing',
+      builder: (_, _s) => const LocationSharingScreen(),
+    ),
 
     // ── Passenger shell (bottom nav) ─────────────────────────────────────────
     ShellRoute(
@@ -108,6 +114,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/driver-history',
       builder: (_, _s) => const DriverHistoryScreen(),
+    ),
+    GoRoute(
+      path: '/driver-ratings',
+      builder: (_, _s) => const DriverRatingsScreen(),
     ),
   ],
 );

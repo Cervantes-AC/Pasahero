@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../theme/app_colors.dart';
-import '../widgets/ph_widgets.dart';
-import '../widgets/toast.dart';
+import '../../theme/app_colors.dart';
+import '../../widgets/ph_widgets.dart';
+import '../../widgets/toast.dart';
 
 class _Ride {
   final String id,

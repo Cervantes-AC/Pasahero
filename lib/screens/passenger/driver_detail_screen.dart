@@ -1,10 +1,9 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../theme/app_colors.dart';
-import '../utils/responsive.dart';
-import '../data/mock_drivers.dart';
-import '../widgets/toast.dart';
+import '../../theme/app_colors.dart';
+import '../../data/mock_drivers.dart';
+import '../../widgets/toast.dart';
 
 class DriverDetailScreen extends StatelessWidget {
   final String driverId;
@@ -12,7 +11,6 @@ class DriverDetailScreen extends StatelessWidget {
 
   String _serviceLabel(String type) {
     if (type == 'habal-habal') return 'Habal-habal (Motorcycle)';
-    if (type == 'rela') return 'Rela (Motorcycle with Sidecar)';
     if (type == 'bao-bao') return 'Bao-bao (Tricycle)';
     return type;
   }
@@ -269,7 +267,9 @@ class DriverDetailScreen extends StatelessWidget {
                                       vertical: 4,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: AppColors.primary.withValues(alpha: 0.1),
+                                      color: AppColors.primary.withValues(
+                                        alpha: 0.1,
+                                      ),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Text(
@@ -364,12 +364,86 @@ class DriverDetailScreen extends StatelessWidget {
                               label: 'Driver Since',
                               value: driver.verifiedDate,
                             ),
+                            const Divider(height: 24),
+                            _DetailRow(
+                              icon: Icons.location_on_outlined,
+                              iconBg: AppColors.primary.withValues(alpha: 0.1),
+                              iconColor: AppColors.primary,
+                              label: 'Current Location',
+                              value: 'Near Ayala Center Cebu',
+                            ),
+                            const Divider(height: 24),
+                            _DetailRow(
+                              icon: Icons.access_time_outlined,
+                              iconBg: AppColors.amber.withValues(alpha: 0.1),
+                              iconColor: AppColors.amber,
+                              label: 'Availability',
+                              value: 'Online • Available Now',
+                            ),
                           ],
                         ),
                       )
                       .animate()
                       .fadeIn(delay: 300.ms, duration: 400.ms)
                       .slideY(begin: 0.2, end: 0),
+
+                  const SizedBox(height: 20),
+
+                  // Driver stats
+                  const Text(
+                    'Driver Statistics',
+                    style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 12),
+                  _Card(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _StatCard(
+                                icon: Icons.route_rounded,
+                                label: 'Total Trips',
+                                value: '${driver.totalRides}',
+                                color: AppColors.primary,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _StatCard(
+                                icon: Icons.schedule_rounded,
+                                label: 'Response Time',
+                                value: '< 2 min',
+                                color: AppColors.success,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _StatCard(
+                                icon: Icons.thumb_up_outlined,
+                                label: 'Acceptance Rate',
+                                value: '98%',
+                                color: AppColors.amber,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _StatCard(
+                                icon: Icons.cancel_outlined,
+                                label: 'Cancellation Rate',
+                                value: '< 1%',
+                                color: AppColors.success,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ).animate().fadeIn(delay: 350.ms, duration: 400.ms),
 
                   const SizedBox(height: 20),
 
@@ -656,6 +730,62 @@ class _DetailRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _StatCard extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+
+  const _StatCard({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 16, color: color),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: color,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -6,8 +6,31 @@ import '../../data/app_state.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../widgets/toast.dart';
 
-class DriverProfileScreen extends StatelessWidget {
+class DriverProfileScreen extends StatefulWidget {
   const DriverProfileScreen({super.key});
+
+  @override
+  State<DriverProfileScreen> createState() => _DriverProfileScreenState();
+}
+
+class _DriverProfileScreenState extends State<DriverProfileScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _glow;
+
+  @override
+  void initState() {
+    super.initState();
+    _glow = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _glow.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +41,7 @@ class DriverProfileScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
+            // ── Header ──────────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Row(
@@ -34,7 +58,8 @@ class DriverProfileScreen extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.5,
                     ),
                   ),
                 ],
@@ -46,118 +71,183 @@ class DriverProfileScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    // Profile card
+                    // ── Profile card ─────────────────────────────────────────
                     PhDriverCard(
                           child: Column(
                             children: [
                               Stack(
+                                alignment: Alignment.center,
                                 children: [
+                                  // Glow ring
+                                  AnimatedBuilder(
+                                    animation: _glow,
+                                    builder: (_, __) => Container(
+                                      width: 100 + 10 * _glow.value,
+                                      height: 100 + 10 * _glow.value,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        gradient: RadialGradient(
+                                          colors: [
+                                            AppColors.driverAccent.withValues(
+                                              alpha: 0.2 * _glow.value,
+                                            ),
+                                            Colors.transparent,
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  // Avatar
                                   Container(
-                                    width: 80,
-                                    height: 80,
+                                    width: 90,
+                                    height: 90,
                                     decoration: BoxDecoration(
                                       gradient: const LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
                                         colors: [
-                                          AppColors.primary,
-                                          AppColors.primaryDark,
+                                          AppColors.driverAccent,
+                                          AppColors.driverAccentDark,
                                         ],
                                       ),
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         color: AppColors.driverAccent
-                                            .withValues(alpha: 0.5),
-                                        width: 2,
+                                            .withValues(alpha: 0.6),
+                                        width: 3,
                                       ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppColors.driverAccent
+                                              .withValues(alpha: 0.4),
+                                          blurRadius: 20,
+                                          spreadRadius: 4,
+                                        ),
+                                      ],
                                     ),
                                     child: const Center(
                                       child: Text(
                                         'PS',
                                         style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 26,
+                                          color: AppColors.driverBg,
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 32,
+                                          letterSpacing: -1,
                                         ),
                                       ),
                                     ),
                                   ),
+                                  // Camera badge
                                   Positioned(
-                                    bottom: 0,
-                                    right: 0,
+                                    bottom: 4,
+                                    right: 4,
                                     child: Container(
-                                      width: 26,
-                                      height: 26,
+                                      width: 30,
+                                      height: 30,
                                       decoration: BoxDecoration(
-                                        color: AppColors.driverAccent,
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            AppColors.primary,
+                                            AppColors.primaryDark,
+                                          ],
+                                        ),
                                         shape: BoxShape.circle,
                                         border: Border.all(
                                           color: AppColors.driverBg,
                                           width: 2,
                                         ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: AppColors.primary.withValues(
+                                              alpha: 0.4,
+                                            ),
+                                            blurRadius: 8,
+                                          ),
+                                        ],
                                       ),
                                       child: const Icon(
-                                        Icons.camera_alt,
-                                        size: 12,
-                                        color: AppColors.driverBg,
+                                        Icons.camera_alt_rounded,
+                                        size: 14,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: 16),
                               const Text(
                                 'Pedro Santos',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: -0.5,
                                 ),
                               ),
-                              const SizedBox(height: 2),
-                              const Text(
-                                '+63 912 345 6789',
-                                style: TextStyle(
-                                  color: AppColors.driverTextMuted,
-                                  fontSize: 13,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 5,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.success.withValues(
-                                    alpha: 0.12,
+                              const SizedBox(height: 4),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.phone_rounded,
+                                    color: AppColors.driverTextMuted,
+                                    size: 14,
                                   ),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: AppColors.success.withValues(
-                                      alpha: 0.3,
+                                  const SizedBox(width: 6),
+                                  const Text(
+                                    '+63 912 345 6789',
+                                    style: TextStyle(
+                                      color: AppColors.driverTextMuted,
+                                      fontSize: 14,
                                     ),
                                   ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      AppColors.success,
+                                      AppColors.success.withValues(alpha: 0.8),
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(24),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.success.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                      blurRadius: 12,
+                                      spreadRadius: 2,
+                                    ),
+                                  ],
                                 ),
                                 child: const Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Icon(
                                       Icons.verified_rounded,
-                                      color: AppColors.success,
-                                      size: 13,
+                                      color: Colors.white,
+                                      size: 16,
                                     ),
-                                    SizedBox(width: 5),
+                                    SizedBox(width: 6),
                                     Text(
                                       'Verified Driver',
                                       style: TextStyle(
-                                        color: AppColors.success,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 20),
                               Row(
                                 children: [
                                   Expanded(
@@ -165,33 +255,33 @@ class DriverProfileScreen extends StatelessWidget {
                                       value: '$rating',
                                       label: 'Rating',
                                       icon: Icons.star_rounded,
-                                      iconColor: AppColors.amber,
+                                      color: AppColors.amber,
                                     ),
                                   ),
                                   Container(
                                     width: 1,
-                                    height: 36,
+                                    height: 40,
                                     color: AppColors.driverBorder,
                                   ),
                                   Expanded(
                                     child: _PStat(
                                       value: '1,250',
                                       label: 'Total Trips',
-                                      icon: Icons.two_wheeler,
-                                      iconColor: AppColors.primary,
+                                      icon: Icons.two_wheeler_rounded,
+                                      color: AppColors.primary,
                                     ),
                                   ),
                                   Container(
                                     width: 1,
-                                    height: 36,
+                                    height: 40,
                                     color: AppColors.driverBorder,
                                   ),
                                   Expanded(
                                     child: _PStat(
                                       value: 'Jan 2024',
                                       label: 'Since',
-                                      icon: Icons.calendar_today_outlined,
-                                      iconColor: AppColors.driverTextMuted,
+                                      icon: Icons.calendar_today_rounded,
+                                      color: AppColors.driverAccent,
                                     ),
                                   ),
                                 ],
@@ -200,17 +290,18 @@ class DriverProfileScreen extends StatelessWidget {
                           ),
                         )
                         .animate()
-                        .fadeIn(delay: 80.ms, duration: 350.ms)
+                        .fadeIn(delay: 80.ms, duration: 400.ms)
                         .slideY(begin: 0.1, end: 0),
 
                     const SizedBox(height: 14),
 
+                    // ── Vehicle info ─────────────────────────────────────────
                     _Section(
                       title: 'Vehicle Information',
                       child: Column(
                         children: [
                           _InfoRow(
-                            icon: Icons.two_wheeler,
+                            icon: Icons.two_wheeler_rounded,
                             label: 'Vehicle',
                             value: 'Honda TMX 155',
                           ),
@@ -232,6 +323,7 @@ class DriverProfileScreen extends StatelessWidget {
 
                     const SizedBox(height: 14),
 
+                    // ── Documents ────────────────────────────────────────────
                     _Section(
                       title: 'Documents',
                       child: Column(
@@ -259,6 +351,7 @@ class DriverProfileScreen extends StatelessWidget {
 
                     const SizedBox(height: 14),
 
+                    // ── Recent ratings ───────────────────────────────────────
                     _Section(
                       title: 'Recent Ratings',
                       child: Column(
@@ -291,7 +384,7 @@ class DriverProfileScreen extends StatelessWidget {
 
                     SizedBox(
                       width: double.infinity,
-                      height: 50,
+                      height: 52,
                       child: OutlinedButton.icon(
                         onPressed: () {
                           showToast(context, 'Logged out');
@@ -299,10 +392,10 @@ class DriverProfileScreen extends StatelessWidget {
                             if (context.mounted) context.go('/');
                           });
                         },
-                        icon: const Icon(Icons.logout, size: 18),
+                        icon: const Icon(Icons.logout_rounded, size: 18),
                         label: const Text(
                           'Log Out',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                          style: TextStyle(fontWeight: FontWeight.w700),
                         ),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.error,
@@ -328,26 +421,40 @@ class DriverProfileScreen extends StatelessWidget {
 class _PStat extends StatelessWidget {
   final String value, label;
   final IconData icon;
-  final Color iconColor;
+  final Color color;
   const _PStat({
     required this.value,
     required this.label,
     required this.icon,
-    required this.iconColor,
+    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(icon, color: iconColor, size: 16),
-        const SizedBox(height: 4),
+        Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                color.withValues(alpha: 0.2),
+                color.withValues(alpha: 0.1),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: color, size: 17),
+        ),
+        const SizedBox(height: 8),
         Text(
           value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.w800,
             fontSize: 14,
+            letterSpacing: -0.3,
           ),
         ),
         Text(
@@ -379,7 +486,7 @@ class _Section extends StatelessWidget {
               color: AppColors.driverTextMuted,
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              letterSpacing: 0.6,
+              letterSpacing: 0.8,
             ),
           ),
           const SizedBox(height: 14),
@@ -484,10 +591,15 @@ class _RatingRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 34,
-          height: 34,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.25),
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary.withValues(alpha: 0.4),
+                AppColors.primary.withValues(alpha: 0.2),
+              ],
+            ),
             shape: BoxShape.circle,
           ),
           child: Center(
@@ -496,7 +608,7 @@ class _RatingRow extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w700,
-                fontSize: 13,
+                fontSize: 14,
               ),
             ),
           ),
@@ -526,18 +638,18 @@ class _RatingRow extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 3),
               Row(
                 children: List.generate(
                   rating,
                   (_) => const Icon(
                     Icons.star_rounded,
-                    size: 11,
+                    size: 12,
                     color: AppColors.amber,
                   ),
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 3),
               Text(
                 comment,
                 style: const TextStyle(

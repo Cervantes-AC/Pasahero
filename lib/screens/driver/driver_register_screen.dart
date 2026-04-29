@@ -2,7 +2,6 @@
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
-import '../../utils/responsive.dart';
 import '../../widgets/toast.dart';
 
 class DriverRegisterScreen extends StatefulWidget {
@@ -28,12 +27,6 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       label: 'Habal-habal',
       icon: Icons.two_wheeler,
       desc: 'Motorcycle',
-    ),
-    (
-      value: 'motorela',
-      label: 'Motorela',
-      icon: Icons.two_wheeler,
-      desc: 'Motorcycle w/ Sidecar',
     ),
     (
       value: 'bao-bao',
@@ -401,6 +394,82 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
           Icons.confirmation_number_outlined,
         ),
         const SizedBox(height: 16),
+
+        // Vehicle Photos Section
+        const Text(
+          'Vehicle Photos',
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _PhotoUploadBox(
+                      label: 'Front View',
+                      icon: Icons.camera_alt_outlined,
+                      onTap: () => showToast(
+                        context,
+                        'Photo upload feature coming soon',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _PhotoUploadBox(
+                      label: 'Side View',
+                      icon: Icons.camera_alt_outlined,
+                      onTap: () => showToast(
+                        context,
+                        'Photo upload feature coming soon',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: _PhotoUploadBox(
+                      label: 'License Plate',
+                      icon: Icons.camera_alt_outlined,
+                      onTap: () => showToast(
+                        context,
+                        'Photo upload feature coming soon',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _PhotoUploadBox(
+                      label: 'Interior',
+                      icon: Icons.camera_alt_outlined,
+                      onTap: () => showToast(
+                        context,
+                        'Photo upload feature coming soon',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
@@ -416,7 +485,7 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
               const SizedBox(width: 10),
               const Expanded(
                 child: Text(
-                  'Your documents will be verified within 24 hours before you can start accepting rides.',
+                  'Your documents and vehicle photos will be verified within 24 hours before you can start accepting rides.',
                   style: TextStyle(color: Colors.white70, fontSize: 12),
                 ),
               ),
@@ -483,6 +552,51 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
         borderSide: BorderSide(color: AppColors.driverAccent, width: 1.5),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    );
+  }
+}
+
+class _PhotoUploadBox extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _PhotoUploadBox({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 80,
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.2),
+            style: BorderStyle.solid,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.white54, size: 24),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

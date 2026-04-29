@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../theme/app_colors.dart';
-import '../widgets/toast.dart';
+import '../../theme/app_colors.dart';
+import '../../widgets/toast.dart';
 
 class RideTrackingScreen extends StatefulWidget {
   const RideTrackingScreen({super.key});

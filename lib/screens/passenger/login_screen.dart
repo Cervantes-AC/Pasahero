@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import '../theme/app_colors.dart';
-import '../utils/responsive.dart';
-import '../widgets/ph_widgets.dart';
-import '../widgets/toast.dart';
+import '../../theme/app_colors.dart';
+import '../../utils/responsive.dart';
+import '../../widgets/ph_widgets.dart';
+import '../../widgets/toast.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,24 +12,46 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen>
+    with TickerProviderStateMixin {
   final _phoneCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
   bool _showPass = false;
+  bool _isLoading = false;
+  late AnimationController _floatingController;
+
+  @override
+  void initState() {
+    super.initState();
+    _floatingController = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    )..repeat();
+  }
 
   @override
   void dispose() {
     _phoneCtrl.dispose();
     _passCtrl.dispose();
+    _floatingController.dispose();
     super.dispose();
   }
 
-  void _handleLogin() {
-    if (_phoneCtrl.text.isNotEmpty && _passCtrl.text.isNotEmpty) {
+  void _handleLogin() async {
+    if (_phoneCtrl.text.isEmpty || _passCtrl.text.isEmpty) {
+      showToast(context, 'Please fill in all fields', isError: true);
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    // Simulate login delay
+    await Future.delayed(const Duration(milliseconds: 1500));
+
+    if (mounted) {
+      setState(() => _isLoading = false);
       showToast(context, 'Welcome back!');
       context.go('/home');
-    } else {
-      showToast(context, 'Please fill in all fields', isError: true);
     }
   }
 
@@ -54,6 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
               phoneCtrl: _phoneCtrl,
               passCtrl: _passCtrl,
               showPass: _showPass,
+              isLoading: _isLoading,
               onTogglePass: () => setState(() => _showPass = !_showPass),
               onLogin: _handleLogin,
               onRegister: () => context.go('/register'),
@@ -111,39 +134,71 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const Spacer(),
-                    const Text(
-                      'Welcome\nback!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 48,
-                        fontWeight: FontWeight.w800,
-                        height: 1.1,
-                        letterSpacing: -1,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Sign in to continue your journey',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: 16,
-                      ),
+                    Stack(
+                      children: [
+                        // Floating elements
+                        AnimatedBuilder(
+                          animation: _floatingController,
+                          builder: (context, child) {
+                            return Positioned(
+                              top: 50 + (20 * _floatingController.value),
+                              right: 100,
+                              child: Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.two_wheeler,
+                                  color: Colors.white,
+                                  size: 30,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Welcome\nback!',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 48,
+                                fontWeight: FontWeight.w800,
+                                height: 1.1,
+                                letterSpacing: -1,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Sign in to continue your journey',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.7),
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                     const Spacer(),
                     _FeatureRow(
                       icon: Icons.two_wheeler,
-                      text: 'Habal-habal, Motorela & Bao-bao',
-                    ),
+                      text: 'Habal-habal & Bao-bao rides',
+                    ).animate().fadeIn(delay: 200.ms, duration: 350.ms),
                     const SizedBox(height: 12),
                     _FeatureRow(
                       icon: Icons.location_on_outlined,
                       text: 'Real-time tracking & location sharing',
-                    ),
+                    ).animate().fadeIn(delay: 300.ms, duration: 350.ms),
                     const SizedBox(height: 12),
                     _FeatureRow(
                       icon: Icons.star_outline_rounded,
                       text: 'Rate drivers and earn rewards',
-                    ),
+                    ).animate().fadeIn(delay: 400.ms, duration: 350.ms),
                     const SizedBox(height: 48),
                   ],
                 ),
@@ -184,6 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         phoneCtrl: _phoneCtrl,
                         passCtrl: _passCtrl,
                         showPass: _showPass,
+                        isLoading: _isLoading,
                         onTogglePass: () =>
                             setState(() => _showPass = !_showPass),
                         onLogin: _handleLogin,
@@ -260,6 +316,7 @@ class _FormContent extends StatelessWidget {
   final TextEditingController phoneCtrl;
   final TextEditingController passCtrl;
   final bool showPass;
+  final bool isLoading;
   final VoidCallback onTogglePass;
   final VoidCallback onLogin;
   final VoidCallback onRegister;
@@ -268,6 +325,7 @@ class _FormContent extends StatelessWidget {
     required this.phoneCtrl,
     required this.passCtrl,
     required this.showPass,
+    required this.isLoading,
     required this.onTogglePass,
     required this.onLogin,
     required this.onRegister,
@@ -315,7 +373,52 @@ class _FormContent extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        PhButton(label: 'Sign In', onTap: onLogin),
+
+        // Enhanced login button with loading state
+        SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: ElevatedButton(
+            onPressed: isLoading ? null : onLogin,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+              elevation: isLoading ? 0 : 2,
+            ),
+            child: isLoading
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white.withValues(alpha: 0.7),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Text(
+                        'Signing in...',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  )
+                : const Text(
+                    'Sign In',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  ),
+          ),
+        ),
+
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
