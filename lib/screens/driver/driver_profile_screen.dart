@@ -303,6 +303,14 @@ class _DriverProfileScreenState extends State<DriverProfileScreen>
                             label: 'Service Type',
                             value: 'Habal-habal',
                           ),
+                          SizedBox(
+                            height: Responsive.spacing(context, units: 1.5),
+                          ),
+                          _InfoRow(
+                            icon: Icons.calendar_today_rounded,
+                            label: 'Registration',
+                            value: 'Valid until 2026',
+                          ),
                         ],
                       ),
                     ).animate().fadeIn(delay: 160.ms, duration: 350.ms),
@@ -334,6 +342,47 @@ class _DriverProfileScreenState extends State<DriverProfileScreen>
                             label: 'Insurance',
                             status: 'Expiring Soon',
                             ok: false,
+                          ),
+                        ],
+                      ),
+                    ).animate().fadeIn(delay: 240.ms, duration: 350.ms),
+
+                    SizedBox(height: Responsive.spacing(context, units: 1.75)),
+
+                    // ── Earnings Summary ─────────────────────────────────────
+                    _Section(
+                      title: 'Earnings Summary',
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _EarningsStat(
+                              label: 'This Month',
+                              value: '₱5,432',
+                              icon: Icons.trending_up_rounded,
+                              color: AppColors.success,
+                            ),
+                          ),
+                          SizedBox(
+                            width: Responsive.spacing(context, units: 1.5),
+                          ),
+                          Expanded(
+                            child: _EarningsStat(
+                              label: 'This Week',
+                              value: '₱1,245',
+                              icon: Icons.calendar_today_rounded,
+                              color: AppColors.driverAccent,
+                            ),
+                          ),
+                          SizedBox(
+                            width: Responsive.spacing(context, units: 1.5),
+                          ),
+                          Expanded(
+                            child: _EarningsStat(
+                              label: 'Today',
+                              value: '₱912',
+                              icon: Icons.today_rounded,
+                              color: AppColors.secondary,
+                            ),
                           ),
                         ],
                       ),
@@ -681,6 +730,62 @@ class _RatingRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+// ── Earnings Stat Widget ─────────────────────────────────────────────────────
+
+class _EarningsStat extends StatelessWidget {
+  final String label, value;
+  final IconData icon;
+  final Color color;
+
+  const _EarningsStat({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 1.5)),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 12),
+        ),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            color: color,
+            size: Responsive.iconSize(context, base: 18),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 0.75)),
+          Text(
+            value,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.w700,
+              fontSize: Responsive.fontSize(context, 14),
+            ),
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 0.25)),
+          Text(
+            label,
+            style: TextStyle(
+              color: AppColors.driverTextMuted,
+              fontSize: Responsive.fontSize(context, 10),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

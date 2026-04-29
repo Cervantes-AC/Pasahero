@@ -218,7 +218,132 @@ class _DriverRatingsScreenState extends State<DriverRatingsScreen> {
               ),
             ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1, end: 0),
 
-            // Rating Distribution
+            // Rating Distribution Card
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: Responsive.spacing(context, units: 2.5),
+              ),
+              child: Container(
+                padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
+                decoration: BoxDecoration(
+                  color: AppColors.driverSurface,
+                  borderRadius: BorderRadius.circular(
+                    Responsive.radius(context, base: 16),
+                  ),
+                  border: Border.all(color: AppColors.driverBorder),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Rating Distribution',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: Responsive.fontSize(context, 14),
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: Responsive.spacing(context, units: 1.5)),
+                    ...List.generate(5, (i) {
+                      final stars = 5 - i;
+                      final count = distribution[stars] ?? 0;
+                      final percentage = _allRatings.isEmpty
+                          ? 0.0
+                          : (count / _allRatings.length) * 100;
+
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          bottom: Responsive.spacing(context, units: 1.25),
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: Responsive.spacing(context, units: 4),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    '$stars',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: Responsive.fontSize(
+                                        context,
+                                        12,
+                                      ),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.star_rounded,
+                                    color: AppColors.driverAccent,
+                                    size: Responsive.iconSize(
+                                      context,
+                                      base: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                height: Responsive.spacing(context, units: 1.5),
+                                decoration: BoxDecoration(
+                                  color: AppColors.driverBorder,
+                                  borderRadius: BorderRadius.circular(
+                                    Responsive.radius(context, base: 8),
+                                  ),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      width:
+                                          (percentage / 100) *
+                                          (MediaQuery.of(context).size.width -
+                                              Responsive.spacing(
+                                                context,
+                                                units: 12,
+                                              ) -
+                                              Responsive.spacing(
+                                                context,
+                                                units: 4,
+                                              )),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.driverAccent,
+                                        borderRadius: BorderRadius.circular(
+                                          Responsive.radius(context, base: 8),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: Responsive.spacing(context, units: 1),
+                            ),
+                            SizedBox(
+                              width: Responsive.spacing(context, units: 3),
+                              child: Text(
+                                '$count',
+                                style: TextStyle(
+                                  color: AppColors.driverTextMuted,
+                                  fontSize: Responsive.fontSize(context, 12),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ).animate().fadeIn(delay: 100.ms, duration: 400.ms),
+
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+
+            // Filter Chips & Stats
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: Responsive.spacing(context, units: 2.5),
@@ -227,135 +352,42 @@ class _DriverRatingsScreenState extends State<DriverRatingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Rating Distribution',
+                    'Filter by Rating',
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: Responsive.fontSize(context, 14),
+                      color: AppColors.driverTextMuted,
+                      fontSize: Responsive.fontSize(context, 11),
                       fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
                     ),
                   ),
-                  SizedBox(height: Responsive.spacing(context, units: 1.5)),
-                  ...List.generate(5, (i) {
-                    final stars = 5 - i;
-                    final count = distribution[stars] ?? 0;
-                    final percentage = _allRatings.isEmpty
-                        ? 0.0
-                        : (count / _allRatings.length) * 100;
-
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: Responsive.spacing(context, units: 1.25),
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: Responsive.spacing(context, units: 4),
-                            child: Row(
-                              children: [
-                                Text(
-                                  '$stars',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: Responsive.fontSize(context, 12),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.star_rounded,
-                                  color: AppColors.driverAccent,
-                                  size: Responsive.iconSize(context, base: 14),
-                                ),
-                              ],
+                  SizedBox(height: Responsive.spacing(context, units: 1)),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _FilterChip(
+                          label: 'All (${_allRatings.length})',
+                          selected: _filterRating == 'all',
+                          onTap: () => setState(() => _filterRating = 'all'),
+                        ),
+                        SizedBox(width: Responsive.spacing(context, units: 1)),
+                        ...[5, 4, 3, 2, 1].map((r) {
+                          final count = distribution[r] ?? 0;
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              right: Responsive.spacing(context, units: 1),
                             ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              height: Responsive.spacing(context, units: 1.5),
-                              decoration: BoxDecoration(
-                                color: AppColors.driverBorder,
-                                borderRadius: BorderRadius.circular(
-                                  Responsive.radius(context, base: 8),
-                                ),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    width:
-                                        (percentage / 100) *
-                                        (MediaQuery.of(context).size.width -
-                                            Responsive.spacing(
-                                              context,
-                                              units: 12,
-                                            ) -
-                                            Responsive.spacing(
-                                              context,
-                                              units: 4,
-                                            )),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.driverAccent,
-                                      borderRadius: BorderRadius.circular(
-                                        Responsive.radius(context, base: 8),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            child: _FilterChip(
+                              label: '$r★ ($count)',
+                              selected: _filterRating == '$r',
+                              onTap: () => setState(() => _filterRating = '$r'),
                             ),
-                          ),
-                          SizedBox(
-                            width: Responsive.spacing(context, units: 1),
-                          ),
-                          SizedBox(
-                            width: Responsive.spacing(context, units: 3),
-                            child: Text(
-                              '$count',
-                              style: TextStyle(
-                                color: AppColors.driverTextMuted,
-                                fontSize: Responsive.fontSize(context, 12),
-                                fontWeight: FontWeight.w600,
-                              ),
-                              textAlign: TextAlign.right,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                ],
-              ),
-            ).animate().fadeIn(delay: 100.ms, duration: 400.ms),
-
-            SizedBox(height: Responsive.spacing(context, units: 2)),
-
-            // Filter Chips
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: Responsive.spacing(context, units: 2.5),
-              ),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    _FilterChip(
-                      label: 'All',
-                      selected: _filterRating == 'all',
-                      onTap: () => setState(() => _filterRating = 'all'),
+                          );
+                        }),
+                      ],
                     ),
-                    SizedBox(width: Responsive.spacing(context, units: 1)),
-                    ...[5, 4, 3, 2, 1].map((r) {
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          right: Responsive.spacing(context, units: 1),
-                        ),
-                        child: _FilterChip(
-                          label: '$r★',
-                          selected: _filterRating == '$r',
-                          onTap: () => setState(() => _filterRating = '$r'),
-                        ),
-                      );
-                    }),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ).animate().fadeIn(delay: 150.ms, duration: 400.ms),
 

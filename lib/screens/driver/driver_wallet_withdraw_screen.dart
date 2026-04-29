@@ -605,8 +605,98 @@ class _DriverWalletWithdrawScreenState
   }
 
   Widget _buildActionButtons() {
+    final amount = double.tryParse(_amountController.text) ?? 0;
+    final fee = _calculateFee(amount);
+    final netAmount = amount - fee;
+
     return Column(
       children: [
+        // Fee breakdown
+        if (amount > 0)
+          Container(
+            padding: EdgeInsets.all(Responsive.spacing(context, units: 1.75)),
+            decoration: BoxDecoration(
+              color: AppColors.driverAccent.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(
+                Responsive.radius(context, base: 12),
+              ),
+              border: Border.all(
+                color: AppColors.driverAccent.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Withdrawal Amount',
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 12),
+                        color: AppColors.driverTextMuted,
+                      ),
+                    ),
+                    Text(
+                      '₱${amount.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 12),
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: Responsive.spacing(context, units: 0.75)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Processing Fee',
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 12),
+                        color: AppColors.driverTextMuted,
+                      ),
+                    ),
+                    Text(
+                      '-₱${fee.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 12),
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.error,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: Responsive.spacing(context, units: 0.75)),
+                Divider(
+                  color: AppColors.driverBorder,
+                  height: Responsive.spacing(context, units: 1.5),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'You\'ll Receive',
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 13),
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      '₱${netAmount.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 13),
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.driverAccent,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        SizedBox(height: Responsive.spacing(context, units: 2)),
         SizedBox(
           width: double.infinity,
           height: Responsive.buttonHeight(context),
@@ -668,6 +758,16 @@ class _DriverWalletWithdrawScreenState
         ),
       ],
     );
+  }
+
+  double _calculateFee(double amount) {
+    if (_selectedMethod == WithdrawMethod.gcash) {
+      return amount * 0.02; // 2% fee for GCash
+    } else if (_selectedMethod == WithdrawMethod.maya) {
+      return amount * 0.025; // 2.5% fee for Maya
+    } else {
+      return 0; // No fee for manual
+    }
   }
 
   Widget _withdrawSuccessSheet({

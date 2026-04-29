@@ -188,6 +188,8 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
     }
 
     final balance = _wallet?.balance ?? 0.0;
+    final monthlyEarnings = _totalEarnings;
+    final balancePercentage = (balance / (balance + monthlyEarnings)) * 100;
 
     return Container(
       padding: EdgeInsets.all(Responsive.spacing(context, units: 2.5)),
@@ -203,6 +205,13 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
         border: Border.all(
           color: AppColors.driverAccent.withValues(alpha: 0.3),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.driverAccent.withValues(alpha: 0.1),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,6 +255,37 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
                   ],
                 ),
               ),
+              const Spacer(),
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: Responsive.spacing(context, units: 1),
+                  vertical: Responsive.spacing(context, units: 0.5),
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.success.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(
+                    Responsive.radius(context, base: 6),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.check_circle,
+                      size: Responsive.iconSize(context, base: 12),
+                      color: AppColors.success,
+                    ),
+                    SizedBox(width: Responsive.spacing(context, units: 0.5)),
+                    Text(
+                      'Active',
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 9),
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.success,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           SizedBox(height: Responsive.spacing(context, units: 2)),
@@ -266,14 +306,103 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
               letterSpacing: -1,
             ),
           ),
-          SizedBox(height: Responsive.spacing(context, units: 0.5)),
-          Text(
-            'Today\'s earnings: ₱${_todayEarnings.toStringAsFixed(2)}',
-            style: TextStyle(
-              fontSize: Responsive.fontSize(context, 13),
-              color: AppColors.driverAccent,
-              fontWeight: FontWeight.w500,
-            ),
+          SizedBox(height: Responsive.spacing(context, units: 1.5)),
+          // Balance progress bar
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Monthly Progress',
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 11),
+                      color: AppColors.driverTextMuted,
+                    ),
+                  ),
+                  Text(
+                    '${balancePercentage.toStringAsFixed(0)}%',
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 11),
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.driverAccent,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: Responsive.spacing(context, units: 0.75)),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 4),
+                ),
+                child: LinearProgressIndicator(
+                  value: balancePercentage / 100,
+                  minHeight: Responsive.spacing(context, units: 0.75),
+                  backgroundColor: AppColors.driverBorder,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppColors.driverAccent,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: Responsive.spacing(context, units: 1.5)),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Today\'s Earnings',
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 11),
+                        color: AppColors.driverTextMuted,
+                      ),
+                    ),
+                    SizedBox(height: Responsive.spacing(context, units: 0.25)),
+                    Text(
+                      '₱${_todayEarnings.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 16),
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.driverAccent,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 1,
+                height: Responsive.spacing(context, units: 3),
+                color: AppColors.driverBorder,
+              ),
+              SizedBox(width: Responsive.spacing(context, units: 1.5)),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total Earned',
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 11),
+                        color: AppColors.driverTextMuted,
+                      ),
+                    ),
+                    SizedBox(height: Responsive.spacing(context, units: 0.25)),
+                    Text(
+                      '₱${_totalEarnings.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontSize: Responsive.fontSize(context, 16),
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.success,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -318,7 +447,7 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Actions',
+          'Quick Actions',
           style: TextStyle(
             fontSize: Responsive.fontSize(context, 15),
             fontWeight: FontWeight.w700,
@@ -339,10 +468,10 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
             SizedBox(width: Responsive.spacing(context, units: 1.5)),
             Expanded(
               child: _actionBtn(
-                icon: Icons.history_outlined,
-                label: 'History',
-                color: AppColors.primaryLight,
-                onTap: () => context.go('/driver-wallet-history'),
+                icon: Icons.add_circle_outline,
+                label: 'Cash In',
+                color: AppColors.success,
+                onTap: () => context.go('/driver-wallet-cash-in'),
               ),
             ),
             SizedBox(width: Responsive.spacing(context, units: 1.5)),
@@ -350,7 +479,7 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
               child: _actionBtn(
                 icon: Icons.bar_chart_outlined,
                 label: 'Summary',
-                color: AppColors.success,
+                color: AppColors.primaryLight,
                 onTap: () => _showEarningsSummary(),
               ),
             ),
