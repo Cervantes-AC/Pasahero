@@ -155,7 +155,10 @@ class _WideLayout extends StatelessWidget {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(logoSz * 0.25),
-                          child: Image.asset('logo.jpg', fit: BoxFit.cover),
+                          child: Image.asset(
+                            'assets/logo.png',
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                       SizedBox(width: sp * 1.5),
@@ -312,7 +315,7 @@ class _LogoSection extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(size * 0.25),
-            child: Image.asset('logo.jpg', fit: BoxFit.cover),
+            child: Image.asset('assets/logo.png', fit: BoxFit.cover),
           ),
         ),
         const SizedBox(height: 16),

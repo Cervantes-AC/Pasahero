@@ -19,8 +19,6 @@ class _SearchRideScreenState extends State<SearchRideScreen>
   final _destCtrl = TextEditingController();
   late AnimationController _mapController;
   late AnimationController _pulseController;
-  bool _showSuggestions = false;
-
   @override
   void initState() {
     super.initState();
@@ -562,8 +560,7 @@ class _SavedChip extends StatelessWidget {
 
 class _MapBtn extends StatelessWidget {
   final String label;
-  final bool isLocation;
-  const _MapBtn({required this.label, this.isLocation = false});
+  const _MapBtn({required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -580,18 +577,15 @@ class _MapBtn extends StatelessWidget {
             offset: const Offset(0, 2),
           ),
         ],
-        border: Border.all(
-          color: isLocation ? AppColors.primary : AppColors.border,
-          width: isLocation ? 1.5 : 1,
-        ),
+        border: Border.all(color: AppColors.border),
       ),
       child: Center(
         child: Text(
           label,
-          style: TextStyle(
-            fontSize: isLocation ? 16 : 18,
+          style: const TextStyle(
+            fontSize: 18,
             fontWeight: FontWeight.w500,
-            color: isLocation ? AppColors.primary : AppColors.textSecondary,
+            color: AppColors.textSecondary,
           ),
         ),
       ),

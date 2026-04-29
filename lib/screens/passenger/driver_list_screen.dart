@@ -41,13 +41,6 @@ class _DriverListScreenState extends State<DriverListScreen>
     });
   }
 
-  String _serviceLabel(String type) {
-    if (type == 'habal-habal') return 'Habal-habal (Motorcycle)';
-    if (type == 'rela') return 'Rela (Motorcycle with Sidecar)';
-    if (type == 'bao-bao') return 'Bao-bao (Tricycle)';
-    return type;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
