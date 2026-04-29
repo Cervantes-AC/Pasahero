@@ -19,6 +19,13 @@ class _SearchRideScreenState extends State<SearchRideScreen>
   final _destCtrl = TextEditingController();
   late AnimationController _mapController;
   late AnimationController _pulseController;
+
+  // Map pan and zoom state
+  Offset _mapOffset = Offset.zero;
+  double _mapZoom = 1.0;
+  final double _minZoom = 0.5;
+  final double _maxZoom = 3.0;
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +46,25 @@ class _SearchRideScreenState extends State<SearchRideScreen>
     _mapController.dispose();
     _pulseController.dispose();
     super.dispose();
+  }
+
+  void _zoomIn() {
+    setState(() {
+      _mapZoom = (_mapZoom + 0.2).clamp(_minZoom, _maxZoom);
+    });
+  }
+
+  void _zoomOut() {
+    setState(() {
+      _mapZoom = (_mapZoom - 0.2).clamp(_minZoom, _maxZoom);
+    });
+  }
+
+  void _resetMap() {
+    setState(() {
+      _mapOffset = Offset.zero;
+      _mapZoom = 1.0;
+    });
   }
 
   void _search() {
@@ -187,67 +213,130 @@ class _SearchRideScreenState extends State<SearchRideScreen>
             ),
           ),
 
-          // Map placeholder
+          // Dynamic map with pan and zoom
           SizedBox(
             height: Responsive.isWide(context) ? 320 : 240,
-            child: Stack(
-              children: [
-                Container(
-                  color: const Color(0xFFE8F0F8),
-                  child: CustomPaint(
-                    painter: _MapGridPainter(),
-                    size: Size.infinite,
+            child: GestureDetector(
+              onPanUpdate: (details) {
+                setState(() {
+                  _mapOffset += details.delta;
+                });
+              },
+              child: Stack(
+                children: [
+                  // Map background with transform
+                  Transform.translate(
+                    offset: _mapOffset,
+                    child: Transform.scale(
+                      scale: _mapZoom,
+                      alignment: Alignment.center,
+                      child: Container(
+                        color: const Color(0xFFE8F0F8),
+                        child: CustomPaint(
+                          painter: _MapGridPainter(),
+                          size: Size.infinite,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-                Center(
-                  child:
-                      Container(
-                            width: Responsive.iconSize(context, base: 48),
-                            height: Responsive.iconSize(context, base: 48),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.primary.withValues(
-                                    alpha: 0.3,
+                  // User location marker
+                  Center(
+                    child: Transform.translate(
+                      offset: _mapOffset,
+                      child: Transform.scale(
+                        scale: _mapZoom,
+                        alignment: Alignment.center,
+                        child:
+                            Container(
+                                  width: Responsive.iconSize(context, base: 48),
+                                  height: Responsive.iconSize(
+                                    context,
+                                    base: 48,
                                   ),
-                                  blurRadius: 12,
-                                  spreadRadius: 2,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary,
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.3,
+                                        ),
+                                        blurRadius: 12,
+                                        spreadRadius: 2,
+                                      ),
+                                    ],
+                                  ),
+                                  child: Icon(
+                                    Icons.navigation,
+                                    color: Colors.white,
+                                    size: Responsive.iconSize(
+                                      context,
+                                      base: 24,
+                                    ),
+                                  ),
+                                )
+                                .animate(onPlay: (c) => c.repeat())
+                                .scale(
+                                  begin: const Offset(1, 1),
+                                  end: const Offset(1.1, 1.1),
+                                  duration: 1000.ms,
+                                )
+                                .then()
+                                .scale(
+                                  begin: const Offset(1.1, 1.1),
+                                  end: const Offset(1, 1),
+                                  duration: 1000.ms,
                                 ),
-                              ],
-                            ),
-                            child: Icon(
-                              Icons.navigation,
-                              color: Colors.white,
-                              size: Responsive.iconSize(context, base: 24),
-                            ),
-                          )
-                          .animate(onPlay: (c) => c.repeat())
-                          .scale(
-                            begin: const Offset(1, 1),
-                            end: const Offset(1.1, 1.1),
-                            duration: 1000.ms,
-                          )
-                          .then()
-                          .scale(
-                            begin: const Offset(1.1, 1.1),
-                            end: const Offset(1, 1),
-                            duration: 1000.ms,
-                          ),
-                ),
-                Positioned(
-                  right: Responsive.spacing(context, units: 2),
-                  top: Responsive.spacing(context, units: 2),
-                  child: Column(
-                    children: [
-                      _MapBtn(label: '+'),
-                      SizedBox(height: Responsive.spacing(context, units: 1)),
-                      _MapBtn(label: 'âˆ’'),
-                    ],
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                  // Zoom and reset buttons
+                  Positioned(
+                    right: Responsive.spacing(context, units: 2),
+                    top: Responsive.spacing(context, units: 2),
+                    child: Column(
+                      children: [
+                        _MapBtn(label: '+', onTap: _zoomIn),
+                        SizedBox(height: Responsive.spacing(context, units: 1)),
+                        _MapBtn(label: '−', onTap: _zoomOut),
+                        SizedBox(height: Responsive.spacing(context, units: 1)),
+                        _MapBtn(
+                          label: '⊙',
+                          onTap: _resetMap,
+                          tooltip: 'Reset map',
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Pan hint overlay (shown when map is at default zoom)
+                  if (_mapZoom == 1.0 && _mapOffset == Offset.zero)
+                    Positioned(
+                      bottom: Responsive.spacing(context, units: 2),
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Responsive.spacing(context, units: 1.5),
+                            vertical: Responsive.spacing(context, units: 0.75),
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.6),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            'Drag to pan • Zoom to explore',
+                            style: TextStyle(
+                              fontSize: Responsive.fontSize(context, 11),
+                              color: Colors.white,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
 
@@ -648,34 +737,43 @@ class _SavedChip extends StatelessWidget {
 
 class _MapBtn extends StatelessWidget {
   final String label;
-  const _MapBtn({required this.label});
+  final VoidCallback? onTap;
+  final String? tooltip;
+
+  const _MapBtn({required this.label, this.onTap, this.tooltip});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: Responsive.iconSize(context, base: 40),
-      height: Responsive.iconSize(context, base: 40),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(
-          Responsive.radius(context, base: 10),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return Tooltip(
+      message: tooltip ?? '',
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: Responsive.iconSize(context, base: 40),
+          height: Responsive.iconSize(context, base: 40),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(
+              Responsive.radius(context, base: 10),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+            border: Border.all(color: AppColors.border),
           ),
-        ],
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Center(
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: Responsive.fontSize(context, 18),
-            fontWeight: FontWeight.w500,
-            color: AppColors.textSecondary,
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 18),
+                fontWeight: FontWeight.w500,
+                color: AppColors.textSecondary,
+              ),
+            ),
           ),
         ),
       ),
