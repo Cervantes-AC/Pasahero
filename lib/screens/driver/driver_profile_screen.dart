@@ -41,257 +41,158 @@ class _DriverProfileScreenState extends State<DriverProfileScreen>
       body: SafeArea(
         child: Column(
           children: [
-            // ── Header ──────────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-              child: Row(
-                children: [
-                  PhIconButton(
-                    icon: Icons.arrow_back,
-                    onTap: () => context.go('/driver-home'),
-                    color: Colors.white.withValues(alpha: 0.1),
-                    iconColor: Colors.white,
-                  ),
-                  const SizedBox(width: 12),
-                  const Text(
-                    'Driver Profile',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                ],
-              ),
-            ).animate().fadeIn(duration: 350.ms),
-
+            PhAppBar(
+              title: 'Driver Profile',
+              showBack: true,
+              onBack: () => context.go('/driver-home'),
+            ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 child: Column(
                   children: [
                     // ── Profile card ─────────────────────────────────────────
-                    PhDriverCard(
-                          child: Column(
+                    PhCard(
+                      padding: const EdgeInsets.all(32),
+                      color: AppColors.driverSurface,
+                      bordered: true,
+                      borderRadius: 28,
+                      child: Column(
+                        children: [
+                          Stack(
+                            alignment: Alignment.center,
                             children: [
-                              Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  // Glow ring
-                                  AnimatedBuilder(
-                                    animation: _glow,
-                                    builder: (_, __) => Container(
-                                      width: 100 + 10 * _glow.value,
-                                      height: 100 + 10 * _glow.value,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        gradient: RadialGradient(
-                                          colors: [
-                                            AppColors.driverAccent.withValues(
-                                              alpha: 0.2 * _glow.value,
-                                            ),
-                                            Colors.transparent,
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  // Avatar
-                                  Container(
-                                    width: 90,
-                                    height: 90,
-                                    decoration: BoxDecoration(
-                                      gradient: const LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          AppColors.driverAccent,
-                                          AppColors.driverAccentDark,
-                                        ],
-                                      ),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: AppColors.driverAccent
-                                            .withValues(alpha: 0.6),
-                                        width: 3,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: AppColors.driverAccent
-                                              .withValues(alpha: 0.4),
-                                          blurRadius: 20,
-                                          spreadRadius: 4,
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Center(
-                                      child: Text(
-                                        'PS',
-                                        style: TextStyle(
-                                          color: AppColors.driverBg,
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 32,
-                                          letterSpacing: -1,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  // Camera badge
-                                  Positioned(
-                                    bottom: 4,
-                                    right: 4,
-                                    child: Container(
-                                      width: 30,
-                                      height: 30,
-                                      decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            AppColors.primary,
-                                            AppColors.primaryDark,
-                                          ],
-                                        ),
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: AppColors.driverBg,
-                                          width: 2,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: AppColors.primary.withValues(
-                                              alpha: 0.4,
-                                            ),
-                                            blurRadius: 8,
-                                          ),
-                                        ],
-                                      ),
-                                      child: const Icon(
-                                        Icons.camera_alt_rounded,
-                                        size: 14,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              const Text(
-                                'Pedro Santos',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: -0.5,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.phone_rounded,
-                                    color: AppColors.driverTextMuted,
-                                    size: 14,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  const Text(
-                                    '+63 912 345 6789',
-                                    style: TextStyle(
-                                      color: AppColors.driverTextMuted,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
+                              // Avatar
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
+                                width: 100,
+                                height: 100,
                                 decoration: BoxDecoration(
-                                  gradient: LinearGradient(
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
                                     colors: [
-                                      AppColors.success,
-                                      AppColors.success.withValues(alpha: 0.8),
+                                      AppColors.driverAccent,
+                                      Color(0xFFFFB300),
                                     ],
                                   ),
-                                  borderRadius: BorderRadius.circular(24),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: AppColors.driverAccent.withValues(alpha: 0.3),
+                                    width: 3,
+                                  ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: AppColors.success.withValues(
-                                        alpha: 0.3,
-                                      ),
-                                      blurRadius: 12,
-                                      spreadRadius: 2,
+                                      color: AppColors.driverAccent.withValues(alpha: 0.2),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 8),
                                     ),
                                   ],
                                 ),
-                                child: const Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.verified_rounded,
-                                      color: Colors.white,
-                                      size: 16,
+                                child: const Center(
+                                  child: Text(
+                                    'PS',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 32,
+                                      letterSpacing: -1,
                                     ),
-                                    SizedBox(width: 6),
-                                    Text(
-                                      'Verified Driver',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                              const SizedBox(height: 20),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _PStat(
-                                      value: '$rating',
-                                      label: 'Rating',
-                                      icon: Icons.star_rounded,
-                                      color: AppColors.amber,
-                                    ),
+                              // Camera badge
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Container(
+                                  width: 32,
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: AppColors.driverSurface, width: 2),
                                   ),
-                                  Container(
-                                    width: 1,
-                                    height: 40,
-                                    color: AppColors.driverBorder,
+                                  child: const Icon(
+                                    Icons.camera_alt_rounded,
+                                    size: 16,
+                                    color: Colors.black,
                                   ),
-                                  Expanded(
-                                    child: _PStat(
-                                      value: '1,250',
-                                      label: 'Total Trips',
-                                      icon: Icons.two_wheeler_rounded,
-                                      color: AppColors.primary,
-                                    ),
-                                  ),
-                                  Container(
-                                    width: 1,
-                                    height: 40,
-                                    color: AppColors.driverBorder,
-                                  ),
-                                  Expanded(
-                                    child: _PStat(
-                                      value: 'Jan 2024',
-                                      label: 'Since',
-                                      icon: Icons.calendar_today_rounded,
-                                      color: AppColors.driverAccent,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             ],
                           ),
-                        )
-                        .animate()
-                        .fadeIn(delay: 80.ms, duration: 400.ms)
-                        .slideY(begin: 0.1, end: 0),
+                          const SizedBox(height: 20),
+                          const Text(
+                            'Pedro Santos',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '+63 912 345 6789',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.5),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: AppColors.success.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppColors.success.withValues(alpha: 0.2)),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.verified_rounded, color: AppColors.success, size: 16),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Verified Driver',
+                                  style: TextStyle(
+                                    color: AppColors.success,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _PStat(
+                                value: '4.9',
+                                label: 'Rating',
+                                icon: Icons.star_rounded,
+                                color: AppColors.driverAccent,
+                              ),
+                              Container(width: 1, height: 40, color: AppColors.driverBorder),
+                              _PStat(
+                                value: '1.2k',
+                                label: 'Trips',
+                                icon: Icons.two_wheeler_rounded,
+                                color: AppColors.secondary,
+                              ),
+                              Container(width: 1, height: 40, color: AppColors.driverBorder),
+                              _PStat(
+                                value: '2y',
+                                label: 'Exp',
+                                icon: Icons.calendar_today_rounded,
+                                color: AppColors.tertiary,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
 
                     const SizedBox(height: 14),
 

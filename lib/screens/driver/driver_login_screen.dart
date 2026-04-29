@@ -106,42 +106,51 @@ class _DriverLoginScreenState extends State<DriverLoginScreen>
   }
 
   Widget _mobileLayout(BuildContext context) {
+    final theme = Theme.of(context);
     return SafeArea(
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(Responsive.hPad(context)),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             PhIconButton(
-              icon: Icons.arrow_back,
+              icon: Icons.arrow_back_ios_new_rounded,
               onTap: () => context.go('/'),
               color: Colors.white.withValues(alpha: 0.1),
               iconColor: Colors.white,
+              size: 48,
+              bordered: true,
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: 40),
             _BrandRow(),
-            const SizedBox(height: 32),
-            const Text(
-              'Sign in to\nyour account',
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w800,
+            const SizedBox(height: 40),
+            Text(
+              'Driver Portal',
+              style: theme.textTheme.displayMedium?.copyWith(
                 color: Colors.white,
-                height: 1.2,
-                letterSpacing: -0.5,
               ),
-            ).animate().fadeIn(delay: 80.ms, duration: 400.ms),
-            const SizedBox(height: 28),
+            ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.2, end: 0),
+            const SizedBox(height: 8),
+            Text(
+              'Sign in to manage your rides and earnings.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: Colors.white70,
+              ),
+            ).animate().fadeIn(delay: 100.ms, duration: 400.ms),
+            const SizedBox(height: 48),
             _FormContent(
-              phoneCtrl: _phoneCtrl,
-              passCtrl: _passCtrl,
-              showPass: _showPass,
-              onTogglePass: () => setState(() => _showPass = !_showPass),
-              onLogin: _login,
-              onRegister: () => context.go('/driver-register'),
-            ),
+                  phoneCtrl: _phoneCtrl,
+                  passCtrl: _passCtrl,
+                  showPass: _showPass,
+                  onTogglePass: () => setState(() => _showPass = !_showPass),
+                  onLogin: _login,
+                  onRegister: () => context.go('/driver-register'),
+                )
+                .animate()
+                .fadeIn(delay: 200.ms, duration: 400.ms)
+                .slideY(begin: 0.1, end: 0),
           ],
-        ).animate().fadeIn(duration: 350.ms),
+        ),
       ),
     );
   }
@@ -263,32 +272,36 @@ class _BrandRow extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset('assets/logo.png', fit: BoxFit.cover),
+          width: 48,
+          height: 48,
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
           ),
+          child: Image.asset('assets/logo.png', fit: BoxFit.contain),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Driver Portal',
+              'PASAHERO',
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
                 color: Colors.white,
+                letterSpacing: 1,
               ),
             ),
             Text(
-              'Pasahero',
+              'FOR DRIVERS',
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 12,
                 color: AppColors.driverAccent,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
               ),
             ),
           ],
@@ -299,9 +312,12 @@ class _BrandRow extends StatelessWidget {
 }
 
 class _FormContent extends StatelessWidget {
-  final TextEditingController phoneCtrl, passCtrl;
+  final TextEditingController phoneCtrl;
+  final TextEditingController passCtrl;
   final bool showPass;
-  final VoidCallback onTogglePass, onLogin, onRegister;
+  final VoidCallback onTogglePass;
+  final VoidCallback onLogin;
+  final VoidCallback onRegister;
 
   const _FormContent({
     required this.phoneCtrl,
@@ -315,70 +331,67 @@ class _FormContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         PhTextField(
           label: 'Phone Number',
           hint: '09XX XXX XXXX',
           controller: phoneCtrl,
+          prefixIcon: Icons.phone_android_rounded,
           keyboardType: TextInputType.phone,
-          prefixIcon: Icons.phone_outlined,
-          dark: true,
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 24),
         PhTextField(
           label: 'Password',
           hint: 'Enter your password',
           controller: passCtrl,
           obscure: !showPass,
-          prefixIcon: Icons.lock_outline,
-          dark: true,
+          prefixIcon: Icons.lock_outline_rounded,
           suffix: IconButton(
             icon: Icon(
               showPass
                   ? Icons.visibility_off_outlined
                   : Icons.visibility_outlined,
-              color: AppColors.driverTextMuted,
-              size: 18,
+              color: Colors.white.withValues(alpha: 0.5),
             ),
             onPressed: onTogglePass,
           ),
         ),
-        const SizedBox(height: 28),
-        SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: ElevatedButton(
-            onPressed: onLogin,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.driverAccent,
-              foregroundColor: AppColors.driverBg,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-              ),
-            ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            onPressed: () {},
             child: const Text(
-              'Sign In',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+              'Forgot Password?',
+              style: TextStyle(
+                color: AppColors.driverAccent,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 32),
+        PhButton(
+          label: 'Sign In',
+          onTap: onLogin,
+          backgroundColor: AppColors.driverAccent,
+          foregroundColor: Colors.black,
+        ),
+        const SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "Don't have an account? ",
-              style: TextStyle(color: AppColors.driverTextMuted, fontSize: 14),
+              "Want to drive with us? ",
+              style: TextStyle(color: Colors.white70),
             ),
             GestureDetector(
               onTap: onRegister,
-              child: Text(
-                'Register',
+              child: const Text(
+                'Register Now',
                 style: TextStyle(
                   color: AppColors.driverAccent,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ),

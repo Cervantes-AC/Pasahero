@@ -340,6 +340,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final state = AppState.instance;
     final name = state.passengerName;
     final phone = state.passengerPhone;
@@ -347,312 +348,217 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final hp = Responsive.hPad(context);
 
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Column(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [AppColors.primary, AppColors.primaryDark],
-              ),
-            ),
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(hp, 16, hp, 20),
-                child: const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Profile',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          PhAppBar(
+            title: 'Profile',
+            showBack: true,
+            onBack: () => context.pop(),
           ),
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(hp),
-              child: ResponsiveContainer(
-                child: Column(
-                  children: [
-                    // ── Profile card ─────────────────────────────────────────
-                    PhCard(
-                          child: Column(
-                            children: [
-                              Stack(
-                                children: [
-                                  PhAvatar(
-                                    initials: initials,
-                                    size: 80,
-                                    bgColor: AppColors.primarySurface,
-                                    textColor: AppColors.primary,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              child: Column(
+                children: [
+                  // ── Profile card ─────────────────────────────────────────
+                  PhCard(
+                        padding: const EdgeInsets.all(32),
+                        child: Column(
+                          children: [
+                            Stack(
+                              children: [
+                                Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: theme.colorScheme.primary.withValues(
+                                      alpha: 0.1,
+                                    ),
+                                    shape: BoxShape.circle,
                                   ),
-                                  Positioned(
-                                    bottom: 0,
-                                    right: 0,
-                                    child: GestureDetector(
-                                      onTap: () => showToast(
-                                        context,
-                                        'Photo upload coming soon',
+                                  child: Center(
+                                    child: Text(
+                                      initials,
+                                      style: TextStyle(
+                                        color: theme.colorScheme.primary,
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.w900,
                                       ),
-                                      child: Container(
-                                        width: 26,
-                                        height: 26,
-                                        decoration: const BoxDecoration(
-                                          color: AppColors.primary,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(
-                                          Icons.camera_alt,
-                                          size: 13,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 0,
+                                  right: 0,
+                                  child: GestureDetector(
+                                    onTap: () => showToast(
+                                      context,
+                                      'Photo upload coming soon',
+                                    ),
+                                    child: Container(
+                                      width: 32,
+                                      height: 32,
+                                      decoration: BoxDecoration(
+                                        color: theme.colorScheme.primary,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
                                           color: Colors.white,
+                                          width: 2,
                                         ),
+                                      ),
+                                      child: const Icon(
+                                        Icons.camera_alt,
+                                        size: 16,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                name,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.textPrimary,
                                 ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                phone,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: AppColors.textTertiary,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              const PhBadge(
-                                label: 'Member since January 2024',
-                                color: AppColors.primary,
-                              ),
-                              const SizedBox(height: 14),
-                              PhButton(
-                                label: 'Edit Profile',
-                                outlined: true,
-                                height: 40,
-                                onTap: () async {
-                                  await context.push('/edit-profile');
-                                  setState(() {});
-                                },
-                              ),
-                            ],
-                          ),
-                        )
-                        .animate()
-                        .fadeIn(duration: 350.ms)
-                        .slideY(begin: 0.1, end: 0),
-
-                    const SizedBox(height: 20),
-
-                    // ── Payment methods ───────────────────────────────────────
-                    PhSectionHeader(
-                      title: 'Payment Methods',
-                      action: '+ Add',
-                      onAction: _showAddPaymentSheet,
-                    ),
-                    const SizedBox(height: 10),
-                    ...state.paymentMethods.asMap().entries.map((e) {
-                      final m = e.value;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child:
-                            PhCard(
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: _payColor(
-                                        m.type,
-                                      ).withValues(alpha: 0.1),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Icon(
-                                      _payIcon(m.type),
-                                      color: _payColor(m.type),
-                                      size: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          m.displayName,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                            color: AppColors.textPrimary,
-                                          ),
-                                        ),
-                                        Text(
-                                          m.accountNumber,
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: AppColors.textTertiary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  if (m.isPrimary)
-                                    const PhBadge(
-                                      label: 'Primary',
-                                      color: AppColors.primary,
-                                    )
-                                  else
-                                    Row(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              AppState.instance
-                                                  .setPrimaryPayment(m.id);
-                                            });
-                                            showToast(
-                                              context,
-                                              '${m.displayName} set as primary',
-                                            );
-                                          },
-                                          child: const Text(
-                                            'Set primary',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: AppColors.primary,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              AppState.instance
-                                                  .removePaymentMethod(m.id);
-                                            });
-                                            showToast(
-                                              context,
-                                              '${m.displayName} removed',
-                                            );
-                                          },
-                                          child: const Icon(
-                                            Icons.delete_outline,
-                                            size: 18,
-                                            color: AppColors.error,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                ],
-                              ),
-                            ).animate().fadeIn(
-                              delay: (e.key * 60).ms,
-                              duration: 350.ms,
+                              ],
                             ),
-                      );
-                    }),
+                            const SizedBox(height: 20),
+                            Text(
+                              name,
+                              style: theme.textTheme.displaySmall?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(phone, style: theme.textTheme.bodyMedium),
+                            const SizedBox(height: 16),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primary.withValues(
+                                  alpha: 0.1,
+                                ),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                'Member since Jan 2024',
+                                style: TextStyle(
+                                  color: theme.colorScheme.primary,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+                            PhButton(
+                              label: 'Edit Profile',
+                              outlined: true,
+                              height: 48,
+                              onTap: () async {
+                                await context.push('/edit-profile');
+                                setState(() {});
+                              },
+                            ),
+                          ],
+                        ),
+                      )
+                      .animate()
+                      .fadeIn(duration: 400.ms)
+                      .slideY(begin: 0.1, end: 0),
+                  const SizedBox(height: 20),
 
-                    const SizedBox(height: 20),
-
-                    // ── Emergency contacts ────────────────────────────────────
-                    PhSectionHeader(
-                      title: 'Emergency Contacts',
-                      action: '+ Add',
-                      onAction: _showAddContactSheet,
-                    ),
-                    const SizedBox(height: 10),
-                    ...state.emergencyContacts.asMap().entries.map((e) {
-                      final c = e.value;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child:
-                            PhCard(
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.errorLight,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: const Icon(
-                                      Icons.phone_outlined,
-                                      color: AppColors.error,
-                                      size: 20,
-                                    ),
+                  // ── Payment methods ───────────────────────────────────────
+                  PhSectionHeader(
+                    title: 'Payment Methods',
+                    action: '+ Add',
+                    onAction: _showAddPaymentSheet,
+                  ),
+                  const SizedBox(height: 10),
+                  ...state.paymentMethods.asMap().entries.map((e) {
+                    final m = e.value;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child:
+                          PhCard(
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: _payColor(
+                                      m.type,
+                                    ).withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          c.name,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                            color: AppColors.textPrimary,
-                                          ),
-                                        ),
-                                        Text(
-                                          c.relationship,
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                            color: AppColors.textTertiary,
-                                          ),
-                                        ),
-                                        Text(
-                                          c.phone,
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            color: AppColors.textSecondary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                                  child: Icon(
+                                    _payIcon(m.type),
+                                    color: _payColor(m.type),
+                                    size: 20,
                                   ),
-                                  Row(
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      GestureDetector(
-                                        onTap: () =>
-                                            _showAddContactSheet(editing: c),
-                                        child: const Icon(
-                                          Icons.edit_outlined,
-                                          size: 18,
+                                      Text(
+                                        m.displayName,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                      ),
+                                      Text(
+                                        m.accountNumber,
+                                        style: const TextStyle(
+                                          fontSize: 12,
                                           color: AppColors.textTertiary,
                                         ),
                                       ),
-                                      const SizedBox(width: 10),
+                                    ],
+                                  ),
+                                ),
+                                if (m.isPrimary)
+                                  const PhBadge(
+                                    label: 'Primary',
+                                    color: AppColors.primary,
+                                  )
+                                else
+                                  Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            AppState.instance.setPrimaryPayment(
+                                              m.id,
+                                            );
+                                          });
+                                          showToast(
+                                            context,
+                                            '${m.displayName} set as primary',
+                                          );
+                                        },
+                                        child: const Text(
+                                          'Set primary',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: AppColors.primary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
                                       GestureDetector(
                                         onTap: () {
                                           setState(() {
                                             AppState.instance
-                                                .removeEmergencyContact(c.id);
+                                                .removePaymentMethod(m.id);
                                           });
                                           showToast(
                                             context,
-                                            '${c.name} removed',
+                                            '${m.displayName} removed',
                                           );
                                         },
                                         child: const Icon(
@@ -663,71 +569,168 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ],
                                   ),
-                                ],
-                              ),
-                            ).animate().fadeIn(
-                              delay: (e.key * 60).ms,
-                              duration: 350.ms,
+                              ],
                             ),
-                      );
-                    }),
-
-                    const SizedBox(height: 20),
-
-                    // ── Account actions ───────────────────────────────────────
-                    PhCard(
-                      child: Column(
-                        children: [
-                          _AccountRow(
-                            icon: Icons.lock_outline,
-                            label: 'Change Password',
-                            onTap: _showForgotPasswordSheet,
+                          ).animate().fadeIn(
+                            delay: (e.key * 60).ms,
+                            duration: 350.ms,
                           ),
-                          const PhDivider(),
-                          _AccountRow(
-                            icon: Icons.notifications_outlined,
-                            label: 'Notification Settings',
-                            onTap: () => showToast(
-                              context,
-                              'Notification settings coming soon',
+                    );
+                  }),
+
+                  const SizedBox(height: 20),
+
+                  // ── Emergency contacts ────────────────────────────────────
+                  PhSectionHeader(
+                    title: 'Emergency Contacts',
+                    action: '+ Add',
+                    onAction: _showAddContactSheet,
+                  ),
+                  const SizedBox(height: 10),
+                  ...state.emergencyContacts.asMap().entries.map((e) {
+                    final c = e.value;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child:
+                          PhCard(
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.errorLight,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Icon(
+                                    Icons.phone_outlined,
+                                    color: AppColors.error,
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        c.name,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                      ),
+                                      Text(
+                                        c.relationship,
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          color: AppColors.textTertiary,
+                                        ),
+                                      ),
+                                      Text(
+                                        c.phone,
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: AppColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () =>
+                                          _showAddContactSheet(editing: c),
+                                      child: const Icon(
+                                        Icons.edit_outlined,
+                                        size: 18,
+                                        color: AppColors.textTertiary,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          AppState.instance
+                                              .removeEmergencyContact(c.id);
+                                        });
+                                        showToast(context, '${c.name} removed');
+                                      },
+                                      child: const Icon(
+                                        Icons.delete_outline,
+                                        size: 18,
+                                        color: AppColors.error,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
+                          ).animate().fadeIn(
+                            delay: (e.key * 60).ms,
+                            duration: 350.ms,
                           ),
-                          const PhDivider(),
-                          _AccountRow(
-                            icon: Icons.privacy_tip_outlined,
-                            label: 'Privacy Policy',
-                            onTap: () =>
-                                showToast(context, 'Opening privacy policy...'),
-                          ),
-                          const PhDivider(),
-                          _AccountRow(
-                            icon: Icons.help_outline,
-                            label: 'Help & Support',
-                            onTap: () =>
-                                showToast(context, 'Opening help center...'),
-                          ),
-                        ],
-                      ),
-                    ).animate().fadeIn(delay: 200.ms, duration: 350.ms),
+                    );
+                  }),
 
-                    const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
-                    PhButton(
-                      label: 'Log Out',
-                      outlined: true,
-                      backgroundColor: AppColors.error,
-                      foregroundColor: AppColors.error,
-                      icon: Icons.logout,
-                      onTap: () {
-                        showToast(context, 'Logged out successfully');
-                        Future.delayed(const Duration(milliseconds: 800), () {
-                          if (context.mounted) context.go('/');
-                        });
-                      },
-                    ).animate().fadeIn(delay: 300.ms, duration: 350.ms),
-                    const SizedBox(height: 16),
-                  ],
-                ),
+                  // ── Account actions ───────────────────────────────────────
+                  PhCard(
+                    child: Column(
+                      children: [
+                        _AccountRow(
+                          icon: Icons.lock_outline,
+                          label: 'Change Password',
+                          onTap: _showForgotPasswordSheet,
+                        ),
+                        const PhDivider(),
+                        _AccountRow(
+                          icon: Icons.notifications_outlined,
+                          label: 'Notification Settings',
+                          onTap: () => showToast(
+                            context,
+                            'Notification settings coming soon',
+                          ),
+                        ),
+                        const PhDivider(),
+                        _AccountRow(
+                          icon: Icons.privacy_tip_outlined,
+                          label: 'Privacy Policy',
+                          onTap: () =>
+                              showToast(context, 'Opening privacy policy...'),
+                        ),
+                        const PhDivider(),
+                        _AccountRow(
+                          icon: Icons.help_outline,
+                          label: 'Help & Support',
+                          onTap: () =>
+                              showToast(context, 'Opening help center...'),
+                        ),
+                      ],
+                    ),
+                  ).animate().fadeIn(delay: 200.ms, duration: 350.ms),
+
+                  const SizedBox(height: 24),
+
+                  PhButton(
+                    label: 'Log Out',
+                    outlined: true,
+                    backgroundColor: AppColors.error,
+                    foregroundColor: AppColors.error,
+                    icon: Icons.logout,
+                    onTap: () {
+                      showToast(context, 'Logged out successfully');
+                      Future.delayed(const Duration(milliseconds: 800), () {
+                        if (context.mounted) context.go('/');
+                      });
+                    },
+                  ).animate().fadeIn(delay: 300.ms, duration: 350.ms),
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
           ),

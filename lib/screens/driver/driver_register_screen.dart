@@ -1,8 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/toast.dart';
+import '../../widgets/ph_widgets.dart';
 
 class DriverRegisterScreen extends StatefulWidget {
   const DriverRegisterScreen({super.key});
@@ -56,235 +57,171 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(gradient: AppColors.driverGradient),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.go('/'),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
+      backgroundColor: AppColors.driverBg,
+      body: SafeArea(
+        child: Column(
+          children: [
+            PhAppBar(
+              title: 'Driver Registration',
+              showBack: true,
+              onBack: () => context.go('/'),
+            ),
+
+            // Step indicator
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 0),
+              child: Row(
+                children: List.generate(2, (i) {
+                  final active = i == _currentStep;
+                  final done = i < _currentStep;
+                  return Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            height: 6,
+                            decoration: BoxDecoration(
+                              color: done || active
+                                  ? AppColors.driverAccent
+                                  : Colors.white.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                          ),
                         ),
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 20,
-                        ),
+                        if (i < 1) const SizedBox(width: 8),
+                      ],
+                    ),
+                  );
+                }),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Step ${_currentStep + 1} of 2',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.driverAccent,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  Text(
+                    _currentStep == 0 ? 'Personal Details' : 'Vehicle Details',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.white.withValues(alpha: 0.5),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: _currentStep == 0
+                    ? _buildStep1().animate().fadeIn(duration: 400.ms)
+                    : _buildStep2().animate().fadeIn(duration: 400.ms),
+              ),
+            ),
+
+            // Bottom buttons
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+              child: Row(
+                children: [
+                  if (_currentStep > 0) ...[
+                    Expanded(
+                      child: PhButton(
+                        label: 'Back',
+                        onTap: () => setState(() => _currentStep--),
+                        outlined: true,
+                        backgroundColor: Colors.white.withValues(alpha: 0.3),
+                        foregroundColor: Colors.white,
                       ),
                     ),
                     const SizedBox(width: 16),
-                    const Text(
-                      'Driver Registration',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
                   ],
-                ),
-              ),
-
-              // Step indicator
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                child: Row(
-                  children: List.generate(2, (i) {
-                    final active = i == _currentStep;
-                    final done = i < _currentStep;
-                    return Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              height: 4,
-                              decoration: BoxDecoration(
-                                color: done || active
-                                    ? AppColors.driverAccent
-                                    : Colors.white.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(2),
-                              ),
-                            ),
-                          ),
-                          if (i < 1) const SizedBox(width: 8),
-                        ],
-                      ),
-                    );
-                  }),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Step ${_currentStep + 1} of 2',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.driverAccent,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  Expanded(
+                    flex: 2,
+                    child: PhButton(
+                      label: _currentStep == 0
+                          ? 'Continue'
+                          : 'Submit Application',
+                      onTap: _currentStep == 0
+                          ? () => setState(() => _currentStep = 1)
+                          : _handleRegister,
+                      backgroundColor: AppColors.driverAccent,
+                      foregroundColor: Colors.black,
                     ),
-                    Text(
-                      _currentStep == 0 ? 'Personal Info' : 'Vehicle Info',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.white54,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: _currentStep == 0
-                      ? _buildStep1().animate().fadeIn(duration: 300.ms)
-                      : _buildStep2().animate().fadeIn(duration: 300.ms),
-                ),
-              ),
-
-              // Bottom buttons
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                child: Row(
-                  children: [
-                    if (_currentStep > 0) ...[
-                      Expanded(
-                        child: SizedBox(
-                          height: 52,
-                          child: OutlinedButton(
-                            onPressed: () => setState(() => _currentStep--),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              side: BorderSide(
-                                color: Colors.white.withValues(alpha: 0.3),
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                            ),
-                            child: const Text('Back'),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                    ],
-                    Expanded(
-                      flex: 2,
-                      child: SizedBox(
-                        height: 52,
-                        child: ElevatedButton(
-                          onPressed: _currentStep == 0
-                              ? () => setState(() => _currentStep = 1)
-                              : _handleRegister,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.driverAccent,
-                            foregroundColor: AppColors.driverPrimary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            elevation: 4,
-                          ),
-                          child: Text(
-                            _currentStep == 0
-                                ? 'Continue'
-                                : 'Submit Registration',
-                            style: const TextStyle(fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildStep1() {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Personal\nInformation',
+          'Tell us about\nyourself',
           style: TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
+            fontSize: 28,
+            fontWeight: FontWeight.w900,
             color: Colors.white,
             height: 1.2,
+            letterSpacing: -0.5,
           ),
         ),
-        const SizedBox(height: 28),
-        _buildField(
-          'Full Name',
-          'Juan Dela Cruz',
-          _nameController,
-          Icons.person_outline,
+        const SizedBox(height: 32),
+        PhTextField(
+          label: 'Full Name',
+          hint: 'Juan Dela Cruz',
+          controller: _nameController,
+          prefixIcon: Icons.person_outline_rounded,
         ),
-        const SizedBox(height: 16),
-        _buildField(
-          'Phone Number',
-          '09XX XXX XXXX',
-          _phoneController,
-          Icons.phone_outlined,
+        const SizedBox(height: 20),
+        PhTextField(
+          label: 'Phone Number',
+          hint: '09XX XXX XXXX',
+          controller: _phoneController,
+          prefixIcon: Icons.phone_android_rounded,
           keyboardType: TextInputType.phone,
         ),
-        const SizedBox(height: 16),
-        _buildField(
-          "Driver's License No.",
-          'N01-23-456789',
-          _licenseController,
-          Icons.badge_outlined,
+        const SizedBox(height: 20),
+        PhTextField(
+          label: "Driver's License No.",
+          hint: 'N01-23-456789',
+          controller: _licenseController,
+          prefixIcon: Icons.badge_outlined,
         ),
-        const SizedBox(height: 16),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Password',
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
+        const SizedBox(height: 20),
+        PhTextField(
+          label: 'Password',
+          hint: 'Create a password',
+          controller: _passwordController,
+          obscure: !_showPassword,
+          prefixIcon: Icons.lock_outline_rounded,
+          suffix: IconButton(
+            icon: Icon(
+              _showPassword
+                  ? Icons.visibility_off_outlined
+                  : Icons.visibility_outlined,
+              color: Colors.white.withValues(alpha: 0.5),
             ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _passwordController,
-              obscureText: !_showPassword,
-              style: const TextStyle(color: Colors.white),
-              decoration: _inputDecoration(
-                hint: 'Create a password',
-                prefixIcon: Icons.lock_outline,
-                suffix: IconButton(
-                  icon: Icon(
-                    _showPassword ? Icons.visibility_off : Icons.visibility,
-                    color: Colors.white38,
-                    size: 20,
-                  ),
-                  onPressed: () =>
-                      setState(() => _showPassword = !_showPassword),
-                ),
-              ),
-            ),
-          ],
+            onPressed: () => setState(() => _showPassword = !_showPassword),
+          ),
         ),
       ],
     );

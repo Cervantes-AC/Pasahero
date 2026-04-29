@@ -43,56 +43,63 @@ class BottomNavBar extends StatelessWidget {
     ];
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.border)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, -4),
+          ),
+        ],
       ),
       child: SafeArea(
         top: false,
-        child: SizedBox(
-          height: 60,
+        child: Container(
+          height: 72,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Row(
             children: tabs.map((tab) {
               final active = location == tab.path;
               return Expanded(
-                child: InkWell(
+                child: GestureDetector(
                   onTap: () => context.go(tab.path),
-                  splashColor: AppColors.primarySurface,
-                  highlightColor: Colors.transparent,
+                  behavior: HitTestBehavior.opaque,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOutCubic,
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 4,
+                          horizontal: 20,
+                          vertical: 6,
                         ),
                         decoration: BoxDecoration(
                           color: active
-                              ? AppColors.primarySurface
+                              ? AppColors.primary.withValues(alpha: 0.08)
                               : Colors.transparent,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         child: Icon(
                           active ? tab.activeIcon : tab.icon,
-                          size: 22,
+                          size: 24,
                           color: active
                               ? AppColors.primary
-                              : AppColors.textTertiary,
+                              : AppColors.textMuted,
                         ),
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
                       Text(
                         tab.label,
                         style: TextStyle(
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: active
-                              ? FontWeight.w600
-                              : FontWeight.w400,
+                              ? FontWeight.w700
+                              : FontWeight.w500,
                           color: active
                               ? AppColors.primary
-                              : AppColors.textTertiary,
+                              : AppColors.textMuted,
                         ),
                       ),
                     ],

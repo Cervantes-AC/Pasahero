@@ -66,21 +66,51 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Widget _mobileLayout(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       children: [
         _Header(),
         Expanded(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(Responsive.hPad(context)),
-            child: _FormContent(
-              phoneCtrl: _phoneCtrl,
-              passCtrl: _passCtrl,
-              showPass: _showPass,
-              isLoading: _isLoading,
-              onTogglePass: () => setState(() => _showPass = !_showPass),
-              onLogin: _handleLogin,
-              onRegister: () => context.go('/register'),
-            ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.08, end: 0),
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: theme.scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(40),
+                topRight: Radius.circular(40),
+              ),
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Welcome Back', style: theme.textTheme.displayMedium)
+                      .animate()
+                      .fadeIn(duration: 400.ms)
+                      .slideX(begin: -0.2, end: 0),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Sign in to continue your journey with Pasahero.',
+                    style: theme.textTheme.bodyMedium,
+                  ).animate().fadeIn(delay: 100.ms, duration: 400.ms),
+                  const SizedBox(height: 40),
+                  _FormContent(
+                        phoneCtrl: _phoneCtrl,
+                        passCtrl: _passCtrl,
+                        showPass: _showPass,
+                        isLoading: _isLoading,
+                        onTogglePass: () =>
+                            setState(() => _showPass = !_showPass),
+                        onLogin: _handleLogin,
+                        onRegister: () => context.go('/register'),
+                      )
+                      .animate()
+                      .fadeIn(delay: 200.ms, duration: 400.ms)
+                      .slideY(begin: 0.1, end: 0),
+                ],
+              ),
+            ),
           ),
         ),
       ],
@@ -264,52 +294,36 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.primaryDark],
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(
-            Responsive.hPad(context),
-            16,
-            Responsive.hPad(context),
-            32,
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(24, 60, 24, 40),
+      decoration: const BoxDecoration(color: AppColors.primary),
+      child: Column(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.2),
+                width: 2,
+              ),
+            ),
+            child: Image.asset('assets/logo.png', fit: BoxFit.contain),
+          ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
+          const SizedBox(height: 20),
+          const Text(
+            'Pasahero',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
+              letterSpacing: -0.5,
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              PhIconButton(
-                icon: Icons.arrow_back,
-                onTap: () => context.go('/'),
-                color: Colors.white.withValues(alpha: 0.15),
-                iconColor: Colors.white,
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Welcome back',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Sign in to continue your journey',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white.withValues(alpha: 0.7),
-                ),
-              ),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }
@@ -336,6 +350,7 @@ class _FormContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -343,101 +358,53 @@ class _FormContent extends StatelessWidget {
           label: 'Phone Number',
           hint: '09XX XXX XXXX',
           controller: phoneCtrl,
+          prefixIcon: Icons.phone_android_rounded,
           keyboardType: TextInputType.phone,
-          prefixIcon: Icons.phone_outlined,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 24),
         PhTextField(
           label: 'Password',
           hint: 'Enter your password',
           controller: passCtrl,
           obscure: !showPass,
-          prefixIcon: Icons.lock_outline,
+          prefixIcon: Icons.lock_outline_rounded,
           suffix: IconButton(
             icon: Icon(
               showPass
                   ? Icons.visibility_off_outlined
                   : Icons.visibility_outlined,
-              color: AppColors.textTertiary,
-              size: 20,
+              color: theme.colorScheme.primary.withValues(alpha: 0.5),
             ),
             onPressed: onTogglePass,
           ),
         ),
-        const SizedBox(height: 6),
         Align(
           alignment: Alignment.centerRight,
           child: TextButton(
             onPressed: () {},
-            child: const Text(
-              'Forgot password?',
-              style: TextStyle(color: AppColors.primary, fontSize: 13),
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-
-        // Enhanced login button with loading state
-        SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: ElevatedButton(
-            onPressed: isLoading ? null : onLogin,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+            child: Text(
+              'Forgot Password?',
+              style: TextStyle(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.w700,
               ),
-              elevation: isLoading ? 0 : 2,
             ),
-            child: isLoading
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Colors.white.withValues(alpha: 0.7),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      const Text(
-                        'Signing in...',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  )
-                : const Text(
-                    'Sign In',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-                  ),
           ),
         ),
-
-        const SizedBox(height: 20),
+        const SizedBox(height: 32),
+        PhButton(label: 'Sign In', onTap: onLogin, loading: isLoading),
+        const SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              "Don't have an account? ",
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
-            ),
+            Text("Don't have an account? ", style: theme.textTheme.bodyMedium),
             GestureDetector(
               onTap: onRegister,
-              child: const Text(
-                'Sign up',
+              child: Text(
+                'Create Account',
                 style: TextStyle(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ),

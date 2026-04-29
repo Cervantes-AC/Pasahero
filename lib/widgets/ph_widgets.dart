@@ -25,59 +25,61 @@ class PhAppBar extends StatelessWidget implements PreferredSizeWidget {
   });
 
   @override
-  Size get preferredSize => const Size.fromHeight(64);
+  Size get preferredSize => const Size.fromHeight(80);
 
   @override
   Widget build(BuildContext context) {
-    final textColor = dark ? AppColors.driverText : Colors.white;
-    final bgColor = dark ? AppColors.driverBg : AppColors.primary;
+    final theme = Theme.of(context);
+    final textColor = theme.colorScheme.onSurface;
 
     return Container(
-      color: bgColor,
+      color: Colors.transparent,
       child: SafeArea(
         bottom: false,
-        child: SizedBox(
-          height: 64,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                if (showBack)
-                  PhIconButton(
-                    icon: Icons.arrow_back,
-                    onTap: onBack ?? () => Navigator.of(context).pop(),
-                    color: textColor.withValues(alpha: 0.15),
-                    iconColor: textColor,
-                  ),
-                if (showBack) const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-                      if (subtitle != null)
-                        Text(
-                          subtitle!,
-                          style: TextStyle(
-                            color: textColor.withValues(alpha: 0.65),
-                            fontSize: 12,
-                          ),
-                        ),
-                    ],
-                  ),
+        child: Container(
+          height: 80,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              if (showBack)
+                PhIconButton(
+                  icon: Icons.arrow_back_ios_new_rounded,
+                  onTap: onBack ?? () => Navigator.of(context).pop(),
+                  color: theme.cardColor,
+                  iconColor: textColor,
+                  bordered: true,
+                  size: 48,
                 ),
-                if (actions != null) ...actions!,
-              ],
-            ),
+              if (showBack) const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.5,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (subtitle != null)
+                      Text(
+                        subtitle!,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: textColor.withValues(alpha: 0.5),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                  ],
+                ),
+              ),
+              if (actions != null) ...actions!,
+            ],
           ),
         ),
       ),
@@ -93,6 +95,7 @@ class PhIconButton extends StatelessWidget {
   final Color? color;
   final Color? iconColor;
   final double size;
+  final bool bordered;
 
   const PhIconButton({
     super.key,
@@ -100,21 +103,42 @@ class PhIconButton extends StatelessWidget {
     required this.onTap,
     this.color,
     this.iconColor,
-    this.size = 40,
+    this.size = 48,
+    this.bordered = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: color ?? AppColors.surfaceVariant,
+          color: color ?? theme.cardColor,
           shape: BoxShape.circle,
+          border: bordered
+              ? Border.all(
+                  color: theme.dividerColor.withValues(alpha: 0.1),
+                  width: 1.5,
+                )
+              : null,
+          boxShadow: bordered
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
         ),
-        child: Icon(icon, color: iconColor ?? AppColors.textPrimary, size: 20),
+        child: Icon(
+          icon,
+          color: iconColor ?? theme.colorScheme.onSurface,
+          size: size * 0.45,
+        ),
       ),
     );
   }
@@ -128,6 +152,8 @@ class PhCard extends StatelessWidget {
   final VoidCallback? onTap;
   final Color? color;
   final bool bordered;
+  final double? borderRadius;
+  final List<BoxShadow>? boxShadow;
 
   const PhCard({
     super.key,
@@ -136,30 +162,44 @@ class PhCard extends StatelessWidget {
     this.onTap,
     this.color,
     this.bordered = true,
+    this.borderRadius,
+    this.boxShadow,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final card = Container(
       width: double.infinity,
-      padding: padding ?? const EdgeInsets.all(16),
+      padding: padding ?? const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: color ?? Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: bordered ? Border.all(color: AppColors.border) : null,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: color ?? theme.cardColor,
+        borderRadius: BorderRadius.circular(borderRadius ?? 28),
+        border: bordered
+            ? Border.all(
+                color: theme.dividerColor.withValues(alpha: 0.1),
+                width: 1.5,
+              )
+            : null,
+        boxShadow:
+            boxShadow ??
+            [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
       ),
       child: child,
     );
 
     if (onTap != null) {
-      return GestureDetector(onTap: onTap, child: card);
+      return GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: card,
+      );
     }
     return card;
   }
@@ -181,20 +221,14 @@ class PhDriverCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: padding ?? const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: highlighted
-            ? AppColors.driverAccent.withValues(alpha: 0.08)
-            : AppColors.driverSurface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: highlighted
-              ? AppColors.driverAccent.withValues(alpha: 0.4)
-              : AppColors.driverBorder,
-        ),
-      ),
+    final theme = Theme.of(context);
+    return PhCard(
+      padding: padding,
+      color: highlighted
+          ? theme.colorScheme.primary.withValues(alpha: 0.1)
+          : theme.cardColor,
+      bordered: true,
+      borderRadius: 20,
       child: child,
     );
   }
@@ -211,6 +245,7 @@ class PhButton extends StatelessWidget {
   final bool outlined;
   final bool loading;
   final double height;
+  final double? width;
 
   const PhButton({
     super.key,
@@ -221,20 +256,22 @@ class PhButton extends StatelessWidget {
     this.icon,
     this.outlined = false,
     this.loading = false,
-    this.height = 52,
+    this.height = 58,
+    this.width,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bg = backgroundColor ?? AppColors.primary;
-    final fg = foregroundColor ?? Colors.white;
+    final theme = Theme.of(context);
+    final bg = backgroundColor ?? theme.colorScheme.primary;
+    final fg = foregroundColor ?? theme.colorScheme.onPrimary;
 
     final content = loading
         ? SizedBox(
-            width: 20,
-            height: 20,
+            width: 24,
+            height: 24,
             child: CircularProgressIndicator(
-              strokeWidth: 2,
+              strokeWidth: 2.5,
               valueColor: AlwaysStoppedAnimation(fg),
             ),
           )
@@ -243,53 +280,81 @@ class PhButton extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (icon != null) ...[
-                Icon(icon, size: 18, color: fg),
-                const SizedBox(width: 8),
+                Icon(icon, size: 20, color: fg),
+                const SizedBox(width: 10),
               ],
               Text(
                 label,
                 style: TextStyle(
                   color: fg,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.2,
                 ),
               ),
             ],
           );
 
-    if (outlined) {
-      return SizedBox(
-        width: double.infinity,
-        height: height,
-        child: OutlinedButton(
-          onPressed: onTap,
-          style: OutlinedButton.styleFrom(
-            foregroundColor: bg,
-            side: BorderSide(color: bg),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-          ),
-          child: content,
-        ),
-      );
-    }
-
     return SizedBox(
-      width: double.infinity,
+      width: width ?? double.infinity,
       height: height,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: bg,
-          foregroundColor: fg,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
+      child: outlined
+          ? OutlinedButton(
+              onPressed: loading ? null : onTap,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: bg,
+                side: BorderSide(color: bg, width: 2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+              ),
+              child: content,
+            )
+          : ElevatedButton(
+              onPressed: loading ? null : onTap,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: bg,
+                foregroundColor: fg,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+              ),
+              child: content,
+            ),
+    );
+  }
+}
+
+// ── PH Text Field ─────────────────────────────────────────────────────────────
+
+// ── PH Logo ───────────────────────────────────────────────────────────────────
+
+class PhLogo extends StatelessWidget {
+  final double size;
+  final bool isDriver;
+
+  const PhLogo({super.key, this.size = 80, this.isDriver = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      padding: EdgeInsets.all(size * 0.2),
+      decoration: BoxDecoration(
+        color: isDriver
+            ? AppColors.driverAccent.withValues(alpha: 0.1)
+            : Colors.white.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(size * 0.3),
+        border: Border.all(
+          color: isDriver
+              ? AppColors.driverAccent.withValues(alpha: 0.2)
+              : Colors.white.withValues(alpha: 0.2),
+          width: 2,
         ),
-        child: content,
       ),
+      child: Image.asset('assets/logo.png', fit: BoxFit.contain),
     );
   }
 }

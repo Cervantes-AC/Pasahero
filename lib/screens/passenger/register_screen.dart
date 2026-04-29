@@ -53,23 +53,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _mobileLayout(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       children: [
         _Header(),
         Expanded(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(Responsive.hPad(context)),
-            child: _FormContent(
-              nameCtrl: _nameCtrl,
-              phoneCtrl: _phoneCtrl,
-              passCtrl: _passCtrl,
-              showPass: _showPass,
-              agreed: _agreed,
-              onTogglePass: () => setState(() => _showPass = !_showPass),
-              onToggleAgreed: () => setState(() => _agreed = !_agreed),
-              onRegister: _handleRegister,
-              onLogin: () => context.go('/login'),
-            ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.08, end: 0),
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: theme.scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(40),
+                topRight: Radius.circular(40),
+              ),
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+              child: _FormContent(
+                nameCtrl: _nameCtrl,
+                phoneCtrl: _phoneCtrl,
+                passCtrl: _passCtrl,
+                showPass: _showPass,
+                agreed: _agreed,
+                onTogglePass: () => setState(() => _showPass = !_showPass),
+                onToggleAgreed: () => setState(() => _agreed = !_agreed),
+                onRegister: _handleRegister,
+                onLogin: () => context.go('/login'),
+              ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1, end: 0),
+            ),
           ),
         ),
       ],
@@ -213,52 +224,40 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.primaryDark],
-        ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(
-            Responsive.hPad(context),
-            16,
-            Responsive.hPad(context),
-            32,
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(24, 60, 24, 40),
+      decoration: const BoxDecoration(color: AppColors.primary),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PhIconButton(
+            icon: Icons.arrow_back_ios_new_rounded,
+            onTap: () => context.go('/'),
+            color: Colors.white.withValues(alpha: 0.1),
+            iconColor: Colors.white,
+            size: 48,
+            bordered: true,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              PhIconButton(
-                icon: Icons.arrow_back,
-                onTap: () => context.go('/'),
-                color: Colors.white.withValues(alpha: 0.15),
-                iconColor: Colors.white,
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Create account',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Join thousands of riders in Cebu',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.white.withValues(alpha: 0.7),
-                ),
-              ),
-            ],
+          const SizedBox(height: 24),
+          const Text(
+            'Create Account',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              letterSpacing: -0.5,
+            ),
           ),
-        ),
+          const SizedBox(height: 4),
+          Text(
+            'Join thousands of riders in Cebu',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.white.withValues(alpha: 0.6),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -283,92 +282,81 @@ class _FormContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       children: [
         PhTextField(
           label: 'Full Name',
           hint: 'Juan Dela Cruz',
           controller: nameCtrl,
-          prefixIcon: Icons.person_outline,
+          prefixIcon: Icons.person_outline_rounded,
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 24),
         PhTextField(
           label: 'Phone Number',
           hint: '09XX XXX XXXX',
           controller: phoneCtrl,
           keyboardType: TextInputType.phone,
-          prefixIcon: Icons.phone_outlined,
+          prefixIcon: Icons.phone_android_rounded,
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 24),
         PhTextField(
           label: 'Password',
-          hint: 'Create a strong password',
+          hint: 'Min. 8 characters',
           controller: passCtrl,
           obscure: !showPass,
-          prefixIcon: Icons.lock_outline,
+          prefixIcon: Icons.lock_outline_rounded,
           suffix: IconButton(
             icon: Icon(
               showPass
                   ? Icons.visibility_off_outlined
                   : Icons.visibility_outlined,
-              color: AppColors.textTertiary,
-              size: 20,
+              color: theme.colorScheme.primary.withValues(alpha: 0.5),
             ),
             onPressed: onTogglePass,
           ),
         ),
-        const SizedBox(height: 16),
-        GestureDetector(
-          onTap: onToggleAgreed,
-          child: Row(
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: agreed ? AppColors.primary : Colors.transparent,
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(
-                    color: agreed ? AppColors.primary : AppColors.borderStrong,
-                    width: 1.5,
-                  ),
-                ),
-                child: agreed
-                    ? const Icon(Icons.check, color: Colors.white, size: 13)
-                    : null,
-              ),
-              const SizedBox(width: 10),
-              const Expanded(
-                child: Text(
-                  'I agree to the Terms of Service and Privacy Policy',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
         const SizedBox(height: 24),
+        Row(
+          children: [
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: Checkbox(
+                value: agreed,
+                onChanged: (_) => onToggleAgreed(),
+                activeColor: theme.colorScheme.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'I agree to the Terms of Service and Privacy Policy',
+                style: theme.textTheme.bodyMedium,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 40),
         PhButton(label: 'Create Account', onTap: onRegister),
-        const SizedBox(height: 20),
+        const SizedBox(height: 24),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Already have an account? ',
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+            Text(
+              "Already have an account? ",
+              style: theme.textTheme.bodyMedium,
             ),
             GestureDetector(
               onTap: onLogin,
-              child: const Text(
-                'Sign in',
+              child: Text(
+                'Sign In',
                 style: TextStyle(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ),

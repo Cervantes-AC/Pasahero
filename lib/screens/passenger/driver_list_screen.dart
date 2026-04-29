@@ -1,9 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../data/mock_drivers.dart';
 import '../../widgets/toast.dart';
+import '../../widgets/ph_widgets.dart';
 
 class DriverListScreen extends StatefulWidget {
   final String rideType;
@@ -47,74 +48,55 @@ class _DriverListScreenState extends State<DriverListScreen>
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          // Header
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [AppColors.primary, AppColors.primaryDark],
-              ),
-            ),
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-                child: Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () => context.go('/search'),
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Available Drivers',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          '${mockDrivers.length} drivers nearby',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.blue[100],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          PhAppBar(
+            title: 'Available Drivers',
+            subtitle: '${mockDrivers.length} drivers nearby',
+            showBack: true,
+            onBack: () => context.go('/search'),
           ),
 
           // Tab bar
           Container(
-            color: Colors.white,
+            margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: AppColors.border.withValues(alpha: 0.5),
+              ),
+            ),
             child: TabBar(
               controller: _tabController,
-              labelColor: AppColors.primary,
-              unselectedLabelColor: AppColors.mutedForeground,
-              indicatorColor: AppColors.primary,
+              labelColor: Colors.white,
+              unselectedLabelColor: AppColors.textSecondary,
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicator: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              dividerColor: Colors.transparent,
               tabs: const [
-                Tab(icon: Icon(Icons.map_outlined, size: 18), text: 'Map View'),
-                Tab(icon: Icon(Icons.list, size: 18), text: 'List View'),
+                Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.map_rounded, size: 18),
+                      SizedBox(width: 8),
+                      Text('Map'),
+                    ],
+                  ),
+                ),
+                Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.list_rounded, size: 18),
+                      SizedBox(width: 8),
+                      Text('List'),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

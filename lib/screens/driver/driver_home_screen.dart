@@ -82,29 +82,26 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                   Stack(
                     children: [
                       Container(
-                        width: 52,
-                        height: 52,
+                        width: 56,
+                        height: 56,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [
-                              AppColors.driverAccent,
-                              AppColors.driverAccentDark,
-                            ],
+                            colors: [AppColors.driverAccent, Color(0xFFFFB300)],
                           ),
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: AppColors.driverAccent.withValues(
-                              alpha: 0.6,
+                              alpha: 0.3,
                             ),
                             width: 2,
                           ),
                           boxShadow: [
                             BoxShadow(
                               color: AppColors.driverAccent.withValues(
-                                alpha: 0.3,
+                                alpha: 0.2,
                               ),
-                              blurRadius: 12,
-                              spreadRadius: 2,
+                              blurRadius: 15,
+                              offset: const Offset(0, 5),
                             ),
                           ],
                         ),
@@ -112,9 +109,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                           child: Text(
                             'PS',
                             style: TextStyle(
-                              color: AppColors.driverBg,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 16,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 18,
                             ),
                           ),
                         ),
@@ -123,33 +120,22 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                         Positioned(
                           bottom: 2,
                           right: 2,
-                          child: AnimatedBuilder(
-                            animation: _breathe,
-                            builder: (_, __) => Container(
-                              width: 14 + 2 * _breathe.value,
-                              height: 14 + 2 * _breathe.value,
-                              decoration: BoxDecoration(
-                                color: AppColors.success,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: AppColors.driverBg,
-                                  width: 2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.success.withValues(
-                                      alpha: 0.6,
-                                    ),
-                                    blurRadius: 6,
-                                  ),
-                                ],
+                          child: Container(
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: AppColors.success,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.driverBg,
+                                width: 2.5,
                               ),
                             ),
                           ),
                         ),
                     ],
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,18 +144,57 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                           'Pedro Santos',
                           style: TextStyle(
                             color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 17,
-                            letterSpacing: -0.3,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 18,
+                            letterSpacing: -0.5,
                           ),
                         ),
+                        const SizedBox(height: 4),
                         Row(
                           children: [
-                            _Chip(label: '$rating ★', color: AppColors.amber),
-                            const SizedBox(width: 6),
-                            _Chip(
-                              label: 'Habal-habal',
-                              color: AppColors.primary,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.driverAccent.withValues(
+                                  alpha: 0.1,
+                                ),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color: AppColors.driverAccent.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                ),
+                              ),
+                              child: const Row(
+                                children: [
+                                  Icon(
+                                    Icons.star_rounded,
+                                    color: AppColors.driverAccent,
+                                    size: 14,
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    '4.9',
+                                    style: TextStyle(
+                                      color: AppColors.driverAccent,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Habal-habal',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.5),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),
@@ -177,187 +202,131 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                     ),
                   ),
                   PhIconButton(
-                    icon: Icons.settings_outlined,
+                    icon: Icons.settings_rounded,
                     onTap: () => context.go('/driver-profile'),
                     color: Colors.white.withValues(alpha: 0.08),
                     iconColor: Colors.white,
+                    size: 48,
+                    bordered: true,
                   ),
                 ],
               ),
-            ).animate().fadeIn(duration: 350.ms).slideY(begin: -0.1, end: 0),
+            ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1, end: 0),
 
             const SizedBox(height: 20),
 
             // ── Online Toggle ────────────────────────────────────────────────
             Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: GestureDetector(
-                    onTap: _toggle,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeInOut,
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: _online
-                            ? LinearGradient(
-                                colors: [
-                                  AppColors.success.withValues(alpha: 0.15),
-                                  AppColors.success.withValues(alpha: 0.08),
-                                ],
-                              )
-                            : null,
-                        color: _online ? null : AppColors.driverSurface,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: _online
-                              ? AppColors.success.withValues(alpha: 0.5)
-                              : AppColors.driverBorder,
-                          width: _online ? 2 : 1,
-                        ),
-                        boxShadow: _online
-                            ? [
-                                BoxShadow(
-                                  color: AppColors.success.withValues(
-                                    alpha: 0.2,
-                                  ),
-                                  blurRadius: 20,
-                                  spreadRadius: 2,
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: Row(
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              if (_online) ...[
-                                AnimatedBuilder(
-                                  animation: _pulse,
-                                  builder: (_, __) => Container(
-                                    width: 60 + 20 * _pulse.value,
-                                    height: 60 + 20 * _pulse.value,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppColors.success.withValues(
-                                        alpha: 0.15 * (1 - _pulse.value),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                AnimatedBuilder(
-                                  animation: _shimmer,
-                                  builder: (_, __) => Container(
-                                    width: 60,
-                                    height: 60,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      gradient: SweepGradient(
-                                        colors: [
-                                          AppColors.success.withValues(
-                                            alpha: 0.1,
-                                          ),
-                                          AppColors.success.withValues(
-                                            alpha: 0.3,
-                                          ),
-                                          AppColors.success.withValues(
-                                            alpha: 0.1,
-                                          ),
-                                        ],
-                                        stops: const [0.0, 0.5, 1.0],
-                                        transform: GradientRotation(
-                                          _shimmer.value * 2 * 3.14159,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                              Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  gradient: _online
-                                      ? const LinearGradient(
-                                          colors: [
-                                            AppColors.success,
-                                            Color(0xFF15803D),
-                                          ],
-                                        )
-                                      : null,
-                                  color: _online
-                                      ? null
-                                      : AppColors.driverBorder,
-                                  shape: BoxShape.circle,
-                                  boxShadow: _online
-                                      ? [
-                                          BoxShadow(
-                                            color: AppColors.success.withValues(
-                                              alpha: 0.4,
-                                            ),
-                                            blurRadius: 12,
-                                            spreadRadius: 2,
-                                          ),
-                                        ]
-                                      : null,
-                                ),
-                                child: Icon(
-                                  _online
-                                      ? Icons.wifi_rounded
-                                      : Icons.wifi_off_rounded,
-                                  color: Colors.white,
-                                  size: 28,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: PhCard(
+                onTap: _toggle,
+                padding: const EdgeInsets.all(24),
+                color: _online
+                    ? AppColors.success.withValues(alpha: 0.1)
+                    : AppColors.driverSurface,
+                bordered: true,
+                borderRadius: 24,
+                child: Row(
+                  children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        if (_online)
+                          AnimatedBuilder(
+                            animation: _pulse,
+                            builder: (_, __) => Container(
+                              width: 64 + 32 * _pulse.value,
+                              height: 64 + 32 * _pulse.value,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.success.withValues(
+                                  alpha: 0.15 * (1 - _pulse.value),
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _online ? "You're Online" : "You're Offline",
-                                  style: TextStyle(
-                                    color: _online
-                                        ? AppColors.success
-                                        : Colors.white,
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 18,
-                                    letterSpacing: -0.3,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  _online
-                                      ? 'Ready to accept ride requests'
-                                      : 'Tap to start accepting rides',
-                                  style: const TextStyle(
-                                    color: AppColors.driverTextMuted,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
                             ),
                           ),
-                          Switch(
-                            value: _online,
-                            onChanged: (_) => _toggle(),
-                            activeThumbColor: AppColors.success,
-                            activeTrackColor: AppColors.success.withValues(
-                              alpha: 0.3,
+                        Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            gradient: _online
+                                ? const LinearGradient(
+                                    colors: [
+                                      AppColors.success,
+                                      Color(0xFF059669),
+                                    ],
+                                  )
+                                : null,
+                            color: _online ? null : AppColors.driverBorder,
+                            shape: BoxShape.circle,
+                            boxShadow: _online
+                                ? [
+                                    BoxShadow(
+                                      color: AppColors.success.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                      blurRadius: 15,
+                                      offset: const Offset(0, 5),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: Icon(
+                            _online
+                                ? Icons.power_settings_new_rounded
+                                : Icons.power_off_rounded,
+                            color: _online
+                                ? Colors.white
+                                : AppColors.driverTextMuted,
+                            size: 32,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _online ? 'You are ONLINE' : 'You are OFFLINE',
+                            style: TextStyle(
+                              color: _online ? AppColors.success : Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.5,
                             ),
-                            inactiveThumbColor: AppColors.driverTextMuted,
-                            inactiveTrackColor: AppColors.driverBorder,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _online
+                                ? 'Waiting for ride requests...'
+                                : 'Go online to start earning',
+                            style: TextStyle(
+                              color: _online
+                                  ? AppColors.success.withValues(alpha: 0.7)
+                                  : AppColors.driverTextMuted,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                )
-                .animate()
-                .fadeIn(delay: 80.ms, duration: 400.ms)
-                .slideY(begin: 0.1, end: 0),
+                    Switch(
+                      value: _online,
+                      onChanged: (_) => _toggle(),
+                      activeThumbColor: AppColors.success,
+                      activeTrackColor: AppColors.success.withValues(
+                        alpha: 0.2,
+                      ),
+                      inactiveThumbColor: AppColors.driverTextMuted,
+                      inactiveTrackColor: AppColors.driverBorder,
+                    ),
+                  ],
+                ),
+              ),
+            ),
 
             const SizedBox(height: 20),
 

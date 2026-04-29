@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../data/app_state.dart';
 import '../../utils/responsive.dart';
+import '../../widgets/ph_widgets.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -20,27 +21,41 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: AnimatedContainer(
-        duration: const Duration(milliseconds: 350),
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: _isDriver
-                ? [AppColors.driverBg, const Color(0xFF1E293B)]
-                : [AppColors.primary, AppColors.primaryDark],
-          ),
+          color: _isDriver ? AppColors.driverBg : AppColors.primary,
         ),
-        child: Responsive.isWide(context)
-            ? _WideLayout(
-                isDriver: _isDriver,
-                role: _role,
-                onRoleChanged: (r) => setState(() => _role = r),
-              )
-            : _MobileLayout(
-                isDriver: _isDriver,
-                role: _role,
-                onRoleChanged: (r) => setState(() => _role = r),
+        child: Stack(
+          children: [
+            // Decorative background elements
+            if (!_isDriver)
+              Positioned(
+                top: -100,
+                right: -100,
+                child: Container(
+                  width: 300,
+                  height: 300,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.05),
+                    shape: BoxShape.circle,
+                  ),
+                ),
               ),
+
+            Responsive.isWide(context)
+                ? _WideLayout(
+                    isDriver: _isDriver,
+                    role: _role,
+                    onRoleChanged: (r) => setState(() => _role = r),
+                  )
+                : _MobileLayout(
+                    isDriver: _isDriver,
+                    role: _role,
+                    onRoleChanged: (r) => setState(() => _role = r),
+                  ),
+          ],
+        ),
       ),
     );
   }
@@ -61,53 +76,68 @@ class _MobileLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fs = Responsive.fontScale(context);
-    final sp = Responsive.spacing(context);
-    final logoSz = Responsive.logoSize(context);
-
     return SafeArea(
-      child: Column(
-        children: [
-          SizedBox(height: sp * 6),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          children: [
+            const Spacer(flex: 2),
 
-          // Logo
-          _LogoSection(
-            size: logoSz,
-            isDriver: isDriver,
-            fontScale: fs,
-          ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
+            // Logo
+            PhLogo(
+              size: 100,
+              isDriver: isDriver,
+            ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
 
-          SizedBox(height: sp * 4.5),
+            const SizedBox(height: 32),
 
-          // Role toggle
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: sp * 4),
-            child: _RoleToggle(
+            const Text(
+              'Pasahero',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 40,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -1,
+              ),
+            ).animate().fadeIn(delay: 200.ms),
+
+            Text(
+              'Ang imong kaabag sa pagbiyahe',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.6),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ).animate().fadeIn(delay: 300.ms),
+
+            const Spacer(flex: 2),
+
+            // Role toggle
+            _RoleToggle(
               isDriver: isDriver,
               onRoleChanged: onRoleChanged,
-            ),
-          ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.15, end: 0),
+            ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2, end: 0),
 
-          SizedBox(height: sp * 4),
+            const SizedBox(height: 48),
 
-          // Feature list
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: sp * 4),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: isDriver
-                  ? _DriverFeatures(key: const ValueKey('driver'), fs: fs)
-                  : _PassengerServices(
-                      key: const ValueKey('passenger'),
-                      fs: fs,
-                    ),
-            ),
-          ).animate().fadeIn(delay: 400.ms),
+            // Action button
+            PhButton(
+                  label: isDriver ? 'Enter Driver Portal' : 'Start Riding',
+                  onTap: () =>
+                      context.go(isDriver ? '/driver-login' : '/login'),
+                  backgroundColor: isDriver
+                      ? AppColors.driverAccent
+                      : Colors.white,
+                  foregroundColor: isDriver ? Colors.black : AppColors.primary,
+                  height: 64,
+                )
+                .animate()
+                .fadeIn(delay: 500.ms)
+                .scale(begin: const Offset(0.9, 0.9)),
 
-          const Spacer(),
-
-          _CtaSection(isDriver: isDriver, role: role, sp: sp, fs: fs),
-        ],
+            const Spacer(),
+          ],
+        ),
       ),
     );
   }
@@ -357,31 +387,33 @@ class _RoleToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fs = Responsive.fontScale(context);
-
     return Container(
-      padding: const EdgeInsets.all(3),
+      height: 64,
+      padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
-          _RoleTab(
-            label: 'Passenger',
-            icon: Icons.person_outline,
-            selected: !isDriver,
-            onTap: () => onRoleChanged(UserRole.passenger),
-            accentColor: AppColors.primary,
-            fontScale: fs,
+          Expanded(
+            child: _ToggleItem(
+              label: 'Passenger',
+              selected: !isDriver,
+              onTap: () => onRoleChanged(UserRole.passenger),
+              activeColor: Colors.white,
+              activeTextColor: AppColors.primary,
+            ),
           ),
-          _RoleTab(
-            label: 'Driver',
-            icon: Icons.two_wheeler,
-            selected: isDriver,
-            onTap: () => onRoleChanged(UserRole.driver),
-            accentColor: AppColors.driverAccent,
-            fontScale: fs,
+          Expanded(
+            child: _ToggleItem(
+              label: 'Driver',
+              selected: isDriver,
+              onTap: () => onRoleChanged(UserRole.driver),
+              activeColor: AppColors.driverAccent,
+              activeTextColor: Colors.black,
+            ),
           ),
         ],
       ),
@@ -527,53 +559,39 @@ class _CtaSection extends StatelessWidget {
   }
 }
 
-class _RoleTab extends StatelessWidget {
+class _ToggleItem extends StatelessWidget {
   final String label;
-  final IconData icon;
   final bool selected;
   final VoidCallback onTap;
-  final Color accentColor;
-  final double fontScale;
+  final Color activeColor;
+  final Color activeTextColor;
 
-  const _RoleTab({
+  const _ToggleItem({
     required this.label,
-    required this.icon,
     required this.selected,
     required this.onTap,
-    required this.accentColor,
-    required this.fontScale,
+    required this.activeColor,
+    required this.activeTextColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: EdgeInsets.symmetric(vertical: 11 * fontScale),
-          decoration: BoxDecoration(
-            color: selected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(11),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 16 * fontScale,
-                color: selected ? accentColor : Colors.white60,
-              ),
-              SizedBox(width: 6 * fontScale),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 13 * fontScale,
-                  fontWeight: FontWeight.w600,
-                  color: selected ? accentColor : Colors.white60,
-                ),
-              ),
-            ],
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        decoration: BoxDecoration(
+          color: selected ? activeColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? activeTextColor : Colors.white70,
+            fontWeight: FontWeight.w800,
+            fontSize: 15,
           ),
         ),
       ),
