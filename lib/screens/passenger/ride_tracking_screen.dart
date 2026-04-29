@@ -168,6 +168,43 @@ class _RideTrackingScreenState extends State<RideTrackingScreen> {
                         ),
                       ),
                     ),
+
+                    // SOS button
+                    Positioned(
+                      top:
+                          MediaQuery.of(context).padding.top +
+                          Responsive.spacing(context, units: 2),
+                      right: Responsive.spacing(context, units: 2),
+                      child: GestureDetector(
+                        onTap: () {
+                          showToast(
+                            context,
+                            'Emergency services contacted!',
+                            isError: true,
+                          );
+                        },
+                        child: Container(
+                          width: Responsive.iconSize(context, base: 48),
+                          height: Responsive.iconSize(context, base: 48),
+                          decoration: BoxDecoration(
+                            color: AppColors.red,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.red.withValues(alpha: 0.4),
+                                blurRadius: 12,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.emergency,
+                            color: Colors.white,
+                            size: Responsive.iconSize(context, base: 24),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

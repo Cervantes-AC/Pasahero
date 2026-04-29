@@ -3,10 +3,10 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:go_router/go_router.dart';
 import '../../data/app_state.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/ph_widgets.dart';
+import '../../utils/responsive.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -78,20 +78,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Responsive.spacing(context, units: 1.5),
+                      vertical: Responsive.spacing(context, units: 0.75),
                     ),
-                    margin: const EdgeInsets.only(right: 4),
+                    margin: EdgeInsets.only(
+                      right: Responsive.spacing(context, units: 0.5),
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(
+                        Responsive.radius(context, base: 8),
+                      ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Mark all read',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 12,
+                        fontSize: Responsive.fontSize(context, 12),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -107,23 +111,25 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       children: [
                         Icon(
                           Icons.notifications_none_outlined,
-                          size: 64,
+                          size: Responsive.iconSize(context, base: 64),
                           color: AppColors.textTertiary,
                         ),
-                        const SizedBox(height: 16),
-                        const Text(
+                        SizedBox(height: Responsive.spacing(context, units: 2)),
+                        Text(
                           'No notifications yet',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: Responsive.fontSize(context, 16),
                             fontWeight: FontWeight.w600,
                             color: AppColors.textSecondary,
                           ),
                         ),
-                        const SizedBox(height: 6),
-                        const Text(
+                        SizedBox(
+                          height: Responsive.spacing(context, units: 0.75),
+                        ),
+                        Text(
                           'We\'ll notify you about rides, promos, and more',
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: Responsive.fontSize(context, 13),
                             color: AppColors.textTertiary,
                           ),
                           textAlign: TextAlign.center,
@@ -132,21 +138,25 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     ),
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: Responsive.spacing(context, units: 2),
+                      vertical: Responsive.spacing(context, units: 1.5),
                     ),
                     itemCount: notifications.length,
                     itemBuilder: (context, i) {
                       final n = notifications[i];
                       final color = _colorFor(n.type);
                       return Container(
-                        margin: const EdgeInsets.only(bottom: 10),
+                        margin: EdgeInsets.only(
+                          bottom: Responsive.spacing(context, units: 1.25),
+                        ),
                         decoration: BoxDecoration(
                           color: n.isRead
                               ? Colors.white
                               : AppColors.primarySurface,
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(
+                            Responsive.radius(context, base: 14),
+                          ),
                           border: Border.all(
                             color: n.isRead
                                 ? AppColors.border
@@ -154,27 +164,32 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           ),
                         ),
                         child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 8,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: Responsive.spacing(
+                              context,
+                              units: 1.75,
+                            ),
+                            vertical: Responsive.spacing(context, units: 1),
                           ),
                           leading: Container(
-                            width: 44,
-                            height: 44,
+                            width: Responsive.iconSize(context, base: 44),
+                            height: Responsive.iconSize(context, base: 44),
                             decoration: BoxDecoration(
                               color: color.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(
+                                Responsive.radius(context, base: 10),
+                              ),
                             ),
                             child: Icon(
                               _iconFor(n.type),
                               color: color,
-                              size: 22,
+                              size: Responsive.iconSize(context, base: 22),
                             ),
                           ),
                           title: Text(
                             n.title,
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: Responsive.fontSize(context, 14),
                               fontWeight: n.isRead
                                   ? FontWeight.w500
                                   : FontWeight.w700,
@@ -184,20 +199,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const SizedBox(height: 3),
+                              SizedBox(
+                                height: Responsive.spacing(
+                                  context,
+                                  units: 0.375,
+                                ),
+                              ),
                               Text(
                                 n.body,
-                                style: const TextStyle(
-                                  fontSize: 12,
+                                style: TextStyle(
+                                  fontSize: Responsive.fontSize(context, 12),
                                   color: AppColors.textSecondary,
                                   height: 1.4,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              SizedBox(
+                                height: Responsive.spacing(context, units: 0.5),
+                              ),
                               Text(
                                 _timeAgo(n.timestamp),
-                                style: const TextStyle(
-                                  fontSize: 11,
+                                style: TextStyle(
+                                  fontSize: Responsive.fontSize(context, 11),
                                   color: AppColors.textTertiary,
                                 ),
                               ),

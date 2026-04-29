@@ -347,13 +347,86 @@ class WalletService {
       UserType.passenger,
     );
 
-    // Add some mock transactions
+    // Add multiple mock transactions for passenger
+    final now = DateTime.now();
+
+    // Cash in transactions
     await processCashIn(
       CashInRequest(
         walletId: passengerWallet.walletId,
         amount: 500.0,
         method: CashInMethod.gcash,
       ),
+    );
+
+    await processCashIn(
+      CashInRequest(
+        walletId: passengerWallet.walletId,
+        amount: 1000.0,
+        method: CashInMethod.maya,
+      ),
+    );
+
+    // Ride payment transactions
+    final ridePayment1 = WalletTransaction(
+      transactionId: 'txn_${now.millisecondsSinceEpoch - 86400000}',
+      walletId: passengerWallet.walletId,
+      type: TransactionType.payment,
+      amount: 85.50,
+      status: TransactionStatus.completed,
+      timestamp: now.subtract(const Duration(days: 1)),
+      rideId: 'ride_20260429_001',
+      description: 'Ride payment',
+    );
+    _transactions[passengerWallet.walletId]!.insert(0, ridePayment1);
+    _wallets[passengerWallet.walletId] = passengerWallet.copyWith(
+      balance: _wallets[passengerWallet.walletId]!.balance - 85.50,
+    );
+
+    final ridePayment2 = WalletTransaction(
+      transactionId: 'txn_${now.millisecondsSinceEpoch - 172800000}',
+      walletId: passengerWallet.walletId,
+      type: TransactionType.payment,
+      amount: 120.00,
+      status: TransactionStatus.completed,
+      timestamp: now.subtract(const Duration(days: 2)),
+      rideId: 'ride_20260428_005',
+      description: 'Ride payment',
+    );
+    _transactions[passengerWallet.walletId]!.insert(0, ridePayment2);
+    _wallets[passengerWallet.walletId] = passengerWallet.copyWith(
+      balance: _wallets[passengerWallet.walletId]!.balance - 120.00,
+    );
+
+    final ridePayment3 = WalletTransaction(
+      transactionId: 'txn_${now.millisecondsSinceEpoch - 259200000}',
+      walletId: passengerWallet.walletId,
+      type: TransactionType.payment,
+      amount: 65.75,
+      status: TransactionStatus.completed,
+      timestamp: now.subtract(const Duration(days: 3)),
+      rideId: 'ride_20260427_003',
+      description: 'Ride payment',
+    );
+    _transactions[passengerWallet.walletId]!.insert(0, ridePayment3);
+    _wallets[passengerWallet.walletId] = passengerWallet.copyWith(
+      balance: _wallets[passengerWallet.walletId]!.balance - 65.75,
+    );
+
+    // Refund transaction
+    final refund = WalletTransaction(
+      transactionId: 'txn_${now.millisecondsSinceEpoch - 345600000}',
+      walletId: passengerWallet.walletId,
+      type: TransactionType.refund,
+      amount: 50.00,
+      status: TransactionStatus.completed,
+      timestamp: now.subtract(const Duration(days: 4)),
+      rideId: 'ride_20260426_002',
+      description: 'Ride cancelled - Refund',
+    );
+    _transactions[passengerWallet.walletId]!.insert(0, refund);
+    _wallets[passengerWallet.walletId] = passengerWallet.copyWith(
+      balance: _wallets[passengerWallet.walletId]!.balance + 50.00,
     );
 
     // Create driver wallet
@@ -370,6 +443,12 @@ class WalletService {
       walletId: driverWallet.walletId,
       rideId: 'ride_002',
       fare: 120.0,
+    );
+
+    await processDriverEarnings(
+      walletId: driverWallet.walletId,
+      rideId: 'ride_003',
+      fare: 95.50,
     );
   }
 }

@@ -6,7 +6,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/app_state.dart';
 import '../../theme/app_colors.dart';
-import '../../utils/responsive.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../widgets/toast.dart';
 
@@ -345,7 +344,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final name = state.passengerName;
     final phone = state.passengerPhone;
     final initials = name.split(' ').map((n) => n[0]).join();
-    final hp = Responsive.hPad(context);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,

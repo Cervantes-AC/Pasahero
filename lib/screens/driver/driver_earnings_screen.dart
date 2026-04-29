@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../data/app_state.dart';
 import '../../widgets/ph_widgets.dart';
+import '../../utils/responsive.dart';
 
 class DriverEarningsScreen extends StatefulWidget {
   const DriverEarningsScreen({super.key});
@@ -57,7 +58,12 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
           children: [
             // ── Header ──────────────────────────────────────────────────────
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              padding: EdgeInsets.fromLTRB(
+                Responsive.spacing(context, units: 2.5),
+                Responsive.spacing(context, units: 2),
+                Responsive.spacing(context, units: 2.5),
+                0,
+              ),
               child: Row(
                 children: [
                   PhIconButton(
@@ -66,8 +72,8 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                     color: Colors.white.withValues(alpha: 0.1),
                     iconColor: Colors.white,
                   ),
-                  const SizedBox(width: 12),
-                  const Expanded(
+                  SizedBox(width: Responsive.spacing(context, units: 1.5)),
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -75,7 +81,7 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                           'Earnings',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 20,
+                            fontSize: Responsive.fontSize(context, 20),
                             fontWeight: FontWeight.w800,
                             letterSpacing: -0.5,
                           ),
@@ -84,7 +90,7 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                           'Your financial overview',
                           style: TextStyle(
                             color: AppColors.driverTextMuted,
-                            fontSize: 12,
+                            fontSize: Responsive.fontSize(context, 12),
                           ),
                         ),
                       ],
@@ -96,12 +102,16 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
 
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
+                padding: EdgeInsets.all(
+                  Responsive.spacing(context, units: 2.5),
+                ),
                 child: Column(
                   children: [
                     // ── Weekly total card ────────────────────────────────────
                     Container(
-                          padding: const EdgeInsets.all(24),
+                          padding: EdgeInsets.all(
+                            Responsive.spacing(context, units: 3),
+                          ),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               begin: Alignment.topLeft,
@@ -111,7 +121,9 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                 AppColors.driverAccent.withValues(alpha: 0.08),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(
+                              Responsive.radius(context, base: 20),
+                            ),
                             border: Border.all(
                               color: AppColors.driverAccent.withValues(
                                 alpha: 0.4,
@@ -141,8 +153,14 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                       Row(
                                         children: [
                                           Container(
-                                            width: 32,
-                                            height: 32,
+                                            width: Responsive.iconSize(
+                                              context,
+                                              base: 32,
+                                            ),
+                                            height: Responsive.iconSize(
+                                              context,
+                                              base: 32,
+                                            ),
                                             decoration: BoxDecoration(
                                               gradient: const LinearGradient(
                                                 colors: [
@@ -151,26 +169,47 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                                 ],
                                               ),
                                               borderRadius:
-                                                  BorderRadius.circular(8),
+                                                  BorderRadius.circular(
+                                                    Responsive.radius(
+                                                      context,
+                                                      base: 8,
+                                                    ),
+                                                  ),
                                             ),
-                                            child: const Icon(
+                                            child: Icon(
                                               Icons.calendar_today_rounded,
                                               color: AppColors.driverBg,
-                                              size: 16,
+                                              size: Responsive.iconSize(
+                                                context,
+                                                base: 16,
+                                              ),
                                             ),
                                           ),
-                                          const SizedBox(width: 8),
-                                          const Text(
+                                          SizedBox(
+                                            width: Responsive.spacing(
+                                              context,
+                                              units: 1,
+                                            ),
+                                          ),
+                                          Text(
                                             'This Week',
                                             style: TextStyle(
                                               color: AppColors.driverTextMuted,
-                                              fontSize: 14,
+                                              fontSize: Responsive.fontSize(
+                                                context,
+                                                14,
+                                              ),
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 8),
+                                      SizedBox(
+                                        height: Responsive.spacing(
+                                          context,
+                                          units: 1,
+                                        ),
+                                      ),
                                       AnimatedBuilder(
                                         animation: _shimmer,
                                         builder: (_, __) => ShaderMask(
@@ -199,9 +238,12 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                               ).createShader(bounds),
                                           child: Text(
                                             '₱${weekTotal.toStringAsFixed(2)}',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               color: AppColors.driverAccent,
-                                              fontSize: 36,
+                                              fontSize: Responsive.fontSize(
+                                                context,
+                                                36,
+                                              ),
                                               fontWeight: FontWeight.w900,
                                               letterSpacing: -1.5,
                                             ),
@@ -213,9 +255,15 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                   Column(
                                     children: [
                                       Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: Responsive.spacing(
+                                            context,
+                                            units: 1.5,
+                                          ),
+                                          vertical: Responsive.spacing(
+                                            context,
+                                            units: 0.75,
+                                          ),
                                         ),
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
@@ -227,7 +275,10 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                             ],
                                           ),
                                           borderRadius: BorderRadius.circular(
-                                            20,
+                                            Responsive.radius(
+                                              context,
+                                              base: 20,
+                                            ),
                                           ),
                                           boxShadow: [
                                             BoxShadow(
@@ -237,39 +288,60 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                             ),
                                           ],
                                         ),
-                                        child: const Row(
+                                        child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(
                                               Icons.trending_up_rounded,
                                               color: Colors.white,
-                                              size: 14,
+                                              size: Responsive.iconSize(
+                                                context,
+                                                base: 14,
+                                              ),
                                             ),
-                                            SizedBox(width: 4),
+                                            SizedBox(
+                                              width: Responsive.spacing(
+                                                context,
+                                                units: 0.5,
+                                              ),
+                                            ),
                                             Text(
                                               '+12%',
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.w800,
-                                                fontSize: 13,
+                                                fontSize: Responsive.fontSize(
+                                                  context,
+                                                  13,
+                                                ),
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
-                                      const SizedBox(height: 6),
-                                      const Text(
+                                      SizedBox(
+                                        height: Responsive.spacing(
+                                          context,
+                                          units: 0.75,
+                                        ),
+                                      ),
+                                      Text(
                                         'vs last week',
                                         style: TextStyle(
                                           color: AppColors.driverTextMuted,
-                                          fontSize: 11,
+                                          fontSize: Responsive.fontSize(
+                                            context,
+                                            11,
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 20),
+                              SizedBox(
+                                height: Responsive.spacing(context, units: 2.5),
+                              ),
                               Row(
                                 children: [
                                   _WStat(
@@ -278,7 +350,12 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                     icon: Icons.two_wheeler_rounded,
                                     color: AppColors.primary,
                                   ),
-                                  const SizedBox(width: 12),
+                                  SizedBox(
+                                    width: Responsive.spacing(
+                                      context,
+                                      units: 1.5,
+                                    ),
+                                  ),
                                   _WStat(
                                     label: 'Avg/Trip',
                                     value:
@@ -286,7 +363,12 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                     icon: Icons.monetization_on_rounded,
                                     color: AppColors.success,
                                   ),
-                                  const SizedBox(width: 12),
+                                  SizedBox(
+                                    width: Responsive.spacing(
+                                      context,
+                                      units: 1.5,
+                                    ),
+                                  ),
                                   _WStat(
                                     label: 'Best Day',
                                     value: '₱1,350',
@@ -309,15 +391,17 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'Daily Breakdown',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 15,
+                                  fontSize: Responsive.fontSize(context, 15),
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              SizedBox(
+                                height: Responsive.spacing(context, units: 2.5),
+                              ),
                               SizedBox(
                                 height: 130,
                                 child: Row(
@@ -329,8 +413,11 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                     final h = (d.amount / maxAmt) * 110;
                                     return Expanded(
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 3,
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: Responsive.spacing(
+                                            context,
+                                            units: 0.375,
+                                          ),
                                         ),
                                         child: Column(
                                           mainAxisAlignment:
@@ -338,15 +425,22 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                           children: [
                                             if (isToday)
                                               Padding(
-                                                padding: const EdgeInsets.only(
-                                                  bottom: 4,
+                                                padding: EdgeInsets.only(
+                                                  bottom: Responsive.spacing(
+                                                    context,
+                                                    units: 0.5,
+                                                  ),
                                                 ),
                                                 child: Text(
                                                   '₱${d.amount.toStringAsFixed(0)}',
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     color:
                                                         AppColors.driverAccent,
-                                                    fontSize: 9,
+                                                    fontSize:
+                                                        Responsive.fontSize(
+                                                          context,
+                                                          9,
+                                                        ),
                                                     fontWeight: FontWeight.w700,
                                                   ),
                                                 ),
@@ -376,17 +470,30 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                                         ],
                                                 ),
                                                 borderRadius:
-                                                    BorderRadius.circular(6),
+                                                    BorderRadius.circular(
+                                                      Responsive.radius(
+                                                        context,
+                                                        base: 6,
+                                                      ),
+                                                    ),
                                               ),
                                             ),
-                                            const SizedBox(height: 6),
+                                            SizedBox(
+                                              height: Responsive.spacing(
+                                                context,
+                                                units: 0.75,
+                                              ),
+                                            ),
                                             Text(
                                               d.day,
                                               style: TextStyle(
                                                 color: isToday
                                                     ? AppColors.driverAccent
                                                     : AppColors.driverTextMuted,
-                                                fontSize: 11,
+                                                fontSize: Responsive.fontSize(
+                                                  context,
+                                                  11,
+                                                ),
                                                 fontWeight: isToday
                                                     ? FontWeight.w700
                                                     : FontWeight.normal,
@@ -406,7 +513,7 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                         .fadeIn(delay: 160.ms, duration: 350.ms)
                         .slideY(begin: 0.1, end: 0),
 
-                    const SizedBox(height: 16),
+                    SizedBox(height: Responsive.spacing(context, units: 2)),
 
                     // ── Today's trips ────────────────────────────────────────
                     PhDriverCard(
@@ -417,24 +524,35 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
+                                  Text(
                                     "Today's Trips",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w700,
-                                      fontSize: 15,
+                                      fontSize: Responsive.fontSize(
+                                        context,
+                                        15,
+                                      ),
                                     ),
                                   ),
                                   Text(
                                     '$trips trips',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: AppColors.driverTextMuted,
-                                      fontSize: 13,
+                                      fontSize: Responsive.fontSize(
+                                        context,
+                                        13,
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 14),
+                              SizedBox(
+                                height: Responsive.spacing(
+                                  context,
+                                  units: 1.75,
+                                ),
+                              ),
                               ...[
                                 ('SM City Cebu', 'Ayala Center', 65, '2:30 PM'),
                                 ('IT Park', 'Guadalupe', 48, '11:15 AM'),
@@ -442,12 +560,23 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                               ].asMap().entries.map((e) {
                                 final t = e.value;
                                 return Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
+                                  padding: EdgeInsets.only(
+                                    bottom: Responsive.spacing(
+                                      context,
+                                      units: 1.25,
+                                    ),
+                                  ),
                                   child: Row(
                                     children: [
                                       Container(
-                                        width: 34,
-                                        height: 34,
+                                        width: Responsive.iconSize(
+                                          context,
+                                          base: 34,
+                                        ),
+                                        height: Responsive.iconSize(
+                                          context,
+                                          base: 34,
+                                        ),
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
                                             colors: [
@@ -458,21 +587,32 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                             ],
                                           ),
                                           borderRadius: BorderRadius.circular(
-                                            10,
+                                            Responsive.radius(
+                                              context,
+                                              base: 10,
+                                            ),
                                           ),
                                         ),
                                         child: Center(
                                           child: Text(
                                             '${e.key + 1}',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.w800,
-                                              fontSize: 13,
+                                              fontSize: Responsive.fontSize(
+                                                context,
+                                                13,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 12),
+                                      SizedBox(
+                                        width: Responsive.spacing(
+                                          context,
+                                          units: 1.5,
+                                        ),
+                                      ),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
@@ -480,30 +620,52 @@ class _DriverEarningsScreenState extends State<DriverEarningsScreen>
                                           children: [
                                             Text(
                                               '${t.$1} → ${t.$2}',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 color: Colors.white,
-                                                fontSize: 13,
+                                                fontSize: Responsive.fontSize(
+                                                  context,
+                                                  13,
+                                                ),
                                                 fontWeight: FontWeight.w500,
                                               ),
+                                              maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
+                                            ),
+                                            SizedBox(
+                                              height: Responsive.spacing(
+                                                context,
+                                                units: 0.25,
+                                              ),
                                             ),
                                             Text(
                                               t.$4,
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 color:
                                                     AppColors.driverTextMuted,
-                                                fontSize: 11,
+                                                fontSize: Responsive.fontSize(
+                                                  context,
+                                                  11,
+                                                ),
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
+                                      SizedBox(
+                                        width: Responsive.spacing(
+                                          context,
+                                          units: 1,
+                                        ),
+                                      ),
                                       Text(
                                         '₱${t.$3}',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: AppColors.driverAccent,
                                           fontWeight: FontWeight.w700,
-                                          fontSize: 15,
+                                          fontSize: Responsive.fontSize(
+                                            context,
+                                            15,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -542,7 +704,7 @@ class _WStat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(Responsive.spacing(context, units: 1.5)),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -550,34 +712,43 @@ class _WStat extends StatelessWidget {
               color.withValues(alpha: 0.05),
             ],
           ),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(
+            Responsive.radius(context, base: 14),
+          ),
           border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [
             Container(
-              width: 28,
-              height: 28,
+              width: Responsive.iconSize(context, base: 28),
+              height: Responsive.iconSize(context, base: 28),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(
+                  Responsive.radius(context, base: 8),
+                ),
               ),
-              child: Icon(icon, color: color, size: 14),
+              child: Icon(
+                icon,
+                color: color,
+                size: Responsive.iconSize(context, base: 14),
+              ),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: Responsive.spacing(context, units: 0.75)),
             Text(
               value,
               style: TextStyle(
                 color: color,
                 fontWeight: FontWeight.w800,
-                fontSize: 14,
+                fontSize: Responsive.fontSize(context, 14),
               ),
+              textAlign: TextAlign.center,
             ),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.driverTextMuted,
-                fontSize: 10,
+                fontSize: Responsive.fontSize(context, 10),
               ),
               textAlign: TextAlign.center,
             ),

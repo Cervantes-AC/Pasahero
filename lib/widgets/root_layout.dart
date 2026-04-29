@@ -44,6 +44,12 @@ class _WideLayout extends StatelessWidget {
         path: '/ride-history',
       ),
       _NavItem(
+        label: 'Wallet',
+        icon: Icons.account_balance_wallet_outlined,
+        activeIcon: Icons.account_balance_wallet,
+        path: '/wallet',
+      ),
+      _NavItem(
         label: 'Saved',
         icon: Icons.bookmark_outline,
         activeIcon: Icons.bookmark,

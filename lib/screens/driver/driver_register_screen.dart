@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/responsive.dart';
 import '../../widgets/toast.dart';
 import '../../widgets/ph_widgets.dart';
 
@@ -103,8 +104,8 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
                 children: [
                   Text(
                     'Step ${_currentStep + 1} of 2',
-                    style: const TextStyle(
-                      fontSize: 13,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 13),
                       color: AppColors.driverAccent,
                       fontWeight: FontWeight.w800,
                     ),
@@ -112,7 +113,7 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
                   Text(
                     _currentStep == 0 ? 'Personal Details' : 'Vehicle Details',
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: Responsive.fontSize(context, 13),
                       color: Colors.white.withValues(alpha: 0.5),
                       fontWeight: FontWeight.w600,
                     ),
@@ -170,14 +171,13 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
   }
 
   Widget _buildStep1() {
-    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Tell us about\nyourself',
           style: TextStyle(
-            fontSize: 28,
+            fontSize: Responsive.fontSize(context, 28),
             fontWeight: FontWeight.w900,
             color: Colors.white,
             height: 1.2,
@@ -231,21 +231,21 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Vehicle\nInformation',
           style: TextStyle(
-            fontSize: 26,
+            fontSize: Responsive.fontSize(context, 26),
             fontWeight: FontWeight.bold,
             color: Colors.white,
             height: 1.2,
           ),
         ),
         const SizedBox(height: 28),
-        const Text(
+        Text(
           'Vehicle Type',
           style: TextStyle(
             color: Colors.white70,
-            fontSize: 13,
+            fontSize: Responsive.fontSize(context, 13),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -273,8 +273,8 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
               child: Row(
                 children: [
                   Container(
-                    width: 44,
-                    height: 44,
+                    width: Responsive.iconSize(context, base: 44),
+                    height: Responsive.iconSize(context, base: 44),
                     decoration: BoxDecoration(
                       color: selected
                           ? AppColors.driverAccent.withValues(alpha: 0.2)
@@ -284,7 +284,7 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
                     child: Icon(
                       v.icon,
                       color: selected ? AppColors.driverAccent : Colors.white54,
-                      size: 22,
+                      size: Responsive.iconSize(context, base: 22),
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -299,14 +299,14 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
                                 ? AppColors.driverAccent
                                 : Colors.white,
                             fontWeight: FontWeight.w600,
-                            fontSize: 15,
+                            fontSize: Responsive.fontSize(context, 15),
                           ),
                         ),
                         Text(
                           v.desc,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white54,
-                            fontSize: 12,
+                            fontSize: Responsive.fontSize(context, 12),
                           ),
                         ),
                       ],
@@ -316,7 +316,7 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
                     Icon(
                       Icons.check_circle,
                       color: AppColors.driverAccent,
-                      size: 20,
+                      size: Responsive.iconSize(context, base: 20),
                     ),
                 ],
               ),
@@ -333,11 +333,11 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
         const SizedBox(height: 16),
 
         // Vehicle Photos Section
-        const Text(
+        Text(
           'Vehicle Photos',
           style: TextStyle(
             color: Colors.white70,
-            fontSize: 13,
+            fontSize: Responsive.fontSize(context, 13),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -418,12 +418,19 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
           ),
           child: Row(
             children: [
-              Icon(Icons.info_outline, color: AppColors.driverAccent, size: 18),
+              Icon(
+                Icons.info_outline,
+                color: AppColors.driverAccent,
+                size: Responsive.iconSize(context, base: 18),
+              ),
               const SizedBox(width: 10),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Your documents and vehicle photos will be verified within 24 hours before you can start accepting rides.',
-                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: Responsive.fontSize(context, 12),
+                  ),
                 ),
               ),
             ],
@@ -445,9 +452,9 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white70,
-            fontSize: 13,
+            fontSize: Responsive.fontSize(context, 13),
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -471,7 +478,11 @@ class _DriverRegisterScreenState extends State<DriverRegisterScreen> {
       hintText: hint,
       hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.35)),
       prefixIcon: prefixIcon != null
-          ? Icon(prefixIcon, color: Colors.white38, size: 20)
+          ? Icon(
+              prefixIcon,
+              color: Colors.white38,
+              size: Responsive.iconSize(context, base: 20),
+            )
           : null,
       suffixIcon: suffix,
       filled: true,
@@ -509,7 +520,7 @@ class _PhotoUploadBox extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 80,
+        height: Responsive.buttonHeight(context),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
@@ -521,13 +532,17 @@ class _PhotoUploadBox extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white54, size: 24),
+            Icon(
+              icon,
+              color: Colors.white54,
+              size: Responsive.iconSize(context, base: 24),
+            ),
             const SizedBox(height: 4),
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white70,
-                fontSize: 11,
+                fontSize: Responsive.fontSize(context, 11),
                 fontWeight: FontWeight.w500,
               ),
             ),

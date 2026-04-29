@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/responsive.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../widgets/toast.dart';
 
@@ -52,73 +53,117 @@ class _RideCompleteScreenState extends State<RideCompleteScreen> {
               ),
               child: SafeArea(
                 bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 32, 24, 32),
-                  child: Column(
-                    children: [
-                      Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.15),
-                                  blurRadius: 24,
-                                  offset: const Offset(0, 8),
-                                ),
-                              ],
-                            ),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Container(
-                                  width: 80,
-                                  height: 80,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.success.withValues(
-                                      alpha: 0.1,
+                child: Stack(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        Responsive.spacing(context, units: 3),
+                        Responsive.spacing(context, units: 4),
+                        Responsive.spacing(context, units: 3),
+                        Responsive.spacing(context, units: 4),
+                      ),
+                      child: Column(
+                        children: [
+                          Container(
+                                width: 100,
+                                height: 100,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(
+                                        alpha: 0.15,
+                                      ),
+                                      blurRadius: 24,
+                                      offset: const Offset(0, 8),
                                     ),
-                                    shape: BoxShape.circle,
-                                  ),
+                                  ],
                                 ),
-                                const Icon(
-                                  Icons.check_circle_rounded,
-                                  size: 50,
-                                  color: AppColors.success,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    Container(
+                                      width: 80,
+                                      height: 80,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.success.withValues(
+                                          alpha: 0.1,
+                                        ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.check_circle_rounded,
+                                      size: 50,
+                                      color: AppColors.success,
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              )
+                              .animate()
+                              .scale(
+                                begin: const Offset(0.5, 0.5),
+                                end: const Offset(1, 1),
+                                duration: 500.ms,
+                                curve: Curves.elasticOut,
+                              )
+                              .fadeIn(duration: 400.ms),
+                          const SizedBox(height: 24),
+                          const Text(
+                            'Trip Complete!',
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
                             ),
-                          )
-                          .animate()
-                          .scale(
-                            begin: const Offset(0.5, 0.5),
-                            end: const Offset(1, 1),
-                            duration: 500.ms,
-                            curve: Curves.elasticOut,
-                          )
-                          .fadeIn(duration: 400.ms),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'Trip Complete!',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Thank you for riding with us',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white.withValues(alpha: 0.9),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // SOS button
+                    Positioned(
+                      top: Responsive.spacing(context, units: 2),
+                      right: Responsive.spacing(context, units: 2),
+                      child: GestureDetector(
+                        onTap: () {
+                          showToast(
+                            context,
+                            'Emergency services contacted!',
+                            isError: true,
+                          );
+                        },
+                        child: Container(
+                          width: Responsive.iconSize(context, base: 48),
+                          height: Responsive.iconSize(context, base: 48),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.2),
+                                blurRadius: 8,
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.emergency,
+                            color: AppColors.red,
+                            size: Responsive.iconSize(context, base: 24),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Thank you for riding with us',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

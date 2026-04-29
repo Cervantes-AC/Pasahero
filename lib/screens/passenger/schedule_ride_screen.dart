@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../data/app_state.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/responsive.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../widgets/toast.dart';
 
@@ -147,10 +148,10 @@ class _ScheduleRideScreenState extends State<ScheduleRideScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'New Scheduled Ride',
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: Responsive.fontSize(context, 15),
                           fontWeight: FontWeight.w700,
                           color: AppColors.textPrimary,
                         ),
@@ -170,10 +171,10 @@ class _ScheduleRideScreenState extends State<ScheduleRideScreen> {
                         prefixIcon: Icons.location_on_outlined,
                       ),
                       const SizedBox(height: 16),
-                      const Text(
+                      Text(
                         'Ride Type',
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: Responsive.fontSize(context, 13),
                           fontWeight: FontWeight.w500,
                           color: AppColors.textSecondary,
                         ),
@@ -293,14 +294,14 @@ class _RideTypeChip extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                size: 16,
+                size: Responsive.iconSize(context, base: 16),
                 color: active ? AppColors.primary : AppColors.textTertiary,
               ),
               const SizedBox(width: 6),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: Responsive.fontSize(context, 13),
                   fontWeight: active ? FontWeight.w600 : FontWeight.w400,
                   color: active ? AppColors.primary : AppColors.textTertiary,
                 ),
@@ -338,7 +339,11 @@ class _DateTimeButton extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, size: 16, color: AppColors.primary),
+            Icon(
+              icon,
+              size: Responsive.iconSize(context, base: 16),
+              color: AppColors.primary,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -346,15 +351,15 @@ class _DateTimeButton extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: const TextStyle(
-                      fontSize: 10,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 10),
                       color: AppColors.textTertiary,
                     ),
                   ),
                   Text(
                     value,
-                    style: const TextStyle(
-                      fontSize: 13,
+                    style: TextStyle(
+                      fontSize: Responsive.fontSize(context, 13),
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
                     ),
@@ -362,9 +367,9 @@ class _DateTimeButton extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(
+            Icon(
               Icons.chevron_right,
-              size: 16,
+              size: Responsive.iconSize(context, base: 16),
               color: AppColors.textTertiary,
             ),
           ],
@@ -424,8 +429,8 @@ class _ScheduledRideCard extends StatelessWidget {
                 ),
                 child: Text(
                   ride.rideType == 'habal-habal' ? 'Habal-habal' : 'Bao-bao',
-                  style: const TextStyle(
-                    fontSize: 11,
+                  style: TextStyle(
+                    fontSize: Responsive.fontSize(context, 11),
                     fontWeight: FontWeight.w600,
                     color: AppColors.primary,
                   ),
@@ -438,10 +443,10 @@ class _ScheduledRideCard extends StatelessWidget {
                   color: AppColors.amber.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Text(
+                child: Text(
                   'Upcoming',
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: Responsive.fontSize(context, 11),
                     fontWeight: FontWeight.w600,
                     color: AppColors.amber,
                   ),
@@ -454,16 +459,16 @@ class _ScheduledRideCard extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.schedule_outlined,
-                size: 14,
+                size: Responsive.iconSize(context, base: 14),
                 color: AppColors.textTertiary,
               ),
               const SizedBox(width: 6),
               Text(
                 dateStr,
-                style: const TextStyle(
-                  fontSize: 12,
+                style: TextStyle(
+                  fontSize: Responsive.fontSize(context, 12),
                   color: AppColors.textSecondary,
                 ),
               ),
@@ -472,13 +477,16 @@ class _ScheduledRideCard extends StatelessWidget {
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
-            height: 36,
+            height: Responsive.buttonHeight(context) * 0.7,
             child: OutlinedButton.icon(
               onPressed: onCancel,
-              icon: const Icon(Icons.cancel_outlined, size: 14),
-              label: const Text(
+              icon: Icon(
+                Icons.cancel_outlined,
+                size: Responsive.iconSize(context, base: 14),
+              ),
+              label: Text(
                 'Cancel Scheduled Ride',
-                style: TextStyle(fontSize: 13),
+                style: TextStyle(fontSize: Responsive.fontSize(context, 13)),
               ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.error,

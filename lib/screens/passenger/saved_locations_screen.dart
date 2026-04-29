@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/ph_widgets.dart';
 import '../../widgets/toast.dart';
+import '../../utils/responsive.dart';
 
 class _Loc {
   final String id, type, label, address;
@@ -261,8 +262,14 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Container(
-                                      width: 42,
-                                      height: 42,
+                                      width: Responsive.iconSize(
+                                        context,
+                                        base: 42,
+                                      ),
+                                      height: Responsive.iconSize(
+                                        context,
+                                        base: 42,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: color.withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(11),
@@ -270,10 +277,18 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
                                       child: Icon(
                                         _icon(loc.type),
                                         color: color,
-                                        size: 20,
+                                        size: Responsive.iconSize(
+                                          context,
+                                          base: 20,
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(width: 12),
+                                    SizedBox(
+                                      width: Responsive.spacing(
+                                        context,
+                                        units: 1.5,
+                                      ),
+                                    ),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -281,24 +296,33 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
                                         children: [
                                           Text(
                                             loc.label,
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontWeight: FontWeight.w600,
-                                              fontSize: 14,
+                                              fontSize: Responsive.fontSize(
+                                                context,
+                                                14,
+                                              ),
                                               color: AppColors.textPrimary,
                                             ),
                                           ),
                                           Text(
                                             loc.address,
-                                            style: const TextStyle(
-                                              fontSize: 12,
+                                            style: TextStyle(
+                                              fontSize: Responsive.fontSize(
+                                                context,
+                                                12,
+                                              ),
                                               color: AppColors.textTertiary,
                                             ),
                                           ),
                                           if (loc.details != null)
                                             Text(
                                               loc.details!,
-                                              style: const TextStyle(
-                                                fontSize: 11,
+                                              style: TextStyle(
+                                                fontSize: Responsive.fontSize(
+                                                  context,
+                                                  11,
+                                                ),
                                                 color: AppColors.textTertiary,
                                               ),
                                             ),
@@ -307,21 +331,36 @@ class _SavedLocationsScreenState extends State<SavedLocationsScreen> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 12),
+                                SizedBox(
+                                  height: Responsive.spacing(
+                                    context,
+                                    units: 1.5,
+                                  ),
+                                ),
                                 Row(
                                   children: [
                                     Expanded(
                                       child: SizedBox(
-                                        height: 38,
+                                        height:
+                                            Responsive.buttonHeight(context) *
+                                            0.7,
                                         child: ElevatedButton.icon(
                                           onPressed: () => _book(loc),
-                                          icon: const Icon(
+                                          icon: Icon(
                                             Icons.place_outlined,
-                                            size: 15,
+                                            size: Responsive.iconSize(
+                                              context,
+                                              base: 15,
+                                            ),
                                           ),
-                                          label: const Text(
+                                          label: Text(
                                             'Book Ride',
-                                            style: TextStyle(fontSize: 13),
+                                            style: TextStyle(
+                                              fontSize: Responsive.fontSize(
+                                                context,
+                                                13,
+                                              ),
+                                            ),
                                           ),
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: AppColors.primary,
@@ -394,14 +433,18 @@ class _SmallBtn extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 38,
-        height: 38,
+        width: Responsive.iconSize(context, base: 38),
+        height: Responsive.iconSize(context, base: 38),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
-        child: Icon(icon, size: 17, color: color),
+        child: Icon(
+          icon,
+          size: Responsive.iconSize(context, base: 17),
+          color: color,
+        ),
       ),
     );
   }

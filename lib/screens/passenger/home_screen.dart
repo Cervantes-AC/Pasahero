@@ -892,7 +892,7 @@ class _WeatherTrafficCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(Responsive.spacing(context, units: 2)),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -902,7 +902,9 @@ class _WeatherTrafficCard extends StatelessWidget {
             AppColors.primary.withValues(alpha: 0.05),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(
+          Responsive.radius(context, base: 16),
+        ),
         border: Border.all(color: AppColors.success.withValues(alpha: 0.2)),
       ),
       child: Row(
@@ -921,34 +923,36 @@ class _WeatherTrafficCard extends StatelessWidget {
                           child: Icon(
                             Icons.wb_sunny_outlined,
                             color: AppColors.amber,
-                            size: 18,
+                            size: Responsive.iconSize(context, base: 18),
                           ),
                         );
                       },
                     ),
-                    const SizedBox(width: 6),
-                    const Text(
+                    SizedBox(width: Responsive.spacing(context, units: 0.75)),
+                    Text(
                       '28°C',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: Responsive.fontSize(context, 16),
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: Responsive.spacing(context, units: 1)),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: Responsive.spacing(context, units: 0.75),
+                        vertical: Responsive.spacing(context, units: 0.25),
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.success.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(
+                          Responsive.radius(context, base: 8),
+                        ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Clear',
                         style: TextStyle(
-                          fontSize: 10,
+                          fontSize: Responsive.fontSize(context, 10),
                           fontWeight: FontWeight.w600,
                           color: AppColors.success,
                         ),
@@ -956,19 +960,23 @@ class _WeatherTrafficCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                SizedBox(height: Responsive.spacing(context, units: 1)),
+                Text(
                   'Perfect weather for riding!',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: Responsive.fontSize(context, 12),
                     color: AppColors.textSecondary,
                   ),
                 ),
               ],
             ),
           ),
-          Container(width: 1, height: 40, color: AppColors.border),
-          const SizedBox(width: 16),
+          Container(
+            width: 1,
+            height: Responsive.iconSize(context, base: 40),
+            color: AppColors.border,
+          ),
+          SizedBox(width: Responsive.spacing(context, units: 2)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -978,24 +986,24 @@ class _WeatherTrafficCard extends StatelessWidget {
                     Icon(
                       Icons.traffic_outlined,
                       color: AppColors.success,
-                      size: 18,
+                      size: Responsive.iconSize(context, base: 18),
                     ),
-                    const SizedBox(width: 6),
-                    const Text(
+                    SizedBox(width: Responsive.spacing(context, units: 0.75)),
+                    Text(
                       'Light',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: Responsive.fontSize(context, 16),
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                const Text(
+                SizedBox(height: Responsive.spacing(context, units: 1)),
+                Text(
                   'Smooth roads ahead',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: Responsive.fontSize(context, 12),
                     color: AppColors.textSecondary,
                   ),
                 ),

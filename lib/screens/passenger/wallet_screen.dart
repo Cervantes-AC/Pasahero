@@ -169,11 +169,7 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
                 icon: Icons.payment_outlined,
                 label: 'Pay Ride',
                 color: AppColors.primary,
-                onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Select PasaWallet during ride booking'),
-                  ),
-                ),
+                onTap: () => _showPayRideModal(),
               ),
             ),
             SizedBox(width: Responsive.spacing(context, units: 1.5)),
@@ -182,9 +178,7 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
                 icon: Icons.qr_code_outlined,
                 label: 'Scan QR',
                 color: AppColors.success,
-                onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('QR scanning coming soon')),
-                ),
+                onTap: () => _showScanQRModal(),
               ),
             ),
             SizedBox(width: Responsive.spacing(context, units: 1.5)),
@@ -193,14 +187,243 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
                 icon: Icons.share_outlined,
                 label: 'Send Money',
                 color: AppColors.amber,
-                onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Send money coming soon')),
-                ),
+                onTap: () => _showSendMoneyModal(),
               ),
             ),
           ],
         ),
       ],
+    );
+  }
+
+  void _showPayRideModal() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: EdgeInsets.all(Responsive.spacing(context, units: 3)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: Responsive.spacing(context, units: 5),
+              height: Responsive.spacing(context, units: 0.5),
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Icon(
+              Icons.payment_outlined,
+              size: Responsive.iconSize(context, base: 48),
+              color: AppColors.primary,
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Text(
+              'Pay for Your Ride',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 18),
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+            Text(
+              'Select PasaWallet as your payment method when booking a ride to pay directly from your wallet balance.',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 14),
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 3)),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    vertical: Responsive.spacing(context, units: 1.75),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      Responsive.radius(context, base: 12),
+                    ),
+                  ),
+                ),
+                child: Text(
+                  'Got it',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: Responsive.fontSize(context, 15),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showScanQRModal() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: EdgeInsets.all(Responsive.spacing(context, units: 3)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: Responsive.spacing(context, units: 5),
+              height: Responsive.spacing(context, units: 0.5),
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Icon(
+              Icons.qr_code_outlined,
+              size: Responsive.iconSize(context, base: 48),
+              color: AppColors.success,
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Text(
+              'Scan QR Code',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 18),
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+            Text(
+              'Scan a merchant QR code to make payments directly from your PasaWallet. This feature is coming soon.',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 14),
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 3)),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.success,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    vertical: Responsive.spacing(context, units: 1.75),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      Responsive.radius(context, base: 12),
+                    ),
+                  ),
+                ),
+                child: Text(
+                  'Notify Me',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: Responsive.fontSize(context, 15),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSendMoneyModal() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: EdgeInsets.all(Responsive.spacing(context, units: 3)),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: Responsive.spacing(context, units: 5),
+              height: Responsive.spacing(context, units: 0.5),
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Icon(
+              Icons.share_outlined,
+              size: Responsive.iconSize(context, base: 48),
+              color: AppColors.amber,
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 2)),
+            Text(
+              'Send Money',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 18),
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+            Text(
+              'Transfer money to other PasaWallet users or to bank accounts. This feature is coming soon.',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 14),
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 3)),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.amber,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    vertical: Responsive.spacing(context, units: 1.75),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      Responsive.radius(context, base: 12),
+                    ),
+                  ),
+                ),
+                child: Text(
+                  'Notify Me',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: Responsive.fontSize(context, 15),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

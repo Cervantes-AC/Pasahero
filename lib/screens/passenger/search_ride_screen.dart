@@ -237,12 +237,12 @@ class _SearchRideScreenState extends State<SearchRideScreen>
                           ),
                 ),
                 Positioned(
-                  right: 16,
-                  top: 16,
+                  right: Responsive.spacing(context, units: 2),
+                  top: Responsive.spacing(context, units: 2),
                   child: Column(
                     children: [
                       _MapBtn(label: '+'),
-                      const SizedBox(height: 8),
+                      SizedBox(height: Responsive.spacing(context, units: 1)),
                       _MapBtn(label: 'âˆ’'),
                     ],
                   ),

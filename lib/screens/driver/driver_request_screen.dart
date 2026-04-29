@@ -108,192 +108,236 @@ class _DriverRequestScreenState extends State<DriverRequestScreen>
                   Responsive.spacing(context, units: 3),
                   0,
                 ),
-                child: Column(
+                child: Stack(
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
+                    Column(
                       children: [
-                        // Outer glow effect
-                        AnimatedBuilder(
-                          animation: _pulseController,
-                          builder: (_, __) => Container(
-                            width:
-                                Responsive.iconSize(context, base: 140) +
-                                Responsive.iconSize(context, base: 20) *
-                                    _pulseController.value,
-                            height:
-                                Responsive.iconSize(context, base: 140) +
-                                Responsive.iconSize(context, base: 20) *
-                                    _pulseController.value,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color:
-                                  (_secondsLeft > 10
-                                          ? AppColors.driverAccent
-                                          : AppColors.error)
-                                      .withValues(
-                                        alpha:
-                                            0.1 * (1 - _pulseController.value),
-                                      ),
-                            ),
-                          ),
-                        ),
-                        // Main timer circle
-                        AnimatedBuilder(
-                          animation: _shakeController,
-                          builder: (_, child) => Transform.translate(
-                            offset: Offset(
-                              _secondsLeft <= 10
-                                  ? 2 *
-                                        _shakeController.value *
-                                        (1 - _shakeController.value)
-                                  : 0,
-                              0,
-                            ),
-                            child: child,
-                          ),
-                          child: Container(
-                            width: Responsive.iconSize(context, base: 120),
-                            height: Responsive.iconSize(context, base: 120),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: LinearGradient(
-                                colors: _secondsLeft > 10
-                                    ? [
-                                        AppColors.driverAccent,
-                                        AppColors.driverAccentDark,
-                                      ]
-                                    : [
-                                        AppColors.error,
-                                        const Color(0xFFB91C1C),
-                                      ],
-                              ),
-                              boxShadow: [
-                                BoxShadow(
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Outer glow effect
+                            AnimatedBuilder(
+                              animation: _pulseController,
+                              builder: (_, __) => Container(
+                                width:
+                                    Responsive.iconSize(context, base: 140) +
+                                    Responsive.iconSize(context, base: 20) *
+                                        _pulseController.value,
+                                height:
+                                    Responsive.iconSize(context, base: 140) +
+                                    Responsive.iconSize(context, base: 20) *
+                                        _pulseController.value,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
                                   color:
                                       (_secondsLeft > 10
                                               ? AppColors.driverAccent
                                               : AppColors.error)
-                                          .withValues(alpha: 0.4),
-                                  blurRadius: 20,
-                                  spreadRadius: 4,
+                                          .withValues(
+                                            alpha:
+                                                0.1 *
+                                                (1 - _pulseController.value),
+                                          ),
                                 ),
-                              ],
+                              ),
                             ),
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                // Progress indicator
-                                SizedBox(
-                                  width: Responsive.iconSize(
-                                    context,
-                                    base: 100,
-                                  ),
-                                  height: Responsive.iconSize(
-                                    context,
-                                    base: 100,
-                                  ),
-                                  child: AnimatedBuilder(
-                                    animation: _timerController,
-                                    builder: (_, __) =>
-                                        CircularProgressIndicator(
-                                          value: 1 - _timerController.value,
-                                          strokeWidth: 4,
-                                          backgroundColor: Colors.white
-                                              .withValues(alpha: 0.3),
-                                          valueColor:
-                                              const AlwaysStoppedAnimation(
-                                                Colors.white,
-                                              ),
-                                        ),
-                                  ),
+                            // Main timer circle
+                            AnimatedBuilder(
+                              animation: _shakeController,
+                              builder: (_, child) => Transform.translate(
+                                offset: Offset(
+                                  _secondsLeft <= 10
+                                      ? 2 *
+                                            _shakeController.value *
+                                            (1 - _shakeController.value)
+                                      : 0,
+                                  0,
                                 ),
-                                // Timer text
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      '$_secondsLeft',
-                                      style: TextStyle(
-                                        fontSize: Responsive.fontSize(
-                                          context,
-                                          36,
-                                        ),
-                                        fontWeight: FontWeight.w900,
-                                        color: Colors.white,
-                                        letterSpacing: -1,
-                                      ),
-                                    ),
-                                    Text(
-                                      'seconds',
-                                      style: TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: Responsive.fontSize(
-                                          context,
-                                          11,
-                                        ),
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                child: child,
+                              ),
+                              child: Container(
+                                width: Responsive.iconSize(context, base: 120),
+                                height: Responsive.iconSize(context, base: 120),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  gradient: LinearGradient(
+                                    colors: _secondsLeft > 10
+                                        ? [
+                                            AppColors.driverAccent,
+                                            AppColors.driverAccentDark,
+                                          ]
+                                        : [
+                                            AppColors.error,
+                                            const Color(0xFFB91C1C),
+                                          ],
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color:
+                                          (_secondsLeft > 10
+                                                  ? AppColors.driverAccent
+                                                  : AppColors.error)
+                                              .withValues(alpha: 0.4),
+                                      blurRadius: 20,
+                                      spreadRadius: 4,
                                     ),
                                   ],
                                 ),
-                              ],
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    // Progress indicator
+                                    SizedBox(
+                                      width: Responsive.iconSize(
+                                        context,
+                                        base: 100,
+                                      ),
+                                      height: Responsive.iconSize(
+                                        context,
+                                        base: 100,
+                                      ),
+                                      child: AnimatedBuilder(
+                                        animation: _timerController,
+                                        builder: (_, __) =>
+                                            CircularProgressIndicator(
+                                              value: 1 - _timerController.value,
+                                              strokeWidth: 4,
+                                              backgroundColor: Colors.white
+                                                  .withValues(alpha: 0.3),
+                                              valueColor:
+                                                  const AlwaysStoppedAnimation(
+                                                    Colors.white,
+                                                  ),
+                                            ),
+                                      ),
+                                    ),
+                                    // Timer text
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '$_secondsLeft',
+                                          style: TextStyle(
+                                            fontSize: Responsive.fontSize(
+                                              context,
+                                              36,
+                                            ),
+                                            fontWeight: FontWeight.w900,
+                                            color: Colors.white,
+                                            letterSpacing: -1,
+                                          ),
+                                        ),
+                                        Text(
+                                          'seconds',
+                                          style: TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: Responsive.fontSize(
+                                              context,
+                                              11,
+                                            ),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: Responsive.spacing(context, units: 2)),
+                        Text(
+                              'New Ride Request!',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: Responsive.fontSize(context, 24),
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: -0.5,
+                              ),
+                            )
+                            .animate(
+                              onPlay: (controller) =>
+                                  controller.repeat(reverse: true),
+                            )
+                            .shimmer(
+                              duration: 2000.ms,
+                              color: AppColors.driverAccent.withValues(
+                                alpha: 0.3,
+                              ),
+                            ),
+                        SizedBox(
+                          height: Responsive.spacing(context, units: 0.75),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: Responsive.spacing(context, units: 1.5),
+                            vertical: Responsive.spacing(context, units: 0.75),
+                          ),
+                          decoration: BoxDecoration(
+                            color:
+                                (_secondsLeft > 10
+                                        ? AppColors.driverAccent
+                                        : AppColors.error)
+                                    .withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(
+                              Responsive.radius(context, base: 20),
+                            ),
+                            border: Border.all(
+                              color:
+                                  (_secondsLeft > 10
+                                          ? AppColors.driverAccent
+                                          : AppColors.error)
+                                      .withValues(alpha: 0.4),
+                            ),
+                          ),
+                          child: Text(
+                            _secondsLeft > 10
+                                ? 'Accept before the timer runs out'
+                                : 'Hurry up! Time is running out!',
+                            style: TextStyle(
+                              color: _secondsLeft > 10
+                                  ? AppColors.driverAccent
+                                  : AppColors.error,
+                              fontSize: Responsive.fontSize(context, 12),
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: Responsive.spacing(context, units: 2)),
-                    Text(
-                          'New Ride Request!',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: Responsive.fontSize(context, 24),
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -0.5,
+                    // SOS button
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: () {
+                          showToast(
+                            context,
+                            'Emergency services contacted!',
+                            isError: true,
+                          );
+                        },
+                        child: Container(
+                          width: Responsive.iconSize(context, base: 48),
+                          height: Responsive.iconSize(context, base: 48),
+                          decoration: BoxDecoration(
+                            color: AppColors.red,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.red.withValues(alpha: 0.4),
+                                blurRadius: 12,
+                                spreadRadius: 2,
+                              ),
+                            ],
                           ),
-                        )
-                        .animate(
-                          onPlay: (controller) =>
-                              controller.repeat(reverse: true),
-                        )
-                        .shimmer(
-                          duration: 2000.ms,
-                          color: AppColors.driverAccent.withValues(alpha: 0.3),
-                        ),
-                    SizedBox(height: Responsive.spacing(context, units: 0.75)),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: Responsive.spacing(context, units: 1.5),
-                        vertical: Responsive.spacing(context, units: 0.75),
-                      ),
-                      decoration: BoxDecoration(
-                        color:
-                            (_secondsLeft > 10
-                                    ? AppColors.driverAccent
-                                    : AppColors.error)
-                                .withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(
-                          Responsive.radius(context, base: 20),
-                        ),
-                        border: Border.all(
-                          color:
-                              (_secondsLeft > 10
-                                      ? AppColors.driverAccent
-                                      : AppColors.error)
-                                  .withValues(alpha: 0.4),
-                        ),
-                      ),
-                      child: Text(
-                        _secondsLeft > 10
-                            ? 'Accept before the timer runs out'
-                            : 'Hurry up! Time is running out!',
-                        style: TextStyle(
-                          color: _secondsLeft > 10
-                              ? AppColors.driverAccent
-                              : AppColors.error,
-                          fontSize: Responsive.fontSize(context, 12),
-                          fontWeight: FontWeight.w600,
+                          child: Icon(
+                            Icons.emergency,
+                            color: Colors.white,
+                            size: Responsive.iconSize(context, base: 24),
+                          ),
                         ),
                       ),
                     ),

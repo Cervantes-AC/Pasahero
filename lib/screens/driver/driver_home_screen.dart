@@ -238,6 +238,22 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                     size: Responsive.iconSize(context, base: 48),
                     bordered: true,
                   ),
+                  SizedBox(width: Responsive.spacing(context, units: 1)),
+                  PhIconButton(
+                    icon: Icons.logout_rounded,
+                    onTap: () {
+                      showToast(context, 'Logging out...');
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        if (mounted) {
+                          context.go('/login');
+                        }
+                      });
+                    },
+                    color: Colors.white.withValues(alpha: 0.08),
+                    iconColor: Colors.white,
+                    size: Responsive.iconSize(context, base: 48),
+                    bordered: true,
+                  ),
                 ],
               ),
             ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1, end: 0),
@@ -815,37 +831,6 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
 }
 
 // ── Shared small widgets ──────────────────────────────────────────────────────
-
-class _Chip extends StatelessWidget {
-  final String label;
-  final Color color;
-  const _Chip({required this.label, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: Responsive.spacing(context, units: 0.75),
-        vertical: Responsive.spacing(context, units: 0.25),
-      ),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(
-          Responsive.radius(context, base: 8),
-        ),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: Responsive.fontSize(context, 11),
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-}
 
 class _MiniStat extends StatelessWidget {
   final IconData icon;

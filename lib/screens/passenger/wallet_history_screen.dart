@@ -383,8 +383,8 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 40,
-            height: 4,
+            width: Responsive.spacing(context, units: 5),
+            height: Responsive.spacing(context, units: 0.5),
             decoration: BoxDecoration(
               color: AppColors.border,
               borderRadius: BorderRadius.circular(2),

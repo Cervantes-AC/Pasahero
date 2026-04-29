@@ -10,7 +10,6 @@ import 'package:go_router/go_router.dart';
 class _AppColors {
   static const primary = Color(0xFF1D4ED8);
   static const primaryLight = Color(0xFF60A5FA);
-  static const primaryDark = Color(0xFF1E3A8A);
   static const success = Color(0xFF22C55E);
   static const error = Color(0xFFEF4444);
   static const amber = Color(0xFFD97706);
@@ -31,6 +30,9 @@ class _AppColors {
 // =============================================================================
 
 enum _Phase {
+  welcome,
+  register,
+  registerVehicle,
   idle,
   searching,
   requested,
@@ -69,14 +71,56 @@ class _StepData {
 
 const List<_StepData> _kSteps = [
   _StepData(
+    phase: _Phase.welcome,
+    label: 'Welcome',
+    pTitle: 'Welcome to Pasahero',
+    pDesc:
+        'Juan opens Pasahero for the first time. He sees the welcome screen with options to ride as a passenger or become a driver.',
+    dTitle: 'Welcome to Pasahero',
+    dDesc:
+        'Pedro opens Pasahero for the first time. He sees the welcome screen with options to ride as a passenger or become a driver.',
+    pIcon: Icons.home_rounded,
+    dIcon: Icons.home_rounded,
+    pColor: _AppColors.primary,
+    dColor: _AppColors.driverAccent,
+  ),
+  _StepData(
+    phase: _Phase.register,
+    label: 'Register',
+    pTitle: 'Create Account',
+    pDesc:
+        'Juan enters his name, phone number, and password. He accepts the terms and conditions to create his passenger account.',
+    dTitle: 'Personal Details',
+    dDesc:
+        'Pedro enters his name, phone number, and password. He accepts the terms to start his driver registration (Step 1 of 2).',
+    pIcon: Icons.person_add_rounded,
+    dIcon: Icons.person_add_rounded,
+    pColor: _AppColors.primary,
+    dColor: _AppColors.driverAccent,
+  ),
+  _StepData(
+    phase: _Phase.registerVehicle,
+    label: 'Vehicle',
+    pTitle: 'Location Sharing',
+    pDesc:
+        'Juan enables location sharing for safety. He can share his live location with family during rides.',
+    dTitle: 'Vehicle Details',
+    dDesc:
+        'Pedro selects his vehicle type (Habal-habal or Bao-bao), uploads vehicle photos, and enters his license plate number.',
+    pIcon: Icons.location_on_rounded,
+    dIcon: Icons.two_wheeler,
+    pColor: _AppColors.primary,
+    dColor: _AppColors.driverAccent,
+  ),
+  _StepData(
     phase: _Phase.idle,
     label: 'Home',
     pTitle: 'Passenger Home',
     pDesc:
-        'Juan opens Pasahero. He sees Habal-habal and Bao-bao options. Wallet balance and saved locations are ready.',
+        'Juan is now ready to book rides. He sees Habal-habal and Bao-bao options, wallet balance, and saved locations.',
     dTitle: 'Driver Offline',
     dDesc:
-        "Pedro is offline. Dashboard shows ₱847.50 earnings and 12 trips. He taps the toggle to go online.",
+        "Pedro's registration is complete. Dashboard shows ₱0 earnings. He taps the toggle to go online and start accepting rides.",
     pIcon: Icons.home_rounded,
     dIcon: Icons.wifi_off_rounded,
     pColor: _AppColors.primary,
@@ -853,6 +897,12 @@ class _SidePanel extends StatelessWidget {
   Widget _buildMock(_Phase p) {
     if (isPassenger) {
       switch (p) {
+        case _Phase.welcome:
+          return const _PMockWelcome();
+        case _Phase.register:
+          return const _PMockRegister();
+        case _Phase.registerVehicle:
+          return const _PMockLocationSharing();
         case _Phase.idle:
           return _PMockHome(pulse: pulse, searching: false);
         case _Phase.searching:
@@ -884,6 +934,12 @@ class _SidePanel extends StatelessWidget {
       }
     } else {
       switch (p) {
+        case _Phase.welcome:
+          return const _DMockWelcome();
+        case _Phase.register:
+          return const _DMockRegisterPersonal();
+        case _Phase.registerVehicle:
+          return const _DMockRegisterVehicle();
         case _Phase.idle:
           return const _DMockOffline();
         case _Phase.searching:
@@ -1028,6 +1084,308 @@ class _RoutePainter extends CustomPainter {
 // =============================================================================
 // PASSENGER MOCK SCREENS
 // =============================================================================
+
+class _PMockWelcome extends StatelessWidget {
+  const _PMockWelcome();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: _AppColors.primary,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.directions_bike_rounded,
+              color: Colors.white,
+              size: 32,
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'Pasahero',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 32,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Ang imong kaabag sa pagbiyahe',
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.7),
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 48),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white.withOpacity(0.2)),
+            ),
+            child: const Text(
+              'Passenger',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PMockRegister extends StatelessWidget {
+  const _PMockRegister();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: _AppColors.surface,
+      child: Column(
+        children: [
+          Container(
+            color: _AppColors.primary,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: const Row(
+              children: [
+                Icon(Icons.arrow_back, color: Colors.white, size: 18),
+                SizedBox(width: 12),
+                Text(
+                  'Create Account',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Full Name',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: _AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: _AppColors.border),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Juan Dela Cruz',
+                          style: TextStyle(fontSize: 13),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Phone Number',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: _AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: _AppColors.border),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '+63 912 345 6789',
+                          style: TextStyle(fontSize: 13),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Password',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: _AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: _AppColors.border),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('••••••••', style: TextStyle(fontSize: 13)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    width: double.infinity,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: _AppColors.primary,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Create Account',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PMockLocationSharing extends StatelessWidget {
+  const _PMockLocationSharing();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: _AppColors.surface,
+      child: Column(
+        children: [
+          Container(
+            color: _AppColors.primary,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: const Row(
+              children: [
+                Icon(Icons.arrow_back, color: Colors.white, size: 18),
+                SizedBox(width: 12),
+                Text(
+                  'Location Sharing',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: _AppColors.primary.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.location_on_rounded,
+                    color: _AppColors.primary,
+                    size: 40,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: Text(
+                    'Enable Location Sharing',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: _AppColors.textPrimary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24),
+                  child: Text(
+                    'Share your live location with family for safety during rides',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: _AppColors.textTertiary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Container(
+                    width: double.infinity,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: _AppColors.primary,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Enable Location',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _PMockHome extends StatelessWidget {
   final AnimationController pulse;
@@ -2102,6 +2460,475 @@ class _FareRow extends StatelessWidget {
 // =============================================================================
 // DRIVER MOCK SCREENS
 // =============================================================================
+
+class _DMockWelcome extends StatelessWidget {
+  const _DMockWelcome();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: _AppColors.driverBg,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: _AppColors.driverAccent.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.two_wheeler,
+              color: _AppColors.driverAccent,
+              size: 32,
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            'Pasahero',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 32,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Drive. Earn. Repeat.',
+            style: TextStyle(
+              color: Colors.white.withOpacity(0.7),
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 48),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: _AppColors.driverAccent.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: _AppColors.driverAccent.withOpacity(0.4),
+              ),
+            ),
+            child: Text(
+              'Driver',
+              style: TextStyle(
+                color: _AppColors.driverAccent,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DMockRegisterPersonal extends StatelessWidget {
+  const _DMockRegisterPersonal();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: _AppColors.driverBg,
+      child: Column(
+        children: [
+          Container(
+            color: _AppColors.driverSurface,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: Row(
+              children: [
+                const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Driver Registration',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        'Step 1 of 2',
+                        style: TextStyle(color: Colors.white54, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _AppColors.driverAccent.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'Personal',
+                    style: TextStyle(
+                      color: _AppColors.driverAccent,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Full Name',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: _AppColors.driverBorder),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Pedro Santos',
+                          style: TextStyle(fontSize: 13, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Phone Number',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: _AppColors.driverBorder),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '+63 912 345 6789',
+                          style: TextStyle(fontSize: 13, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Password',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: _AppColors.driverBorder),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '••••••••',
+                          style: TextStyle(fontSize: 13, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    width: double.infinity,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: _AppColors.driverAccent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Next',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DMockRegisterVehicle extends StatelessWidget {
+  const _DMockRegisterVehicle();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: _AppColors.driverBg,
+      child: Column(
+        children: [
+          Container(
+            color: _AppColors.driverSurface,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            child: Row(
+              children: [
+                const Icon(Icons.arrow_back, color: Colors.white, size: 18),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Driver Registration',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        'Step 2 of 2',
+                        style: TextStyle(color: Colors.white54, fontSize: 11),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _AppColors.driverAccent.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'Vehicle',
+                    style: TextStyle(
+                      color: _AppColors.driverAccent,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Vehicle Type',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: _AppColors.driverAccent),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.two_wheeler,
+                                color: _AppColors.driverAccent,
+                                size: 24,
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                'Habal-habal',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white24),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.directions_car,
+                                color: Colors.white54,
+                                size: 24,
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                'Bao-bao',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.white54,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'License Plate',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: _AppColors.driverBorder),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'ABC 1234',
+                          style: TextStyle(fontSize: 13, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Vehicle Photos',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: _AppColors.driverBorder),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.add_photo_alternate_outlined,
+                              color: Colors.white54,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: _AppColors.driverBorder),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Center(
+                            child: Icon(
+                              Icons.add_photo_alternate_outlined,
+                              color: Colors.white54,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    width: double.infinity,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: _AppColors.driverAccent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Complete Registration',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _DMockOffline extends StatelessWidget {
   const _DMockOffline();
