@@ -135,6 +135,13 @@ class _DriverWalletWithdrawScreenState
       title: 'Withdraw Funds',
       subtitle: 'Transfer earnings to your account',
       showBack: true,
+      onBack: () {
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        } else {
+          context.go('/driver-wallet');
+        }
+      },
       dark: true,
     );
   }

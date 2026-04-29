@@ -30,78 +30,90 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
   }
 
   Future<void> _loadData() async {
+    if (!mounted) return;
     setState(() => _loading = true);
 
-    // Simulate loading delay
-    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      // Simulate loading delay
+      await Future.delayed(const Duration(milliseconds: 500));
 
-    // Mock wallet data
-    _wallet = Wallet(
-      walletId: 'wallet_driver_001',
-      userId: 'driver_001',
-      balance: 912.50,
-      userType: UserType.driver,
-      createdAt: DateTime.now().subtract(const Duration(days: 30)),
-      updatedAt: DateTime.now(),
-    );
+      if (!mounted) return;
 
-    _todayEarnings = 912.50;
-    _totalEarnings = 5432.75;
-    _todayTrips = 13;
+      // Mock wallet data
+      _wallet = Wallet(
+        walletId: 'wallet_driver_001',
+        userId: 'driver_001',
+        balance: 912.50,
+        userType: UserType.driver,
+        createdAt: DateTime.now().subtract(const Duration(days: 30)),
+        updatedAt: DateTime.now(),
+      );
 
-    // Mock recent transactions
-    _recentTransactions = [
-      WalletTransaction(
-        transactionId: 'TXN-DRV-001',
-        walletId: 'wallet_driver_001',
-        type: TransactionType.earnings,
-        amount: 65.00,
-        status: TransactionStatus.completed,
-        timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
-        rideId: 'RIDE-DRV-001',
-        commissionRate: 0.17,
-        commissionAmount: 13.00,
-        description: 'Ride Earnings',
-      ),
-      WalletTransaction(
-        transactionId: 'TXN-DRV-002',
-        walletId: 'wallet_driver_001',
-        type: TransactionType.earnings,
-        amount: 120.00,
-        status: TransactionStatus.completed,
-        timestamp: DateTime.now().subtract(const Duration(minutes: 45)),
-        rideId: 'RIDE-DRV-002',
-        commissionRate: 0.17,
-        commissionAmount: 24.00,
-        description: 'Ride Earnings',
-      ),
-      WalletTransaction(
-        transactionId: 'TXN-DRV-003',
-        walletId: 'wallet_driver_001',
-        type: TransactionType.earnings,
-        amount: 95.50,
-        status: TransactionStatus.completed,
-        timestamp: DateTime.now().subtract(const Duration(hours: 1)),
-        rideId: 'RIDE-DRV-003',
-        commissionRate: 0.17,
-        commissionAmount: 19.50,
-        description: 'Ride Earnings',
-      ),
-      WalletTransaction(
-        transactionId: 'TXN-DRV-004',
-        walletId: 'wallet_driver_001',
-        type: TransactionType.earnings,
-        amount: 630.00,
-        status: TransactionStatus.completed,
-        timestamp: DateTime.now().subtract(const Duration(hours: 2)),
-        rideId: 'RIDE-DRV-004',
-        commissionRate: 0.17,
-        commissionAmount: 130.00,
-        description: 'Ride Earnings',
-      ),
-    ];
+      _todayEarnings = 912.50;
+      _totalEarnings = 5432.75;
+      _todayTrips = 13;
 
-    setState(() => _loading = false);
+      // Mock recent transactions
+      _recentTransactions = [
+        WalletTransaction(
+          transactionId: 'TXN-DRV-001',
+          walletId: 'wallet_driver_001',
+          type: TransactionType.earnings,
+          amount: 65.00,
+          status: TransactionStatus.completed,
+          timestamp: DateTime.now().subtract(const Duration(minutes: 5)),
+          rideId: 'RIDE-DRV-001',
+          commissionRate: 0.17,
+          commissionAmount: 13.00,
+          description: 'Ride Earnings',
+        ),
+        WalletTransaction(
+          transactionId: 'TXN-DRV-002',
+          walletId: 'wallet_driver_001',
+          type: TransactionType.earnings,
+          amount: 120.00,
+          status: TransactionStatus.completed,
+          timestamp: DateTime.now().subtract(const Duration(minutes: 45)),
+          rideId: 'RIDE-DRV-002',
+          commissionRate: 0.17,
+          commissionAmount: 24.00,
+          description: 'Ride Earnings',
+        ),
+        WalletTransaction(
+          transactionId: 'TXN-DRV-003',
+          walletId: 'wallet_driver_001',
+          type: TransactionType.earnings,
+          amount: 95.50,
+          status: TransactionStatus.completed,
+          timestamp: DateTime.now().subtract(const Duration(hours: 1)),
+          rideId: 'RIDE-DRV-003',
+          commissionRate: 0.17,
+          commissionAmount: 19.50,
+          description: 'Ride Earnings',
+        ),
+        WalletTransaction(
+          transactionId: 'TXN-DRV-004',
+          walletId: 'wallet_driver_001',
+          type: TransactionType.earnings,
+          amount: 630.00,
+          status: TransactionStatus.completed,
+          timestamp: DateTime.now().subtract(const Duration(hours: 2)),
+          rideId: 'RIDE-DRV-004',
+          commissionRate: 0.17,
+          commissionAmount: 130.00,
+          description: 'Ride Earnings',
+        ),
+      ];
+
+      if (mounted) {
+        setState(() => _loading = false);
+      }
+    } catch (e) {
+      debugPrint('Error loading wallet data: $e');
+      if (mounted) {
+        setState(() => _loading = false);
+      }
+    }
   }
 
   @override
@@ -139,6 +151,13 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
       title: 'PasaWallet',
       subtitle: 'Driver earnings & payouts',
       showBack: true,
+      onBack: () {
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        } else {
+          context.go('/driver-home');
+        }
+      },
       dark: true,
       actions: [
         PhIconButton(

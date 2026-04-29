@@ -2,6 +2,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
 
 // ── PH App Bar ────────────────────────────────────────────────────────────────
@@ -44,7 +45,7 @@ class PhAppBar extends StatelessWidget implements PreferredSizeWidget {
               if (showBack)
                 PhIconButton(
                   icon: Icons.arrow_back_ios_new_rounded,
-                  onTap: onBack ?? () => Navigator.of(context).pop(),
+                  onTap: onBack ?? () => context.pop(),
                   color: theme.cardColor,
                   iconColor: textColor,
                   bordered: true,

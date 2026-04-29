@@ -29,6 +29,8 @@ import 'screens/driver/driver_ratings_screen.dart';
 import 'screens/driver/driver_wallet_screen.dart';
 import 'screens/driver/driver_wallet_withdraw_screen.dart';
 import 'screens/driver/driver_wallet_history_screen.dart';
+import 'screens/driver/driver_wallet_cash_in_screen.dart';
+import 'screens/passenger/notifications_screen.dart';
 import 'widgets/root_layout.dart';
 
 final appRouter = GoRouter(
@@ -69,6 +71,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/location-sharing',
       builder: (ctx, s) => const LocationSharingScreen(),
+    ),
+    GoRoute(
+      path: '/notifications',
+      builder: (ctx, s) => const NotificationsScreen(),
     ),
 
     // ── Passenger shell (bottom nav) ─────────────────────────────────────────
@@ -150,6 +156,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/driver-wallet',
       builder: (ctx, s) => const DriverWalletScreen(),
+    ),
+    GoRoute(
+      path: '/driver-wallet-cash-in',
+      builder: (ctx, s) => const DriverWalletCashInScreen(),
     ),
     GoRoute(
       path: '/driver-wallet-withdraw',

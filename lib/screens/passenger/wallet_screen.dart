@@ -145,7 +145,6 @@ class _PassengerWalletScreenState extends State<PassengerWalletScreen> {
                 child: PhButton(
                   label: 'History',
                   icon: Icons.history_outlined,
-                  outlined: true,
                   onTap: () => context.go('/wallet-history'),
                 ),
               ),
