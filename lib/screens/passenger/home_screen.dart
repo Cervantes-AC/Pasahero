@@ -29,26 +29,46 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       duration: const Duration(seconds: 3),
       vsync: this,
     )..repeat();
-    _addMockDriverMessage();
+    _addMockDriverMessages();
   }
 
-  void _addMockDriverMessage() {
-    // Add a mock driver message notification
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        AppState.instance.notifications.insert(
-          0,
-          AppNotification(
-            id: 'msg_${DateTime.now().millisecondsSinceEpoch}',
-            title: 'Message from Pedro Santos',
-            body: 'Hi! I\'m on my way. I\'ll be there in 5 minutes.',
-            type: 'ride',
-            timestamp: DateTime.now(),
-          ),
-        );
-        setState(() {});
-      }
-    });
+  void _addMockDriverMessages() {
+    // Add mock driver message notifications
+    final driverMessages = [
+      (
+        name: 'Pedro Santos',
+        message: 'Hi! I\'m on my way. I\'ll be there in 5 minutes.',
+        delay: 2,
+      ),
+      (
+        name: 'Maria Garcia',
+        message: 'Just picked up another passenger. Will be with you soon!',
+        delay: 8,
+      ),
+      (
+        name: 'Juan Reyes',
+        message: 'I\'m here! Look for the red motorcycle with plate ABC 1234.',
+        delay: 15,
+      ),
+    ];
+
+    for (final msg in driverMessages) {
+      Future.delayed(Duration(seconds: msg.delay), () {
+        if (mounted) {
+          AppState.instance.notifications.insert(
+            0,
+            AppNotification(
+              id: 'msg_${DateTime.now().millisecondsSinceEpoch}_${msg.name}',
+              title: 'Message from ${msg.name}',
+              body: msg.message,
+              type: 'ride',
+              timestamp: DateTime.now(),
+            ),
+          );
+          setState(() {});
+        }
+      });
+    }
   }
 
   void _logout() {
@@ -92,75 +112,95 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(child: _HomeHeader(onLogout: _logout)),
-          SliverPadding(
-            padding: EdgeInsets.fromLTRB(
-              Responsive.hPad(context),
-              0,
-              Responsive.hPad(context),
-              32,
-            ),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                Transform.translate(
-                  offset: Offset(0, -Responsive.spacing(context, units: 2.5)),
-                  child: _SearchBar()
-                      .animate()
-                      .fadeIn(duration: 350.ms)
-                      .slideY(begin: 0.2, end: 0),
+          SliverToBoxAdapter(
+            child: ResponsiveContainer(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Transform.translate(
+                      offset: Offset(
+                        0,
+                        -Responsive.spacing(context, units: 2.5),
+                      ),
+                      child: _SearchBar()
+                          .animate()
+                          .fadeIn(duration: 350.ms)
+                          .slideY(begin: 0.2, end: 0),
+                    ),
+                    Transform.translate(
+                      offset: Offset(
+                        0,
+                        -Responsive.spacing(context, units: 1.5),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: Responsive.spacing(context, units: 1),
+                          ),
+
+                          // Quick Actions Row
+                          _QuickActionsRow(
+                            selectedIndex: _selectedQuickAction,
+                            onActionTap: (index) =>
+                                setState(() => _selectedQuickAction = index),
+                          ).animate().fadeIn(delay: 100.ms, duration: 350.ms),
+
+                          SizedBox(
+                            height: Responsive.spacing(context, units: 2.5),
+                          ),
+
+                          // Weather & Traffic Card
+                          _WeatherTrafficCard(
+                            weatherController: _weatherController,
+                          ).animate().fadeIn(delay: 150.ms, duration: 350.ms),
+
+                          SizedBox(
+                            height: Responsive.spacing(context, units: 2.5),
+                          ),
+
+                          Text(
+                            'Choose your ride',
+                            style: TextStyle(
+                              fontSize: Responsive.fontSize(context, 17),
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                              letterSpacing: -0.3,
+                            ),
+                          ),
+                          SizedBox(
+                            height: Responsive.spacing(context, units: 1.5),
+                          ),
+                          // On tablet/desktop show 2-col grid
+                          Responsive.isWide(context)
+                              ? _RideGrid()
+                              : _RideList(),
+                          SizedBox(
+                            height: Responsive.spacing(context, units: 3),
+                          ),
+
+                          // Recent Activity
+                          _RecentActivityCard().animate().fadeIn(
+                            delay: 200.ms,
+                            duration: 350.ms,
+                          ),
+
+                          SizedBox(
+                            height: Responsive.spacing(context, units: 2.5),
+                          ),
+
+                          _PromoBanner().animate().fadeIn(
+                            delay: 240.ms,
+                            duration: 350.ms,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                Transform.translate(
-                  offset: Offset(0, -Responsive.spacing(context, units: 1.5)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: Responsive.spacing(context, units: 1)),
-
-                      // Quick Actions Row
-                      _QuickActionsRow(
-                        selectedIndex: _selectedQuickAction,
-                        onActionTap: (index) =>
-                            setState(() => _selectedQuickAction = index),
-                      ).animate().fadeIn(delay: 100.ms, duration: 350.ms),
-
-                      SizedBox(height: Responsive.spacing(context, units: 2.5)),
-
-                      // Weather & Traffic Card
-                      _WeatherTrafficCard(
-                        weatherController: _weatherController,
-                      ).animate().fadeIn(delay: 150.ms, duration: 350.ms),
-
-                      SizedBox(height: Responsive.spacing(context, units: 2.5)),
-
-                      Text(
-                        'Choose your ride',
-                        style: TextStyle(
-                          fontSize: Responsive.fontSize(context, 17),
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-                      SizedBox(height: Responsive.spacing(context, units: 1.5)),
-                      // On tablet/desktop show 2-col grid
-                      Responsive.isWide(context) ? _RideGrid() : _RideList(),
-                      SizedBox(height: Responsive.spacing(context, units: 3)),
-
-                      // Recent Activity
-                      _RecentActivityCard().animate().fadeIn(
-                        delay: 200.ms,
-                        duration: 350.ms,
-                      ),
-
-                      SizedBox(height: Responsive.spacing(context, units: 2.5)),
-
-                      _PromoBanner().animate().fadeIn(
-                        delay: 240.ms,
-                        duration: 350.ms,
-                      ),
-                    ],
-                  ),
-                ),
-              ]),
+              ),
             ),
           ),
         ],
