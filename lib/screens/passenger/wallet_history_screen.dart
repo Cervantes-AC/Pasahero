@@ -19,7 +19,6 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
   late TabController _tabController;
   List<WalletTransaction> _allTransactions = [];
   bool _loading = true;
-  String? _walletId;
 
   @override
   void initState() {
@@ -41,7 +40,6 @@ class _WalletHistoryScreenState extends State<WalletHistoryScreen>
         'passenger_001',
       );
       if (wallet != null) {
-        _walletId = wallet.walletId;
         _allTransactions = await WalletService.instance.getTransactionHistory(
           wallet.walletId,
           limit: 100,

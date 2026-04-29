@@ -268,7 +268,7 @@ class _BrandRow extends StatelessWidget {
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.asset('logo.jpg', fit: BoxFit.cover),
+            child: Image.asset('assets/logo.png', fit: BoxFit.cover),
           ),
         ),
         const SizedBox(width: 12),

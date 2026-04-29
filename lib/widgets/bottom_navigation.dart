@@ -23,6 +23,12 @@ class BottomNavBar extends StatelessWidget {
         path: '/ride-history',
       ),
       _NavTab(
+        label: 'Wallet',
+        icon: Icons.account_balance_wallet_outlined,
+        activeIcon: Icons.account_balance_wallet,
+        path: '/wallet',
+      ),
+      _NavTab(
         label: 'Saved',
         icon: Icons.bookmark_outline,
         activeIcon: Icons.bookmark,

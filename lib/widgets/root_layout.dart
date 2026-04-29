@@ -17,7 +17,7 @@ class RootLayout extends StatelessWidget {
   }
 }
 
-/// Tablet/Desktop: side navigation rail
+/// Tablet / Laptop / Desktop / TV: side navigation rail or drawer
 class _WideLayout extends StatelessWidget {
   final Widget child;
   const _WideLayout({required this.child});
@@ -25,6 +25,10 @@ class _WideLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
+    final showLabels = Responsive.navShowsLabels(context);
+    final navW = Responsive.navWidth(context);
+    final logoSz = Responsive.logoSize(context);
+    final isTv = Responsive.isTv(context);
 
     final tabs = [
       _NavItem(
@@ -53,14 +57,12 @@ class _WideLayout extends StatelessWidget {
       ),
     ];
 
-    final isDesktop = Responsive.isDesktop(context);
-
     return Scaffold(
       body: Row(
         children: [
-          // Side nav
+          // ── Side nav ──────────────────────────────────────────────────────
           Container(
-            width: isDesktop ? 220 : 72,
+            width: navW,
             decoration: const BoxDecoration(
               color: Colors.white,
               border: Border(right: BorderSide(color: AppColors.border)),
@@ -71,86 +73,65 @@ class _WideLayout extends StatelessWidget {
                   // Logo
                   Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: isDesktop ? 20 : 12,
-                      vertical: 20,
+                      horizontal: showLabels ? 20 : 12,
+                      vertical: isTv ? 28 : 20,
                     ),
-                    child: isDesktop
+                    child: showLabels
                         ? Row(
                             children: [
-                              Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(9),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(9),
-                                  child: Image.asset(
-                                    'logo.jpg',
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
+                              _LogoBox(size: logoSz),
                               const SizedBox(width: 10),
-                              const Text(
+                              Text(
                                 'Pasahero',
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: Responsive.fontSize(context, 16),
                                   fontWeight: FontWeight.w800,
                                   color: AppColors.textPrimary,
                                 ),
                               ),
                             ],
                           )
-                        : Center(
-                            child: Container(
-                              width: 36,
-                              height: 36,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(9),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(9),
-                                child: Image.asset(
-                                  'logo.jpg',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
+                        : Center(child: _LogoBox(size: logoSz)),
                   ),
 
-                  const SizedBox(height: 8),
+                  SizedBox(height: Responsive.spacing(context)),
 
                   // Nav items
                   ...tabs.map((tab) {
                     final active = location == tab.path;
+                    final iconSz = Responsive.iconSize(context, base: 20);
+                    final itemPadV = isTv ? 16.0 : 10.0;
+
                     return Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: isDesktop ? 12 : 8,
-                        vertical: 2,
+                        horizontal: showLabels ? 12 : 8,
+                        vertical: isTv ? 4 : 2,
                       ),
                       child: InkWell(
                         onTap: () => context.go(tab.path),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(
+                          Responsive.radius(context, base: 12),
+                        ),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
                           padding: EdgeInsets.symmetric(
-                            horizontal: isDesktop ? 12 : 8,
-                            vertical: 10,
+                            horizontal: showLabels ? 12 : 8,
+                            vertical: itemPadV,
                           ),
                           decoration: BoxDecoration(
                             color: active
                                 ? AppColors.primarySurface
                                 : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(
+                              Responsive.radius(context, base: 12),
+                            ),
                           ),
-                          child: isDesktop
+                          child: showLabels
                               ? Row(
                                   children: [
                                     Icon(
                                       active ? tab.activeIcon : tab.icon,
-                                      size: 20,
+                                      size: iconSz,
                                       color: active
                                           ? AppColors.primary
                                           : AppColors.textTertiary,
@@ -159,7 +140,10 @@ class _WideLayout extends StatelessWidget {
                                     Text(
                                       tab.label,
                                       style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: Responsive.fontSize(
+                                          context,
+                                          14,
+                                        ),
                                         fontWeight: active
                                             ? FontWeight.w600
                                             : FontWeight.w400,
@@ -173,7 +157,7 @@ class _WideLayout extends StatelessWidget {
                               : Center(
                                   child: Icon(
                                     active ? tab.activeIcon : tab.icon,
-                                    size: 22,
+                                    size: iconSz,
                                     color: active
                                         ? AppColors.primary
                                         : AppColors.textTertiary,
@@ -188,9 +172,29 @@ class _WideLayout extends StatelessWidget {
             ),
           ),
 
-          // Content
+          // ── Content ───────────────────────────────────────────────────────
           Expanded(child: child),
         ],
+      ),
+    );
+  }
+}
+
+class _LogoBox extends StatelessWidget {
+  final double size;
+  const _LogoBox({required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(size * 0.25),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(size * 0.25),
+        child: Image.asset('assets/logo.png', fit: BoxFit.cover),
       ),
     );
   }

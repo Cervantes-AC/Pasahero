@@ -68,7 +68,9 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
         method: _selectedMethod,
       );
 
-      final transaction = await WalletService.instance.processCashIn(request);
+      await WalletService.instance.processCashIn(request);
+
+      if (!mounted) return;
 
       // Show success
       ScaffoldMessenger.of(context).showSnackBar(
@@ -81,10 +83,9 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
       );
 
       // Navigate back
-      if (context.mounted) {
-        context.pop();
-      }
+      context.pop();
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error),
       );

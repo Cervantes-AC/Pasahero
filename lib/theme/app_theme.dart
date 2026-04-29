@@ -1,9 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app_colors.dart';
+import '../utils/responsive.dart';
 
 class AppTheme {
-  static ThemeData get light => ThemeData(
+  /// Base theme — used as-is on mobile.
+  static ThemeData get light => _build();
+
+  /// Context-aware theme that scales button/input sizes for the current device.
+  static ThemeData responsive(BuildContext context) {
+    final btnH = Responsive.buttonHeight(context);
+    final fs = Responsive.fontScale(context);
+    final r = Responsive.radius(context, base: 14);
+    final inputR = Responsive.radius(context, base: 12);
+    return _build(
+      buttonHeight: btnH,
+      fontScale: fs,
+      buttonRadius: r,
+      inputRadius: inputR,
+    );
+  }
+
+  static ThemeData _build({
+    double buttonHeight = 52,
+    double fontScale = 1.0,
+    double buttonRadius = 14,
+    double inputRadius = 12,
+  }) => ThemeData(
     useMaterial3: true,
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.primary,
@@ -33,11 +56,13 @@ class AppTheme {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
-        minimumSize: const Size(double.infinity, 52),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        minimumSize: Size(double.infinity, buttonHeight),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(buttonRadius),
+        ),
         elevation: 0,
-        textStyle: const TextStyle(
-          fontSize: 15,
+        textStyle: TextStyle(
+          fontSize: 15 * fontScale,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.1,
         ),
@@ -46,11 +71,13 @@ class AppTheme {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primary,
-        minimumSize: const Size(double.infinity, 52),
+        minimumSize: Size(double.infinity, buttonHeight),
         side: const BorderSide(color: AppColors.primary, width: 1.5),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        textStyle: const TextStyle(
-          fontSize: 15,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(buttonRadius),
+        ),
+        textStyle: TextStyle(
+          fontSize: 15 * fontScale,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.1,
         ),
@@ -59,7 +86,10 @@ class AppTheme {
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: AppColors.primary,
-        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        textStyle: TextStyle(
+          fontSize: 14 * fontScale,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     ),
 
@@ -68,24 +98,33 @@ class AppTheme {
       filled: true,
       fillColor: AppColors.surfaceVariant,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(inputRadius),
         borderSide: const BorderSide(color: AppColors.border),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(inputRadius),
         borderSide: const BorderSide(color: AppColors.border),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(inputRadius),
         borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(inputRadius),
         borderSide: const BorderSide(color: AppColors.error),
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      hintStyle: const TextStyle(color: AppColors.textTertiary, fontSize: 14),
-      labelStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 14 * fontScale,
+      ),
+      hintStyle: TextStyle(
+        color: AppColors.textTertiary,
+        fontSize: 14 * fontScale,
+      ),
+      labelStyle: TextStyle(
+        color: AppColors.textSecondary,
+        fontSize: 14 * fontScale,
+      ),
     ),
 
     // Cards
@@ -107,19 +146,25 @@ class AppTheme {
     ),
 
     // Tab bar
-    tabBarTheme: const TabBarThemeData(
+    tabBarTheme: TabBarThemeData(
       labelColor: AppColors.primary,
       unselectedLabelColor: AppColors.textTertiary,
       indicatorColor: AppColors.primary,
-      labelStyle: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-      unselectedLabelStyle: TextStyle(fontSize: 13),
+      labelStyle: TextStyle(
+        fontSize: 13 * fontScale,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedLabelStyle: TextStyle(fontSize: 13 * fontScale),
     ),
 
     // Chip
     chipTheme: ChipThemeData(
       backgroundColor: AppColors.surfaceVariant,
       selectedColor: AppColors.primarySurface,
-      labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      labelStyle: TextStyle(
+        fontSize: 12 * fontScale,
+        fontWeight: FontWeight.w500,
+      ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       side: const BorderSide(color: AppColors.border),
     ),

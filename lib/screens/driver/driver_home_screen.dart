@@ -659,11 +659,31 @@ class _DriverHomeScreenState extends State<DriverHomeScreen>
                       ),
                       const SizedBox(width: 12),
                       _ActionBtn(
+                        icon: Icons.account_balance_wallet_rounded,
+                        label: 'PasaWallet',
+                        sub: 'My wallet',
+                        color: AppColors.driverAccent,
+                        onTap: () => context.go('/driver-wallet'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      _ActionBtn(
                         icon: Icons.person_outline_rounded,
                         label: 'Profile',
                         sub: 'Verified',
-                        color: AppColors.driverAccent,
+                        color: AppColors.primary,
                         onTap: () => context.go('/driver-profile'),
+                      ),
+                      const SizedBox(width: 12),
+                      _ActionBtn(
+                        icon: Icons.account_balance_outlined,
+                        label: 'Withdraw',
+                        sub: 'Cash out',
+                        color: AppColors.error,
+                        onTap: () => context.go('/driver-wallet-withdraw'),
                       ),
                     ],
                   ),

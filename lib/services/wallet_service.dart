@@ -300,24 +300,27 @@ class WalletService {
     final transactions = await getTransactionHistory(walletId);
     final today = DateTime.now();
 
-    return transactions
-        .where(
-          (t) =>
-              t.type == TransactionType.earnings &&
-              t.timestamp.year == today.year &&
-              t.timestamp.month == today.month &&
-              t.timestamp.day == today.day,
-        )
-        .fold(0.0, (sum, t) => sum + t.amount);
+    double total = 0.0;
+    for (final t in transactions) {
+      if (t.type == TransactionType.earnings &&
+          t.timestamp.year == today.year &&
+          t.timestamp.month == today.month &&
+          t.timestamp.day == today.day) {
+        total += t.amount;
+      }
+    }
+    return total;
   }
 
   /// Get total earnings for driver
   Future<double> getTotalEarnings(String walletId) async {
     final transactions = await getTransactionHistory(walletId);
 
-    return transactions
-        .where((t) => t.type == TransactionType.earnings)
-        .fold(0.0, (sum, t) => sum + t.amount);
+    double total = 0.0;
+    for (final t in transactions) {
+      if (t.type == TransactionType.earnings) total += t.amount;
+    }
+    return total;
   }
 
   /// Get today's trip count for driver

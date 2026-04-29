@@ -13,6 +13,9 @@ import 'screens/passenger/ride_complete_screen.dart';
 import 'screens/passenger/ride_history_screen.dart';
 import 'screens/passenger/saved_locations_screen.dart';
 import 'screens/passenger/profile_screen.dart';
+import 'screens/passenger/wallet_screen.dart';
+import 'screens/passenger/wallet_cash_in_screen.dart';
+import 'screens/passenger/wallet_history_screen.dart';
 import 'screens/shared/location_sharing_screen.dart';
 import 'screens/driver/driver_login_screen.dart';
 import 'screens/driver/driver_register_screen.dart';
@@ -23,101 +26,135 @@ import 'screens/driver/driver_earnings_screen.dart';
 import 'screens/driver/driver_profile_screen.dart';
 import 'screens/driver/driver_history_screen.dart';
 import 'screens/driver/driver_ratings_screen.dart';
+import 'screens/driver/driver_wallet_screen.dart';
+import 'screens/driver/driver_wallet_withdraw_screen.dart';
+import 'screens/driver/driver_wallet_history_screen.dart';
 import 'widgets/root_layout.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     // ── Shared ──────────────────────────────────────────────────────────────
-    GoRoute(path: '/', builder: (_, _s) => const WelcomeScreen()),
-    GoRoute(path: '/showcase', builder: (_, _s) => const ShowcaseScreen()),
+    GoRoute(path: '/', builder: (ctx, s) => const WelcomeScreen()),
+    GoRoute(path: '/showcase', builder: (ctx, s) => const ShowcaseScreen()),
 
     // ── Passenger auth ───────────────────────────────────────────────────────
-    GoRoute(path: '/login', builder: (_, _s) => const LoginScreen()),
-    GoRoute(path: '/register', builder: (_, _s) => const RegisterScreen()),
+    GoRoute(path: '/login', builder: (ctx, s) => const LoginScreen()),
+    GoRoute(path: '/register', builder: (ctx, s) => const RegisterScreen()),
 
     // ── Passenger ride flow ──────────────────────────────────────────────────
     GoRoute(
       path: '/search',
-      builder: (_, state) {
+      builder: (ctx, state) {
         final type = state.uri.queryParameters['type'] ?? 'habal-habal';
         return SearchRideScreen(rideType: type);
       },
     ),
     GoRoute(
       path: '/drivers',
-      builder: (_, state) {
+      builder: (ctx, state) {
         final type = state.uri.queryParameters['type'] ?? 'habal-habal';
         return DriverListScreen(rideType: type);
       },
     ),
     GoRoute(
       path: '/driver-detail',
-      builder: (_, state) {
+      builder: (ctx, state) {
         final id = state.uri.queryParameters['id'] ?? '1';
         return DriverDetailScreen(driverId: id);
       },
     ),
-    GoRoute(path: '/tracking', builder: (_, _s) => const RideTrackingScreen()),
-    GoRoute(path: '/ongoing', builder: (_, _s) => const RideOngoingScreen()),
-    GoRoute(path: '/complete', builder: (_, _s) => const RideCompleteScreen()),
+    GoRoute(path: '/tracking', builder: (ctx, s) => const RideTrackingScreen()),
+    GoRoute(path: '/ongoing', builder: (ctx, s) => const RideOngoingScreen()),
+    GoRoute(path: '/complete', builder: (ctx, s) => const RideCompleteScreen()),
     GoRoute(
       path: '/location-sharing',
-      builder: (_, _s) => const LocationSharingScreen(),
+      builder: (ctx, s) => const LocationSharingScreen(),
     ),
 
     // ── Passenger shell (bottom nav) ─────────────────────────────────────────
     ShellRoute(
       builder: (context, state, child) => RootLayout(child: child),
       routes: [
-        GoRoute(path: '/home', builder: (_, _s) => const HomeScreen()),
+        GoRoute(path: '/home', builder: (ctx, s) => const HomeScreen()),
         GoRoute(
           path: '/ride-history',
-          builder: (_, _s) => const RideHistoryScreen(),
+          builder: (ctx, s) => const RideHistoryScreen(),
+        ),
+        GoRoute(
+          path: '/wallet',
+          builder: (ctx, s) => const PassengerWalletScreen(),
         ),
         GoRoute(
           path: '/saved-locations',
-          builder: (_, _s) => const SavedLocationsScreen(),
+          builder: (ctx, s) => const SavedLocationsScreen(),
         ),
-        GoRoute(path: '/profile', builder: (_, _s) => const ProfileScreen()),
+        GoRoute(path: '/profile', builder: (ctx, s) => const ProfileScreen()),
       ],
     ),
 
     // ── Driver auth ──────────────────────────────────────────────────────────
     GoRoute(
       path: '/driver-login',
-      builder: (_, _s) => const DriverLoginScreen(),
+      builder: (ctx, s) => const DriverLoginScreen(),
     ),
     GoRoute(
       path: '/driver-register',
-      builder: (_, _s) => const DriverRegisterScreen(),
+      builder: (ctx, s) => const DriverRegisterScreen(),
     ),
 
     // ── Driver app ───────────────────────────────────────────────────────────
-    GoRoute(path: '/driver-home', builder: (_, _s) => const DriverHomeScreen()),
+    GoRoute(
+      path: '/driver-home',
+      builder: (ctx, s) => const DriverHomeScreen(),
+    ),
     GoRoute(
       path: '/driver-request',
-      builder: (_, _s) => const DriverRequestScreen(),
+      builder: (ctx, s) => const DriverRequestScreen(),
     ),
     GoRoute(
       path: '/driver-active',
-      builder: (_, _s) => const DriverActiveTripScreen(),
+      builder: (ctx, s) => const DriverActiveTripScreen(),
     ),
     GoRoute(
       path: '/driver-earnings',
-      builder: (_, _s) => const DriverEarningsScreen(),
+      builder: (ctx, s) => const DriverEarningsScreen(),
     ),
     GoRoute(
       path: '/driver-profile',
-      builder: (_, _s) => const DriverProfileScreen(),
+      builder: (ctx, s) => const DriverProfileScreen(),
     ),
     GoRoute(
       path: '/driver-history',
-      builder: (_, _s) => const DriverHistoryScreen(),
+      builder: (ctx, s) => const DriverHistoryScreen(),
     ),
     GoRoute(
       path: '/driver-ratings',
-      builder: (_, _s) => const DriverRatingsScreen(),
+      builder: (ctx, s) => const DriverRatingsScreen(),
+    ),
+
+    // ── Passenger wallet (standalone) ────────────────────────────────────────
+    GoRoute(
+      path: '/wallet-cash-in',
+      builder: (ctx, s) => const WalletCashInScreen(),
+    ),
+    GoRoute(
+      path: '/wallet-history',
+      builder: (ctx, s) => const WalletHistoryScreen(),
+    ),
+
+    // ── Driver wallet ────────────────────────────────────────────────────────
+    GoRoute(
+      path: '/driver-wallet',
+      builder: (ctx, s) => const DriverWalletScreen(),
+    ),
+    GoRoute(
+      path: '/driver-wallet-withdraw',
+      builder: (ctx, s) => const DriverWalletWithdrawScreen(),
+    ),
+    GoRoute(
+      path: '/driver-wallet-history',
+      builder: (ctx, s) => const DriverWalletHistoryScreen(),
     ),
   ],
 );
