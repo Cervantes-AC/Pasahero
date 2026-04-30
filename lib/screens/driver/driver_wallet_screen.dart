@@ -152,8 +152,8 @@ class _DriverWalletScreenState extends State<DriverWalletScreen> {
       subtitle: 'Driver earnings & payouts',
       showBack: true,
       onBack: () {
-        if (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
+        if (context.canPop()) {
+          context.pop();
         } else {
           context.go('/driver-home');
         }

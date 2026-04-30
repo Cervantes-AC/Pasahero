@@ -83,8 +83,11 @@ class _DriverWalletWithdrawScreenState
         amount: amount,
         method: _selectedMethod,
         onDone: () {
-          Navigator.pop(ctx);
-          context.go('/driver-wallet');
+          if (context.canPop()) {
+            context.pop();
+          } else {
+            context.go('/driver-wallet');
+          }
         },
       ),
     );
@@ -136,8 +139,8 @@ class _DriverWalletWithdrawScreenState
       subtitle: 'Transfer earnings to your account',
       showBack: true,
       onBack: () {
-        if (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
+        if (context.canPop()) {
+          context.pop();
         } else {
           context.go('/driver-wallet');
         }
@@ -737,7 +740,13 @@ class _DriverWalletWithdrawScreenState
           width: double.infinity,
           height: Responsive.buttonHeight(context),
           child: OutlinedButton(
-            onPressed: () => context.pop(),
+            onPressed: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/driver-wallet');
+              }
+            },
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.driverTextMuted,
               side: const BorderSide(color: AppColors.driverBorder),

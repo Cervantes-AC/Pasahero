@@ -58,7 +58,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     // Use mounted check to avoid BuildContext issues
     Future.delayed(const Duration(milliseconds: 600), () {
       if (mounted && context.mounted) {
-        context.pop();
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.go('/home');
+        }
       }
     });
   }
@@ -76,7 +80,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           PhAppBar(
             title: 'Edit Profile',
             showBack: true,
-            onBack: () => context.pop(),
+            onBack: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/home');
+              }
+            },
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -242,7 +252,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         label: 'Cancel',
                         outlined: true,
                         height: Responsive.buttonHeight(context),
-                        onTap: () => context.pop(),
+                        onTap: () {
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            context.go('/home');
+                          }
+                        },
                       )
                       .animate()
                       .fadeIn(delay: 450.ms, duration: 300.ms)

@@ -187,8 +187,8 @@ class _DriverWalletHistoryScreenState extends State<DriverWalletHistoryScreen>
       subtitle: 'All your PasaWallet transactions',
       showBack: true,
       onBack: () {
-        if (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
+        if (context.canPop()) {
+          context.pop();
         } else {
           context.go('/driver-wallet');
         }

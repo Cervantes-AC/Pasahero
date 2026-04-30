@@ -63,7 +63,11 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
     );
 
     // Navigate back
-    context.pop();
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/wallet');
+    }
   }
 
   void _selectQuickAmount(double amount) {
@@ -109,6 +113,13 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
       title: 'Cash In',
       subtitle: 'Add money to your PasaWallet',
       showBack: true,
+      onBack: () {
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.go('/wallet');
+        }
+      },
     );
   }
 
@@ -345,7 +356,17 @@ class _WalletCashInScreenState extends State<WalletCashInScreen> {
           loading: _processing,
         ),
         SizedBox(height: Responsive.spacing(context, units: 1.5)),
-        PhButton(label: 'Cancel', outlined: true, onTap: () => context.pop()),
+        PhButton(
+          label: 'Cancel',
+          outlined: true,
+          onTap: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/wallet');
+            }
+          },
+        ),
       ],
     );
   }

@@ -45,7 +45,15 @@ class PhAppBar extends StatelessWidget implements PreferredSizeWidget {
               if (showBack)
                 PhIconButton(
                   icon: Icons.arrow_back_ios_new_rounded,
-                  onTap: onBack ?? () => context.pop(),
+                  onTap:
+                      onBack ??
+                      () {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go('/home');
+                        }
+                      },
                   color: theme.cardColor,
                   iconColor: textColor,
                   bordered: true,

@@ -352,7 +352,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           PhAppBar(
             title: 'Profile',
             showBack: true,
-            onBack: () => context.pop(),
+            onBack: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/home');
+              }
+            },
           ),
           Expanded(
             child: SingleChildScrollView(

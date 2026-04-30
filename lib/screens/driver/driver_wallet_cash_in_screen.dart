@@ -72,7 +72,11 @@ class _DriverWalletCashInScreenState extends State<DriverWalletCashInScreen> {
       );
 
       // Navigate back
-      context.pop();
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/driver-wallet');
+      }
     } catch (e) {
       debugPrint('Error processing top-up: $e');
       if (mounted) {
@@ -121,8 +125,8 @@ class _DriverWalletCashInScreenState extends State<DriverWalletCashInScreen> {
       subtitle: 'Add funds to your PasaWallet',
       showBack: true,
       onBack: () {
-        if (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop();
+        if (context.canPop()) {
+          context.pop();
         } else {
           context.go('/driver-wallet');
         }
@@ -424,7 +428,13 @@ class _DriverWalletCashInScreenState extends State<DriverWalletCashInScreen> {
           width: double.infinity,
           height: Responsive.buttonHeight(context),
           child: OutlinedButton(
-            onPressed: () => context.pop(),
+            onPressed: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/driver-wallet');
+              }
+            },
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.driverAccent,
               side: const BorderSide(color: AppColors.driverAccent),

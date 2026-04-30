@@ -96,7 +96,13 @@ class _ScheduleRideScreenState extends State<ScheduleRideScreen> {
     if (!mounted) return;
     showToast(context, 'Ride scheduled successfully!');
     await Future.delayed(const Duration(milliseconds: 800));
-    if (mounted) context.pop();
+    if (mounted) {
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/home');
+      }
+    }
   }
 
   String _formatDate(DateTime dt) {
@@ -137,6 +143,13 @@ class _ScheduleRideScreenState extends State<ScheduleRideScreen> {
               title: 'Schedule a Ride',
               subtitle: 'Book up to 7 days in advance',
               showBack: true,
+              onBack: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go('/home');
+                }
+              },
             ),
           ),
           SliverPadding(

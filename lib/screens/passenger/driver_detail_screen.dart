@@ -55,7 +55,13 @@ class DriverDetailScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     GestureDetector(
-                      onTap: () => context.pop(),
+                      onTap: () {
+                        if (context.canPop()) {
+                          context.pop();
+                        } else {
+                          context.go('/home');
+                        }
+                      },
                       child: Container(
                         width: Responsive.iconSize(context, base: 40),
                         height: Responsive.iconSize(context, base: 40),

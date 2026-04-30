@@ -44,7 +44,13 @@ class _LocationSharingScreenState extends State<LocationSharingScreen> {
               child: Row(
                 children: [
                   GestureDetector(
-                    onTap: () => context.pop(),
+                    onTap: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go('/home');
+                      }
+                    },
                     child: Container(
                       width: 40,
                       height: 40,

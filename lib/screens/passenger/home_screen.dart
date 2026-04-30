@@ -135,6 +135,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       children: [
                         SizedBox(height: Responsive.spacing(context, units: 1)),
 
+                        // Book a Ride & Quick Match Buttons - NEW FEATURE
+                        _BookingButtonsRow()
+                            .animate()
+                            .fadeIn(delay: 50.ms, duration: 350.ms)
+                            .slideY(begin: 0.2, end: 0),
+
+                        SizedBox(height: Responsive.spacing(context, units: 2)),
+
                         // Quick Actions Row
                         _QuickActionsRow(
                           selectedIndex: _selectedQuickAction,
@@ -940,7 +948,37 @@ class _QuickActionsRow extends StatelessWidget {
   }
 
   void _showFavoritesSheet(BuildContext context) {
-    final favorites = AppState.instance.favoriteDrivers;
+    // Mock favorite drivers if list is empty
+    final mockFavorites = [
+      const FavoriteDriver(
+        driverId: '1',
+        name: 'Pedro Santos',
+        rating: 4.9,
+        vehicleType: 'Habal-habal',
+        plateNumber: 'ABC 1234',
+        totalRidesTogether: 8,
+      ),
+      const FavoriteDriver(
+        driverId: '2',
+        name: 'Maria Garcia',
+        rating: 4.8,
+        vehicleType: 'Bao-bao',
+        plateNumber: 'XYZ 5678',
+        totalRidesTogether: 5,
+      ),
+      const FavoriteDriver(
+        driverId: '3',
+        name: 'Juan Reyes',
+        rating: 4.7,
+        vehicleType: 'Habal-habal',
+        plateNumber: 'DEF 9012',
+        totalRidesTogether: 3,
+      ),
+    ];
+
+    final favorites = AppState.instance.favoriteDrivers.isEmpty
+        ? mockFavorites
+        : AppState.instance.favoriteDrivers;
 
     showModalBottomSheet(
       context: context,
@@ -1185,7 +1223,37 @@ class _QuickActionsRow extends StatelessWidget {
   }
 
   void _showPromosSheet(BuildContext context) {
-    final promos = AppState.instance.promoCodes;
+    // Mock promo codes if list is empty
+    final mockPromos = [
+      const PromoCode(
+        code: 'PASAHERO10',
+        description: '₱10 off your next ride',
+        discountAmount: 10,
+        expiryDate: 'Apr 30, 2026',
+      ),
+      const PromoCode(
+        code: 'NEWUSER20',
+        description: '₱20 off for new users',
+        discountAmount: 20,
+        expiryDate: 'May 15, 2026',
+      ),
+      const PromoCode(
+        code: 'WEEKEND15',
+        description: '₱15 off on weekends',
+        discountAmount: 15,
+        expiryDate: 'May 31, 2026',
+      ),
+      const PromoCode(
+        code: 'SUMMER25',
+        description: '₱25 off on summer rides',
+        discountAmount: 25,
+        expiryDate: 'Jun 30, 2026',
+      ),
+    ];
+
+    final promos = AppState.instance.promoCodes.isEmpty
+        ? mockPromos
+        : AppState.instance.promoCodes;
 
     showModalBottomSheet(
       context: context,
@@ -1683,6 +1751,253 @@ class _ActivityItem extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+// ── Quick Match Button ────────────────────────────────────────────────────────
+
+// ── Booking Buttons Row ──────────────────────────────────────────────────────
+
+class _BookingButtonsRow extends StatelessWidget {
+  const _BookingButtonsRow();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        // Book a Ride Button
+        Expanded(
+          child: _BookButton(
+            icon: Icons.search_rounded,
+            title: 'Book a Ride',
+            subtitle: 'Choose your driver',
+            color: AppColors.primary,
+            onTap: () => context.go('/search'),
+          ),
+        ),
+        SizedBox(width: Responsive.spacing(context, units: 1.5)),
+        // Quick Match Button
+        Expanded(child: _QuickMatchButton()),
+      ],
+    );
+  }
+}
+
+// ── Book Button ──────────────────────────────────────────────────────────────
+
+class _BookButton extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _BookButton({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: Responsive.spacing(context, units: 1.5),
+          vertical: Responsive.spacing(context, units: 1.5),
+        ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [color, color.withValues(alpha: 0.8)],
+          ),
+          borderRadius: BorderRadius.circular(
+            Responsive.radius(context, base: 16),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.3),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.all(Responsive.spacing(context, units: 0.75)),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                color: Colors.white,
+                size: Responsive.iconSize(context, base: 18),
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 14),
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 11),
+                color: Colors.white.withValues(alpha: 0.85),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Quick Match Button ───────────────────────────────────────────────────────
+
+class _QuickMatchButton extends StatefulWidget {
+  const _QuickMatchButton();
+
+  @override
+  State<_QuickMatchButton> createState() => _QuickMatchButtonState();
+}
+
+class _QuickMatchButtonState extends State<_QuickMatchButton>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _pulseController;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  void _handleQuickMatch() async {
+    if (_isLoading) return;
+
+    setState(() => _isLoading = true);
+
+    // Simulate finding a driver
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (mounted) {
+      setState(() => _isLoading = false);
+
+      // Show success message
+      showToast(context, 'Driver matched! Pedro Santos is on the way');
+
+      // Navigate to ride tracking
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          context.go('/ride-tracking');
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _isLoading ? null : _handleQuickMatch,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: Responsive.spacing(context, units: 1.5),
+          vertical: Responsive.spacing(context, units: 1.5),
+        ),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [AppColors.success, Color(0xFF00A86B)],
+          ),
+          borderRadius: BorderRadius.circular(
+            Responsive.radius(context, base: 16),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.success.withValues(alpha: 0.3),
+              blurRadius: 16,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Animated pulse circle
+            ScaleTransition(
+              scale: Tween<double>(begin: 1.0, end: 1.2).animate(
+                CurvedAnimation(
+                  parent: _pulseController,
+                  curve: Curves.easeInOut,
+                ),
+              ),
+              child: Container(
+                width: Responsive.iconSize(context, base: 18),
+                height: Responsive.iconSize(context, base: 18),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.3),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            SizedBox(height: Responsive.spacing(context, units: 1)),
+            Text(
+              'Quick Match',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 14),
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+            Text(
+              _isLoading ? 'Finding driver...' : 'Auto-match instantly',
+              style: TextStyle(
+                fontSize: Responsive.fontSize(context, 11),
+                color: Colors.white.withValues(alpha: 0.85),
+              ),
+            ),
+            if (_isLoading)
+              Padding(
+                padding: EdgeInsets.only(
+                  top: Responsive.spacing(context, units: 0.75),
+                ),
+                child: SizedBox(
+                  width: Responsive.iconSize(context, base: 16),
+                  height: Responsive.iconSize(context, base: 16),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Colors.white.withValues(alpha: 0.8),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
