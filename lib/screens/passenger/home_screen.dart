@@ -1899,21 +1899,15 @@ class _QuickMatchButtonState extends State<_QuickMatchButton>
 
     setState(() => _isLoading = true);
 
-    // Simulate finding a driver
-    await Future.delayed(const Duration(seconds: 2));
+    // Navigate to search screen with quick match flag
+    // This will auto-select the first available driver
+    await Future.delayed(const Duration(milliseconds: 500));
 
     if (mounted) {
       setState(() => _isLoading = false);
 
-      // Show success message
-      showToast(context, 'Driver matched! Pedro Santos is on the way');
-
-      // Navigate to ride tracking
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (mounted) {
-          context.go('/ride-tracking');
-        }
-      });
+      // Navigate to search screen with quickMatch parameter
+      context.go('/search?quickMatch=true');
     }
   }
 

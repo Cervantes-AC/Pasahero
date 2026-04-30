@@ -48,14 +48,16 @@ final appRouter = GoRouter(
       path: '/search',
       builder: (ctx, state) {
         final type = state.uri.queryParameters['type'] ?? 'habal-habal';
-        return SearchRideScreen(rideType: type);
+        final quickMatch = state.uri.queryParameters['quickMatch'] == 'true';
+        return SearchRideScreen(rideType: type, quickMatch: quickMatch);
       },
     ),
     GoRoute(
       path: '/drivers',
       builder: (ctx, state) {
         final type = state.uri.queryParameters['type'] ?? 'habal-habal';
-        return DriverListScreen(rideType: type);
+        final quickMatch = state.uri.queryParameters['quickMatch'] == 'true';
+        return DriverListScreen(rideType: type, quickMatch: quickMatch);
       },
     ),
     GoRoute(

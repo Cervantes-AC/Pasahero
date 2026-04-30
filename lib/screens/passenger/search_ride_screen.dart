@@ -7,7 +7,12 @@ import '../../widgets/ph_widgets.dart';
 
 class SearchRideScreen extends StatefulWidget {
   final String rideType;
-  const SearchRideScreen({super.key, required this.rideType});
+  final bool quickMatch;
+  const SearchRideScreen({
+    super.key,
+    required this.rideType,
+    this.quickMatch = false,
+  });
 
   @override
   State<SearchRideScreen> createState() => _SearchRideScreenState();
@@ -42,6 +47,18 @@ class _SearchRideScreenState extends State<SearchRideScreen>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat();
+
+    // Handle quick match - auto-navigate to drivers with first driver selected
+    if (widget.quickMatch) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          // Auto-navigate to drivers screen with quickMatch flag
+          context.go(
+            '/drivers?type=${widget.rideType}&quickMatch=true&from=${_pickupCtrl.text}&to=Robinsons Place',
+          );
+        }
+      });
+    }
   }
 
   @override

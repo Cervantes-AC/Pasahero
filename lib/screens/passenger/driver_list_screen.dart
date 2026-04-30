@@ -9,7 +9,12 @@ import '../../utils/responsive.dart';
 
 class DriverListScreen extends StatefulWidget {
   final String rideType;
-  const DriverListScreen({super.key, required this.rideType});
+  final bool quickMatch;
+  const DriverListScreen({
+    super.key,
+    required this.rideType,
+    this.quickMatch = false,
+  });
 
   @override
   State<DriverListScreen> createState() => _DriverListScreenState();
@@ -24,6 +29,21 @@ class _DriverListScreenState extends State<DriverListScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
+    // Handle quick match - auto-select first driver
+    if (widget.quickMatch) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          // Get first driver from mock data
+          final drivers = mockDrivers
+              .where((d) => d.vehicleType == widget.rideType)
+              .toList();
+          if (drivers.isNotEmpty) {
+            _handleOrderRide(drivers.first);
+          }
+        }
+      });
+    }
   }
 
   @override
